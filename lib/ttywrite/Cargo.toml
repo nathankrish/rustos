@@ -11,6 +11,8 @@ authors = [
 edition = "2018"
 
 [dependencies]
+bitflags="=1.2"
+clap="=2.33.3"
 structopt = "0.1.0"
 structopt-derive = "0.1.0"
 serial = "0.4"

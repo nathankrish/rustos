@@ -1,0 +1,1 @@
+If the user can choose the starting state for the Gpio structure, then our structure's state might be inconsistent with the actual state of the pin. We might attempt to perform invalid transitions in our FSM, which would produce undefined behavior.

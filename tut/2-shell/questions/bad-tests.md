@@ -1,0 +1,1 @@
+The Xmodem protocol expects a particular handshake pattern between the sender and receiver in order to send packets. It could be challenging to emulate this handshake in a test script without having a receiver set up. Sending the data in the raw is simply a matter of writing to an IO stream.

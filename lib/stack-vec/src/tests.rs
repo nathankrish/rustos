@@ -220,3 +220,58 @@ fn errors() {
         assert_eq!(vec.pop(), None);
     }
 }
+
+#[test]
+fn new() {
+    let mut storage = [0usize; 10];
+    let vec = StackVec::new(&mut storage);
+    assert_eq!(vec.len(), 0);
+    assert_eq!(vec.capacity(), 10);
+}
+
+#[test]
+fn with_len() {
+    let mut storage = [0usize; 10];
+    let mut vec = StackVec::with_len(&mut storage, 5);
+    assert_eq!(vec.len(), 5);
+    for _i in 0..5 {
+        assert_eq!(vec.pop(), Some(0));
+    }
+    assert!(vec.is_empty());
+}
+
+#[test]
+fn truncate() {
+    let mut storage = [0usize; 10];
+    let mut vec = StackVec::with_len(&mut storage, 5);
+    vec.truncate(2);
+    assert_eq!(vec.len(), 2);
+    assert_eq!(vec.capacity(), 10);
+    for _i in 0..2 {
+        assert_eq!(vec.pop(), Some(0));
+    }    
+    assert!(vec.is_empty());
+}
+
+#[test]
+fn slice_deref() {
+    let mut storage = [0usize; 10];
+    let vec = StackVec::with_len(&mut storage, 4);
+    let expected: [usize; 4] = [0, 0, 0, 0];
+    assert_eq!(*vec, expected[0..4]);
+}
+
+#[test]
+fn slice_mut_deref() {
+    let mut storage = [0usize; 10];
+    let mut vec = StackVec::new(&mut storage);
+    for i in 1..6 {
+        let _res = vec.push(i);
+    }
+    let expected1: [usize; 5] = [1, 2, 3, 4, 5];
+    assert_eq!(*vec, expected1[0..5]);
+
+    vec[3] = 0;
+    let expected2: [usize; 5] = [1, 2, 3, 0, 5];
+    assert_eq!(*vec, expected2[0..5])
+}

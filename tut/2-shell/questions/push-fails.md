@@ -1,0 +1,1 @@
+StackVec::push can fail because it uses pre-allocated memory which may be exhausted. If there is no memory left to push another item, StackVec can't push. Vec is heap allocated, so it can make a syscall to request more space if it runs out. Since StackVec::push can fail it returns a Result, whereas Vec::push won't fail.

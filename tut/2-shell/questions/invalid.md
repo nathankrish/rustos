@@ -1,0 +1,1 @@
+structopt knows to reject invalid values for the command line arguments because we specify the type of each variable. If the CLI arg cannot be parsed to a value with the same type as the annotated variable, then the parsing will fail.

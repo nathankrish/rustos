@@ -1,0 +1,1 @@
+if the bootloader did not time out, then the transmitter could stall in cases where the transmitter sends the binary and is expecting a response from the receiver, but does not get one. In this case, the transmitter will be stuck (?)

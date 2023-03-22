@@ -1,0 +1,1 @@
+The 'a bound is required because the elements in the StackVec must have lifetimes as least as long as the StackVec itself. If T is &'b str and 'b is shorter than 'a then the str refs in the StackVec will become invalid before the StackVec does. Then, the StackVec will contain invalid references which could lead to undefined behavior.

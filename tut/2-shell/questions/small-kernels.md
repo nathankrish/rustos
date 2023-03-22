@@ -1,0 +1,1 @@
+The MacOS kernel is 17M in size, so it would fit in the 63.5 MB space allocated in the raspberry pi

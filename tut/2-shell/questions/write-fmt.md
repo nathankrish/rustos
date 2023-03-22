@@ -1,0 +1,1 @@
+the write_fmt implementation in Console will be called, which calls the write_str in Console. This will then call write_str which is implemented in uart.

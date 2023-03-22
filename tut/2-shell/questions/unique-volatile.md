@@ -1,0 +1,1 @@
+Unique<Volatile<T>> implements Sync if T implements Sync whereas Volatile<T> does not. Unique<Volatile> structs are then synchronized, meaning that they can safely share references between threads without data races occuring. This is useful if we have several threads performing volatile memory operations.

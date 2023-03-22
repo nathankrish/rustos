@@ -1,0 +1,1 @@
+Our code enforces that CLO and CHI are read only registers by making them ReadVolatile. Only read access is permitted for the u32 wrapped inside of a ReadVolatile.

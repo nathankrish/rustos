@@ -1,12 +1,13 @@
 mod parsers;
-
 use serial;
 use structopt;
 use structopt_derive::StructOpt;
-use xmodem::Xmodem;
+use xmodem::{Xmodem, Progress};
 
 use std::path::PathBuf;
 use std::time::Duration;
+use std::fs;
+use std::io::Write;
 
 use structopt::StructOpt;
 use serial::core::{CharSize, BaudRate, StopBits, FlowControl, SerialDevice, SerialPortSettings};
@@ -45,6 +46,9 @@ struct Opt {
     #[structopt(short = "r", long = "raw", help = "Disable XMODEM")]
     raw: bool,
 }
+fn progress_fn(progress: Progress) {
+    println!("Progress: {:?}", progress);
+}
 
 fn main() {
     use std::fs::File;
@@ -53,5 +57,36 @@ fn main() {
     let opt = Opt::from_args();
     let mut port = serial::open(&opt.tty_path).expect("path points to invalid TTY");
 
-    // FIXME: Implement the `ttywrite` utility.
+    // input -> file reading
+    // baud rate, timeout, char_width, tty_path, flow_control, stop_bits, raw
+    //      x       x           x         x           x            x       x 
+
+    let mut settings = port.read_settings().unwrap();
+    settings.set_baud_rate(opt.baud_rate).expect("can't set baud rate");
+    settings.set_char_size(opt.char_width);
+    settings.set_flow_control(opt.flow_control);
+    settings.set_stop_bits(opt.stop_bits);
+    
+    port.write_settings(&settings).expect("can't write settings");
+    port.set_timeout(Duration::from_secs(opt.timeout)).expect("can't set timeout");
+
+    let mut buffer = Vec::<u8>::new();
+    match opt.input {
+        None => {
+            io::copy(&mut io::stdin(), &mut buffer).expect("copy from stdin to buffer");
+        },
+        Some(input) => {
+            let mut file = BufReader::new(File::open(input).expect("can't open file"));
+            io::copy(&mut file, &mut buffer).expect("copy from file to buffer");
+        }
+    }
+    let input = buffer.as_slice();
+    if opt.raw {
+        let bytes = port.write(input).expect("write to port failed");
+        println!("wrote {} bytes to input", bytes);
+    } else {
+        let bytes = Xmodem::transmit_with_progress(input, port, progress_fn)
+                            .expect("write with xmodem failed");
+        println!("wrote {} bytes to input", bytes);
+    }
 }

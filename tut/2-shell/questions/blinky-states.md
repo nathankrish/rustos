@@ -1,0 +1,1 @@
+In lab 1 we implemented the SET and CLEAR transitions on an output pin by continuously setting and clearing the GPIO register to make the LED blink

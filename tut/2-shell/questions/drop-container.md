@@ -1,0 +1,1 @@
+Returning an &mut T directly is bad because there is no synchronization primitive to ensure that several mutable references to the same value are issued simultaneously. The borrow checker may not allow us to directly return a mutable reference of the value, since it violates the "1 mutable reference rule".

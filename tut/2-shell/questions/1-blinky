@@ -1,0 +1,3 @@
+We would write 001 to GPFSEL27 to set GPIO pin 27 as an output
+We successively write a 1 to GPSET27 and a 1 to GPCLR27 to blink an LED connected to GPIO pin 27
+GPIO 27 corresponds to pin 13 on the RPi 3

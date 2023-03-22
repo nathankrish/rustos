@@ -1,0 +1,1 @@
+StackVec::pop() requires T: Clone because the references to T may expire after the result of pop. We enforce the Clone trait bound so that we can clone the object of type T before returning it from pop(??) 
