@@ -20,7 +20,14 @@ impl Atag {
 
     /// FIXME: Returns the ATAG following `self`, if there is one.
     pub fn next(&self) -> Option<&Atag> {
-        unimplemented!()
+        if self.tag != Atag::NONE {
+            let raw_ptr = self as *const Atag as usize;
+            unsafe {
+                // add 4 times the number of words (word = 4 bytes) and cast to Some(atag ptr)
+                return Some(&(*((raw_ptr + 4 * (self.dwords as usize)) as *mut Atag)));
+            }
+        }
+        return None;
     }
 }
 

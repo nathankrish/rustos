@@ -1,0 +1,5 @@
+Exposing safe interfaces to unsafe data structures such as unions allows us to ensure that they are used in
+safe, consistent ways. Exposing these union data structures directly to an application programmer is unsafe 
+because Rust cannot guarantee the type of these union fields. Since we know how the Atags should be structured,
+we can define a safe interface for the user to interact with. This same practice applies with C, as we may 
+create wrappers around raw pointers and unsafe union types which are safe for the user.
