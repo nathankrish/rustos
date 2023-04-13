@@ -24,21 +24,28 @@ use shell::shell;
 use pi::atags::{Atag, Atags};
 use allocator::Allocator;
 use fs::FileSystem;
-
 use crate::console::{kprint, kprintln, CONSOLE};
+use alloc::vec::Vec;
 
 #[cfg_attr(not(test), global_allocator)]
 pub static ALLOCATOR: Allocator = Allocator::uninitialized();
 pub static FILESYSTEM: FileSystem = FileSystem::uninitialized();
 
 fn kmain() -> ! {
-    // unsafe {
-    //     ALLOCATOR.initialize();
-    //     FILESYSTEM.initialize();
+    unsafe {
+        ALLOCATOR.initialize();
+        // FILESYSTEM.initialize();
+    }
+    // let mut iter = Atags::get();
+    // while let Some(atag) = iter.next() {
+    //     kprintln!("{:#?}", atag);
     // }
-    let mut iter = Atags::get();
-    while let Some(atag) = iter.next() {
-        kprintln!("{:#?}", atag);
+    // kprintln!("{:?}", allocator::memory_map());
+
+    let mut v = Vec::new();
+    for i in 0..50 {
+        v.push(i);
+        kprintln!("{:?}", v);
     }
     kprintln!("Welcome to cs3210!");
     shell::shell("> ");

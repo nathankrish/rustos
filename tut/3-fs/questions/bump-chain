@@ -1,0 +1,4 @@
+The backtrace goes like this
+
+Vec::push() -> RawVec::push() -> heap::reallocate() -> 
+alloc::__rust_alloc() (GlobalAlloc) -> bump::Allocator::alloc()

@@ -1,0 +1,2 @@
+The 8 and 16 byte alignment guarantees are both twice the bit width provided by the system. This is useful because
+memory accesses at these aligned addresses are significantly faster than accesses at unaligned addresses.

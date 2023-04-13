@@ -1,0 +1,3 @@
+Intrusive linked lists are a better choice for a memory allocator because creating a new node only requires one memory allocation.
+A traditional linked list needs 2 allocations, one for the data and one for the next pointer. Halving the allocations reduces the
+number of potential failures in the allocator.
