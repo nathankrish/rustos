@@ -1,0 +1,22 @@
+1. /a/b/c.txt
+   ^
+Get cluster # of root dir using EBPB
+Load dirents
+
+2. /a/b/c.txt
+   ^
+Iterate until name match
+Get cluster # of /a and load dirents
+
+3. /a/b/c.txt
+     ^
+Iterate until name match
+Get cluster # of /b and load dirents
+
+4. /a/b/c.txt
+       ^ 
+Iterate until name match
+Get cluster # of /c.txt and load dirents
+
+5. /a/b/c.txt
+        ^

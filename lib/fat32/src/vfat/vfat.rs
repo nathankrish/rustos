@@ -39,7 +39,62 @@ impl<HANDLE: VFatHandle> VFat<HANDLE> {
     where
         T: BlockDevice + 'static,
     {
-        unimplemented!("VFat::from()")
+        // MasterBootRecord, BiosParameterBlock, CachedPartition
+        
+        // from BlockDevice produce a Result<HANDLE>
+        // HANDLE is a VFatHandle -> use VFatHandle::new(VFat)
+        // let mbr = MasterBootRecord::from(device)?;
+        // let partition = Partition {
+        //     start: u64::from(u32::from_be_bytes(mbr.partitions[0].relative_sector)),
+        //     num_sectors: u64::from(u32::from_be_bytes(mbr.partitions[0].relative_sector)),
+        //     sector_size: u64::from(u32::from_be_bytes(mbr.partitions[0].total_sectors))
+        // };
+        // let cached_partition = CachedPartition::new(device, partition);
+        // let bpb = BiosParameterBlock::from(device, partition.start)?;
+        // let reserved_secs = u64::from(u16::from_be_bytes(bpb.reserved_secs));
+        // let secs_per_fat = u64::from(u32::from_be_bytes(bpb.secs_per_fat_2));
+        // let num_fats = u64::from(bpb.fats);
+        // let data_start = reserved_secs + secs_per_fat * num_fats;
+        // let vfat = VFat::<HANDLE> {
+        //     phantom: PhantomData,
+        //     device: cached_partition,
+        //     bytes_per_sector: u16::from_be_bytes(bpb.bytes_per_sec),
+        //     sectors_per_cluster: bpb.sec_per_cluster,
+        //     sectors_per_fat: u32::from_be_bytes(bpb.secs_per_fat_2),
+        //     fat_start_sector: reserved_secs,
+        //     data_start_sector: data_start,
+        //     rootdir_cluster: Cluster::from(u32::from_be_bytes(bpb.cluster_root))
+        // };
+        // return Ok(VFatHandle::new(vfat));
+
+        // locate the fat32 parititon (partition type = 0xB or 0xC)
+        let mbr = MasterBootRecord::from(&mut device)?;
+        let p = mbr.partitions.iter().find(|p| {
+            p.partition_type == 0xB || p.partition_type == 0xC
+        }).ok_or(Error::NotFound)?;
+
+        let bpb = BiosParameterBlock::from(&mut device, p.relative_sector as u64)?;
+
+        let partition = Partition {
+            start: p.relative_sector as u64,
+            // # virtual sectors * (size of physical sector / size of virtual sector) (?)
+            num_sectors: (p.total_sectors as u64) * (device.sector_size() / (bpb.bytes_per_sec as u64)),
+            sector_size: bpb.bytes_per_sec as u64 
+        };
+
+        let cached_partition = CachedPartition::new(device, partition);
+        
+        let vfat = VFat::<HANDLE> {
+            phantom: PhantomData,
+            device: cached_partition,
+            bytes_per_sector: bpb.bytes_per_sec as u16,
+            sectors_per_cluster: bpb.sec_per_cluster,
+            sectors_per_fat: bpb.secs_per_fat_2 as u32,
+            fat_start_sector: bpb.reserved_secs as u64,
+            data_start_sector: (bpb.reserved_secs as u64) + (bpb.secs_per_fat_2 as u64) * (bpb.fats as u64),
+            rootdir_cluster: Cluster::from(bpb.cluster_root as u32)
+        };
+        return Ok(VFatHandle::new(vfat));
     }
 
     // TODO: The following methods may be useful here:

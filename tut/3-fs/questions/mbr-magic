@@ -1,0 +1,1 @@
+The last 2 bytes of the sector should be 0x55AA

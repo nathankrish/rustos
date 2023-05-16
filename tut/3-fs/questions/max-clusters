@@ -1,0 +1,4 @@
+The maximum number of clusters is equal to 0xFFFFFEF - 0000002.
+This is because there are 28 bytes allocated for FAT32 entry numbers,
+and there are several reserved clusters. The max cluster size would be 
+< 2^16 for a FAT-16 system

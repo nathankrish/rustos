@@ -1,0 +1,2 @@
+The file size is specified using 4 bytes in a directory entry. This is 32 bits to store the size,
+which means the max size is 2^32 bits / 2^3 bits per byte = 2^29 bytes. 
