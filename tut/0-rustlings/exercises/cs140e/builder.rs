@@ -9,13 +9,32 @@ struct Builder {
 }
 
 impl Builder {
-    // fn string(...
+    fn string(&mut self, s: &str) -> &mut Builder {
+        self.string = Some(s);
+        return self;
+    }
 
-    // fn number(...
+    fn number(&mut self, n: usize) -> &mut Builder {
+       self.number = Some(n);
+       return self;
+    }
 }
 
 impl ToString for Builder {
     // Implement the trait
+    fn to_string(&self) -> String {
+        let string = match self.string {
+            Some(s) => s,
+            None => String::from("")
+        };
+        let number = match self.number {
+            Some(n) => n.to_string(),
+            None => String::from("")
+        };
+
+        string + " " + &number
+
+    }
 }
 
 // Do not modify this function.

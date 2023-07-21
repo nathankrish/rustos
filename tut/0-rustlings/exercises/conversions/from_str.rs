@@ -10,7 +10,6 @@ struct Person {
     age: usize,
 }
 
-// I AM NOT DONE
 // Steps:
 // 1. Split the given string on the commas present in it
 // 2. Extract the first element from the split operation and use it as the name
@@ -21,6 +20,19 @@ struct Person {
 impl FromStr for Person {
     type Err = String;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+        let words: Vec<&str> = s.split(",").collect();
+        if words.len() < 2 {
+            return Err(String::from("not enough data"));
+        }
+        let name = words[0].to_string();
+        if let Ok(age) = words[1].parse::<usize>() {
+            return Ok(Person {
+                name,
+                age
+            });
+        } else {
+            return Err(String::from("couldn't parse age"));
+        }
     }
 }
 
