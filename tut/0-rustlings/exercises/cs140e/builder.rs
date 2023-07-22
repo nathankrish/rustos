@@ -2,7 +2,6 @@
 
 // I AM NOT DONE
 
-#[derive(Default)]
 struct Builder {
     string: Option<String>,
     number: Option<usize>,
@@ -64,7 +63,9 @@ fn builder() {
 
     assert_eq!(b, "bye now! 200");
 
-    let c = Builder::default().string("heap!".to_owned()).to_string();
+    let c = Builder::default()
+        .string("heap!".to_owned())
+        .to_string();
 
     assert_eq!(c, "heap!");
 }
