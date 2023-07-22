@@ -1,0 +1,3 @@
+# something like this is how to screen into usb device, unsure of how to do
+this from DigitalOcean Droplet
+screen /dev/tty.usbserial-0001 115200
