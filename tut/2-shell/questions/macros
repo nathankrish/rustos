@@ -1,0 +1,2 @@
+readable! implements Readable trait on that struct, writeable! implements
+Writable trait and readable_writable! implements both

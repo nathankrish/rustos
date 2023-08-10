@@ -1,0 +1,4 @@
+The 'a bound is required because we need the items which are contained in the StackVec to last
+at least as long as the backing buffer. If the references contained in the buffer have shorter
+lifetimes than the buffer, then the buffer may contain dangling pointers, which would cause undefined
+behavior.

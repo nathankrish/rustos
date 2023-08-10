@@ -1,0 +1,1 @@
+For GPIO 27, I would write to GPFSEL2, GPSET0, and GPCLR0. GPIO 27 corresponds to physical pin 13

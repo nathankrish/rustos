@@ -96,14 +96,20 @@ impl Gpio<Uninitialized> {
         Gpio {
             registers: unsafe { &mut *(GPIO_BASE as *mut Registers) },
             pin: pin,
-            _state: PhantomData
+            _state: PhantomData,
         }
     }
 
     /// Enables the alternative function `function` for `self`. Consumes self
     /// and returns a `Gpio` structure in the `Alt` state.
     pub fn into_alt(self, function: Function) -> Gpio<Alt> {
-        unimplemented!()
+        let fsel_register = &mut self.registers.FSEL[(self.pin / 10) as usize];
+        let offset = ((self.pin % 10) * 3) as usize;
+        // clear the previous fsel value
+        fsel_register.and_mask(!(0b111 << offset));
+        // write the given function
+        fsel_register.or_mask((function as u32) << offset);
+        return self.transition();
     }
 
     /// Sets this pin to be an _output_ pin. Consumes self and returns a `Gpio`
@@ -122,12 +128,18 @@ impl Gpio<Uninitialized> {
 impl Gpio<Output> {
     /// Sets (turns on) the pin.
     pub fn set(&mut self) {
-        unimplemented!()
+        let set_register = &mut self.registers.SET[(self.pin / 32) as usize];
+        let offset = self.pin % 32;
+        let set_written = (1 as u32) << offset;
+        set_register.write(set_written);   
     }
 
     /// Clears (turns off) the pin.
     pub fn clear(&mut self) {
-        unimplemented!()
+        let clr_register = &mut self.registers.CLR[(self.pin / 32) as usize];
+        let offset = self.pin % 32;
+        let clr_written = (1 as u32) << offset;
+        clr_register.write(clr_written);   
     }
 }
 
@@ -135,6 +147,13 @@ impl Gpio<Input> {
     /// Reads the pin's value. Returns `true` if the level is high and `false`
     /// if the level is low.
     pub fn level(&mut self) -> bool {
-        unimplemented!()
+        let lvl_register = &mut self.registers.LEV[(self.pin / 32) as usize];
+        let lvl_val = lvl_register.read();
+        let mask = (1 as u32) << (self.pin % 32);
+        if lvl_val & mask == 0 {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

@@ -1,0 +1,4 @@
+index_oob, index_oob_after_truncate,
+indexing, mut_indexing all index into
+the StackVec, thereby utilizing the 
+Deref Trait

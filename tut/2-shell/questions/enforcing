@@ -1,0 +1,2 @@
+ReadVolatile only implements Readable and WriteVolatile implements Writable
+so there is no method to write/read the underlying pointer for these structs.

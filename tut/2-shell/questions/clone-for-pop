@@ -1,0 +1,3 @@
+The T: Clone bound is needed because the buffer contains mutable references to T. If we dereference 
+to pop, the compiler will not allow us to move the value from behind the mutable reference. We have
+to clone to avoid moving from behind the mutable reference.

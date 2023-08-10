@@ -30,7 +30,7 @@ pub struct ReadVolatile<T>(T);
 /// A wrapper type that enforces _volatile_ (read **or** write) accesses to a
 /// raw pointer.
 #[repr(C)]
-pub struct Volatile<T>(T);
+pub struct Volatile<T>(T); 
 
 /// A wrapper type that enforces **write-only** _volatile_ accesses to a raw
 /// pointer.

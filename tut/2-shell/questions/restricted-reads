@@ -1,0 +1,1 @@
+CLO and CHI are ReadVolatile so they can only be read from

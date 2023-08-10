@@ -1,0 +1,1 @@
+Unique exists to implement Sync if the inner type contained in the wrapper is Sync

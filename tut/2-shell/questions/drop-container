@@ -1,0 +1,2 @@
+if we return &mut T directly then we won't be able to update the reference count
+or unlock the value, so only 1 mutable reference can ever be created.

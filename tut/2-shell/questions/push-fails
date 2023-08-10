@@ -1,0 +1,1 @@
+StackVec::push() can fail because the vector can get full and it is not able to resize because it is backed by a preallocated block of memory
