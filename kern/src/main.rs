@@ -14,12 +14,12 @@ pub mod console;
 pub mod mutex;
 pub mod shell;
 
-use console::kprintln;
+use console::{kprintln, kprint};
 
 // FIXME: You need to add dependencies here to
 // test your drivers (Phase 2). Add them as needed.
 
 fn kmain() -> ! {
     // FIXME: Start the shell.
-    unimplemented!()
+    shell::shell("> ");
 }
