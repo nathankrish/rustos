@@ -46,7 +46,7 @@ pub fn current_time() -> Duration {
 /// Spins until `t` duration have passed.
 pub fn spin_sleep(t: Duration) {
     let end = current_time().checked_add(t).expect("add duration");
-    while (current_time() < end) {
+    while current_time() < end {
         
     }
 }

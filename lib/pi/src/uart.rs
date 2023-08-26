@@ -3,10 +3,8 @@ use core::time::Duration;
 
 use shim::const_assert_size;
 use shim::io;
-use shim::io;
 
 use volatile::prelude::*;
-use volatile::{ReadVolatile, Reserved, Volatile};
 use volatile::{ReadVolatile, Reserved, Volatile};
 
 use crate::common::IO_BASE;
@@ -31,11 +29,30 @@ enum LsrStatus {
 #[allow(non_snake_case)]
 struct Registers {
     // FIXME: Declare the "MU" registers from page 8.
+    IO: Volatile<u8>,
+    _r0: [Reserved<u8>; 3],
+    IER: Volatile<u8>,
+    _r1: [Reserved<u8>; 3],
+    IIR: Volatile<u8>,
+    _r2: [Reserved<u8>; 3],
+    LCR: Volatile<u8>,
+    _r3: [Reserved<u8>; 3],
+    MCR: Volatile<u8>,
+    _r4: [Reserved<u8>; 3],
+    LSR: ReadVolatile<u8>,
+    _r5: [Reserved<u8>; 3],
+    MSR: Volatile<u8>,
+    _r6: [Reserved<u8>; 3],
+    SCRATCH: Volatile<u8>,
+    _r7: [Reserved<u8>; 3],
+    CNTL: Volatile<u8>,
+    _r8: [Reserved<u8>; 3],
+    STAT: ReadVolatile<u32>,
+    BAUD: Volatile<u16>,
+    _r9: [Reserved<u8>; 2]
 }
 
 const_assert_size!(Registers, 44);
-
-const_assert_size!(Registers, 0x7E21506C - 0x7E215040);
 
 /// The Raspberry Pi's "mini UART".
 pub struct MiniUart {
