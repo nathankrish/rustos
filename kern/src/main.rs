@@ -7,6 +7,7 @@
 #![feature(raw_vec_internals)]
 #![cfg_attr(not(test), no_std)]
 #![cfg_attr(not(test), no_main)]
+#![feature(panic_info_message)]
 
 #[cfg(not(test))]
 mod init;
@@ -29,9 +30,16 @@ pub static ALLOCATOR: Allocator = Allocator::uninitialized();
 pub static FILESYSTEM: FileSystem = FileSystem::uninitialized();
 
 fn kmain() -> ! {
+    
+    // timer::spin_sleep(Duration::from_millis(100));
+
+    for atag in pi::atags::Atags::get() {
+        kprintln!("{:?}", atag);
+    }
+
     unsafe {
         ALLOCATOR.initialize();
-        FILESYSTEM.initialize();
+        // FILESYSTEM.initialize();
     }
 
     kprintln!("Welcome to cs3210!");

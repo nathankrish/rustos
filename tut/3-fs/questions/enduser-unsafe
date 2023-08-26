@@ -1,0 +1,3 @@
+The enduser might need to access the hardware in a way that could be unsafe. By creating safe interfaces 
+to unsafe structures, we allow them to directly alter memory or access unions while minimizing the
+likelihood of creating a runtime error.
