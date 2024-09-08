@@ -2,3 +2,4 @@ target/
 build/
 TAGS
 .dep
+bin/qemu-system-aarch64
