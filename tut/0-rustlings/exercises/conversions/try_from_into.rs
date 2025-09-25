@@ -10,7 +10,6 @@ struct Person {
     age: usize,
 }
 
-// I AM NOT DONE
 // Your task is to complete this implementation
 // in order for the line `let p = Person::try_from("Mark,20")` to compile
 // and return an Ok result of inner type Person.
@@ -28,6 +27,18 @@ struct Person {
 impl TryFrom<&str> for Person {
     type Error = String;
     fn try_from(s: &str) -> Result<Self, Self::Error> {
+        let strVec: Vec<&str> = s.split(',').collect();
+        if strVec.len() != 2 {
+            return Err("String doesn't have two comma separated elements".to_owned())
+        }
+        let ageRes = strVec[1].parse::<usize>();
+        match ageRes {
+            Ok(age) => Ok(Person {
+                name: strVec[0].to_owned(),
+                age: age
+            }),
+            Err(e) => Err("Can't parse age".to_owned())
+        }
     }
 }
 

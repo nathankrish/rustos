@@ -13,8 +13,8 @@ PROJ_PKG=(build-essential
      curl
      tar
      screen
-     clang-8
-     lld-8
+     clang-11
+     lld-11
      linux-image-extra-virtual)
 QEMU_DEP=(libglib2.0-dev libpixman-1-dev zlib1g-dev)
 

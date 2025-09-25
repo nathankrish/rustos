@@ -1,7 +1,6 @@
 // FIXME: Make me compile! Diff budget: 1 line.
 
-// I AM NOT DONE
-
+#[derive(Clone, Copy, Debug)]
 // What traits does this struct need to derive?
 enum Duration {
     MilliSeconds(u64),
