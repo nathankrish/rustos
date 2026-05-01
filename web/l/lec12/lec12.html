@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Rust 7: Interior Mutability</title>
+<meta charset="utf-8"/>
+<meta content="ie=edge" http-equiv="x-ua-compatible"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="../shower/styles/ribbon.css" rel="stylesheet"/>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+  position: relative; left: -1em; text-align: right; vertical-align: baseline;
+  border: none; display: inline-block;
+  -webkit-touch-callout: none; -webkit-user-select: none;
+  -khtml-user-select: none; -moz-user-select: none;
+  -ms-user-select: none; user-select: none;
+  padding: 0 4px; width: 4em;
+  color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+{   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style>
+section pre code {
+  line-height: 1.4 !important;
+  font-size: 20px !important;
+}
+.compact code {
+  line-height: 1.4 !important;
+  font-size: 16px !important;
+}
+ul.compact {
+  line-height: 1.5 !important;
+  font-size: 20px !important;
+}
+.writeup {
+    font-size: 20px !important;
+}
+a.sourceLine { background: none !important; }
+section.region { display: none !important; }
+pre.numberSource { margin-left: 2em; }
+div.sourceCode { overflow: hidden; }
+a.sourceLine::before { text-decoration: none; }
+
+pre > code.sourceCode > span > a:first-child::before { text-decoration: none !important; }
+</style>
+<script src="../shower/js/jquery-2.2.0.min.js"></script>
+</head>
+<body class="shower list">
+<header class="caption">
+<h1>CS3210 Design Operating Systems</h1>
+<p>Taesoo Kim</p>
+</header>
+<header class="caption">
+</header>
+<section class="slide" id="cover">
+<br/><br/><br/><br/>
+<h2>Rust 7: Interior Mutability</h2>
+<p> Taesoo Kim</p>
+<style>
+ #cover h2 {
+   /* margin:180px 0 0; */
+   color: #666;
+   text-align:center;
+   font-size: 60px;
+   font-weight: bold;
+   margin-bottom: 0em;
+ }
+ #cover p {
+   margin:30px 0 0;
+   text-align:center;
+   font-style:italic;
+   font-size:40px;
+ }
+ </style>
+</section>
+
+<section class="slide level1" id="administrivia"><div>
+<h1>Administrivia</h1>
+<ul>
+<li>“Lab 3: FAT32 Filesystem” is due on <mark>Mar 2</mark>!</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/doitnow.png" style="width:35%"/></p>
+</div></section>
+<section class="slide level1" id="administrivia-1"><div>
+<h1>Administrivia</h1>
+<ul>
+<li>Proposal day:
+<ul>
+<li><strong>Two days</strong> to accommodate the larger number of teams/students</li>
+<li><strong>Slides</strong> <mark>DUE on Feb 24</mark>! (2-day earlier than the original plan)</li>
+<li>Feedback from peers (individually to each team)
+<ol type="1">
+<li>Overall rating (0-5): I will give you this if you complete as promised</li>
+<li>Coolness (0-5): how impressive is it as a final project?</li>
+<li>Difficulty (0-5): indicating potential risks in my perspective</li>
+<li>Any comment: e.g., is it super cool to demo A ..</li>
+</ol></li>
+<li>Check <a href="../../proj.html">our web site</a> for ideas</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="administrivia-2"><div>
+<h1>Administrivia</h1>
+<ul>
+<li>In the proposal (elevator pitch, early feedback), include:
+<ol type="1">
+<li>Goal, Motivation, Problem or Statement</li>
+<li><strong>Demo plan</strong></li>
+<li><strong>Timeline</strong> (1pg, just append at the end)</li>
+</ol></li>
+<li><em>Don’t overcommit</em>: it would disappoint peers in the demo day</li>
+<li>Okay to regroup or even change the idea after!</li>
+<li><em>No evaluation</em> for proposal itself</li>
+<li>Final evaluation: average of overall ratings from peers</li>
+</ul>
+</div></section>
+<section class="slide level1" id="qa"><div>
+<h1>Q&amp;A</h1>
+<blockquote>
+<p>It seems the entirety of the Rust standard library is built on top of unsafe code. Granted I understand why this is the case, I don’t understand why we can call Rust “safe.” No matter how structurally sound you build a building, if you build its foundation on unstable ground the building cannot truly be safe.</p>
+</blockquote>
+</div></section>
+<section class="slide level1" id="agenda"><div>
+<h1>Agenda</h1>
+<ul>
+<li>Remind: Rust’s safety rule</li>
+<li>Interior mutability patterns</li>
+<li>New abstractions: Cell, RefCell, UnsafeCell</li>
+</ul>
+</div></section>
+<section class="slide level1" id="again-safety-rule"><div>
+<h1>(Again) Safety rule</h1>
+<ul>
+<li><strong><em>Aliasing</em></strong>: many shared references</li>
+<li><strong><em>Mutability</em></strong>: unique mutable reference</li>
+<li>Safety rule: aliasing <strong><em>xor</em></strong> mutability</li>
+</ul>
+</div></section>
+<section class="slide level1" id="example"><div>
+<h1>Example</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource cc numberLines"><code class="sourceCode cpp"><span id="cb1-1"><a href="lec12.html#cb1-1"></a><span class="co">// in C++</span></span>
+<span id="cb1-2"><a href="lec12.html#cb1-2"></a><span class="bu">std::</span>string s = <span class="st">"Hello"</span>;</span>
+<span id="cb1-3"><a href="lec12.html#cb1-3"></a><span class="at">const</span> <span class="dt">char</span> *c = s.c_str();</span>
+<span id="cb1-4"><a href="lec12.html#cb1-4"></a></span>
+<span id="cb1-5"><a href="lec12.html#cb1-5"></a>s.append(<span class="st">" World!"</span>);</span>
+<span id="cb1-6"><a href="lec12.html#cb1-6"></a></span>
+<span id="cb1-7"><a href="lec12.html#cb1-7"></a><span class="bu">std::</span>cout &lt;&lt; c;</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb2-1"><a href="lec12.html#cb2-1"></a><span class="co">// in Rust</span></span>
+<span id="cb2-2"><a href="lec12.html#cb2-2"></a><span class="kw">let</span> <span class="kw">mut</span> s <span class="op">=</span> <span class="dt">String</span><span class="pp">::</span>from(<span class="st">"Hello"</span>)<span class="op">;</span></span>
+<span id="cb2-3"><a href="lec12.html#cb2-3"></a><span class="kw">let</span> c <span class="op">=</span> s<span class="op">.</span>as_str()<span class="op">;</span></span>
+<span id="cb2-4"><a href="lec12.html#cb2-4"></a>    </span>
+<span id="cb2-5"><a href="lec12.html#cb2-5"></a>s<span class="op">.</span>push_str(<span class="st">" World!"</span>)<span class="op">;</span></span>
+<span id="cb2-6"><a href="lec12.html#cb2-6"></a></span>
+<span id="cb2-7"><a href="lec12.html#cb2-7"></a><span class="pp">dbg!</span>(c)<span class="op">;</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="more-examples"><div>
+<h1>More examples</h1>
+<ul>
+<li>Error-prone cases that Rust would statically prevent
+<ul>
+<li><a href="https://github.com/isocpp/CppCoreGuidelines/issues/1038">string_view</a></li>
+<li><a href="http://www.cplusplus.com/reference/iterator/">iterator</a></li>
+<li>etc.</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="mutability-in-rust"><div>
+<h1>Mutability in Rust</h1>
+<ul>
+<li>Inherited mutability (aka, external mutability)</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb3-1"><a href="lec12.html#cb3-1"></a><span class="kw">struct</span> S <span class="op">{</span></span>
+<span id="cb3-2"><a href="lec12.html#cb3-2"></a>  e1<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span></span>
+<span id="cb3-3"><a href="lec12.html#cb3-3"></a>  e2<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span></span>
+<span id="cb3-4"><a href="lec12.html#cb3-4"></a><span class="op">}</span></span>
+<span id="cb3-5"><a href="lec12.html#cb3-5"></a></span>
+<span id="cb3-6"><a href="lec12.html#cb3-6"></a><span class="kw">let</span> <span class="kw">mut</span> s <span class="op">=</span> S <span class="op">{</span> e1<span class="op">:</span> <span class="dv">1</span><span class="op">,</span> e2<span class="op">:</span> <span class="dv">2</span> <span class="op">};</span></span>
+<span id="cb3-7"><a href="lec12.html#cb3-7"></a><span class="co">//  ---&gt; determins mutability of all elements of struct S</span></span>
+<span id="cb3-8"><a href="lec12.html#cb3-8"></a></span>
+<span id="cb3-9"><a href="lec12.html#cb3-9"></a>change_me(<span class="op">&amp;</span><span class="kw">mut</span> s)<span class="op">;</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="rc-reference-counted-smart-pointer"><div>
+<h1>Rc<t>: Reference counted smart pointer</t></h1>
+<ul>
+<li>Q. how does <code>Rc</code> work and what’s for?</li>
+<li>Q. how is <code>clone()</code> implemented?</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb4-1"><a href="lec12.html#cb4-1"></a><span class="kw">let</span> r1 <span class="op">=</span> <span class="pp">Rc::</span>new(<span class="dv">1</span>)<span class="op">;</span></span>
+<span id="cb4-2"><a href="lec12.html#cb4-2"></a><span class="kw">let</span> r2 <span class="op">=</span> <span class="pp">Rc::</span>clone(<span class="op">&amp;</span>r1)<span class="op">;</span></span>
+<span id="cb4-3"><a href="lec12.html#cb4-3"></a></span>
+<span id="cb4-4"><a href="lec12.html#cb4-4"></a><span class="pp">dbg!</span>(r1)<span class="op">;</span></span>
+<span id="cb4-5"><a href="lec12.html#cb4-5"></a><span class="pp">dbg!</span>(r2)<span class="op">;</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="rc-reference-counted-smart-pointer-1"><div>
+<h1>Rc<t>: Reference counted smart pointer</t></h1>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb5-1"><a href="lec12.html#cb5-1"></a><span class="co">// simplified</span></span>
+<span id="cb5-2"><a href="lec12.html#cb5-2"></a><span class="kw">pub</span> <span class="kw">struct</span> Rc<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb5-3"><a href="lec12.html#cb5-3"></a>  ptr<span class="op">:</span> NonNull<span class="op">&lt;</span>RcBox<span class="op">&lt;</span>T<span class="op">&gt;&gt;</span></span>
+<span id="cb5-4"><a href="lec12.html#cb5-4"></a>  phantom<span class="op">:</span> PhantomData<span class="op">&lt;</span>T<span class="op">&gt;,</span></span>
+<span id="cb5-5"><a href="lec12.html#cb5-5"></a><span class="op">}</span></span>
+<span id="cb5-6"><a href="lec12.html#cb5-6"></a></span>
+<span id="cb5-7"><a href="lec12.html#cb5-7"></a><span class="kw">struct</span> RcBox<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb5-8"><a href="lec12.html#cb5-8"></a>  strong<span class="op">:</span> Cell<span class="op">&lt;</span><span class="dt">usize</span><span class="op">&gt;,</span></span>
+<span id="cb5-9"><a href="lec12.html#cb5-9"></a>  weak<span class="op">:</span> Cell<span class="op">&lt;</span><span class="dt">usize</span><span class="op">&gt;,</span></span>
+<span id="cb5-10"><a href="lec12.html#cb5-10"></a>  value<span class="op">:</span> T<span class="op">,</span></span>
+<span id="cb5-11"><a href="lec12.html#cb5-11"></a><span class="op">}</span></span>
+<span id="cb5-12"><a href="lec12.html#cb5-12"></a></span>
+<span id="cb5-13"><a href="lec12.html#cb5-13"></a><span class="co">// note: &amp;self not &amp;mut self</span></span>
+<span id="cb5-14"><a href="lec12.html#cb5-14"></a><span class="kw">fn</span> clone(<span class="op">&amp;</span><span class="kw">self</span>) <span class="op">-&gt;</span> Rc<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb5-15"><a href="lec12.html#cb5-15"></a>  <span class="kw">self</span><span class="op">.</span>strong<span class="op">.</span>set(<span class="kw">self</span><span class="op">.</span>strong <span class="op">+</span> <span class="dv">1</span>)<span class="op">;</span> <span class="co">// Q. guess?</span></span>
+<span id="cb5-16"><a href="lec12.html#cb5-16"></a>  Rc <span class="op">{</span> ptr<span class="op">:</span> <span class="kw">self</span><span class="op">.</span>ptr <span class="op">}</span></span>
+<span id="cb5-17"><a href="lec12.html#cb5-17"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="introducing-cell"><div>
+<h1>Introducing <code>Cell</code></h1>
+<ul>
+<li>Allow modification w/o mutable references</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb6-1"><a href="lec12.html#cb6-1"></a><span class="kw">pub</span> <span class="kw">fn</span> get(<span class="op">&amp;</span><span class="kw">self</span>) <span class="op">-&gt;</span> T<span class="op">;</span></span>
+<span id="cb6-2"><a href="lec12.html#cb6-2"></a><span class="kw">pub</span> <span class="kw">fn</span> set(<span class="op">&amp;</span><span class="kw">self</span><span class="op">,</span> val<span class="op">:</span> T)<span class="op">;</span></span>
+<span id="cb6-3"><a href="lec12.html#cb6-3"></a><span class="kw">pub</span> <span class="kw">fn</span> replace(<span class="op">&amp;</span><span class="kw">self</span><span class="op">,</span> val<span class="op">:</span> T) <span class="op">-&gt;</span> T<span class="op">;</span></span>
+<span id="cb6-4"><a href="lec12.html#cb6-4"></a></span>
+<span id="cb6-5"><a href="lec12.html#cb6-5"></a><span class="co">// example:</span></span>
+<span id="cb6-6"><a href="lec12.html#cb6-6"></a><span class="kw">struct</span> RcBox<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb6-7"><a href="lec12.html#cb6-7"></a>  strong<span class="op">:</span> Cell<span class="op">&lt;</span><span class="dt">usize</span><span class="op">&gt;,</span> <span class="co">// mutable!</span></span>
+<span id="cb6-8"><a href="lec12.html#cb6-8"></a>  weak<span class="op">:</span> Cell<span class="op">&lt;</span><span class="dt">usize</span><span class="op">&gt;,</span>   <span class="co">// mutable!</span></span>
+<span id="cb6-9"><a href="lec12.html#cb6-9"></a>  value<span class="op">:</span> T<span class="op">,</span></span>
+<span id="cb6-10"><a href="lec12.html#cb6-10"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-cell-interfaces"><div>
+<h1>Example: <code>Cell</code> interfaces</h1>
+<ul>
+<li>No “mutable” annotated but the modification is indeed made!</li>
+<li>Q. What could go wrong in this code?</li>
+<li>Q. Is the safety rule violated?</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb7-1"><a href="lec12.html#cb7-1"></a><span class="kw">let</span> c <span class="op">=</span> <span class="pp">Cell::</span>new(<span class="dv">10</span>)<span class="op">;</span></span>
+<span id="cb7-2"><a href="lec12.html#cb7-2"></a><span class="kw">let</span> v1 <span class="op">=</span> c<span class="op">.</span>get()<span class="op">;</span></span>
+<span id="cb7-3"><a href="lec12.html#cb7-3"></a></span>
+<span id="cb7-4"><a href="lec12.html#cb7-4"></a>c<span class="op">.</span>set(v1 <span class="op">+</span> <span class="dv">10</span>)<span class="op">;</span></span>
+<span id="cb7-5"><a href="lec12.html#cb7-5"></a></span>
+<span id="cb7-6"><a href="lec12.html#cb7-6"></a><span class="kw">let</span> v2 <span class="op">=</span> c<span class="op">.</span>get()<span class="op">;</span> <span class="co">// v1 != v2</span></span>
+<span id="cb7-7"><a href="lec12.html#cb7-7"></a><span class="pp">dbg!</span>(v2)<span class="op">;</span>         <span class="co">//=&gt; 20</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="wait-qa"><div>
+<h1>Wait, Q&amp;A</h1>
+<ul>
+<li>Q. Wait, why did we want to avoid multiple mutable references at the first place?</li>
+<li>Q. How to compare <code>Cell</code> to C’s pointer?</li>
+</ul>
+<blockquote>
+<p>Doesn’t Cell defeat the entire purpose of Rust (to provide simpler memory safety)? In addition, if not, then why isn’t Cell used for all mutable pointers when multiple mutable pointers attempt to access the same memory location?</p>
+</blockquote>
+</div></section>
+<section class="slide level1" id="wait-qa-1"><div>
+<h1>Wait, Q&amp;A</h1>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb8-1"><a href="lec12.html#cb8-1"></a><span class="co">// in Rust</span></span>
+<span id="cb8-2"><a href="lec12.html#cb8-2"></a><span class="kw">let</span> <span class="kw">mut</span> s <span class="op">=</span> <span class="dt">String</span><span class="pp">::</span>from(<span class="st">"Hello"</span>)<span class="op">;</span></span>
+<span id="cb8-3"><a href="lec12.html#cb8-3"></a><span class="kw">let</span> c <span class="op">=</span> s<span class="op">.</span>as_str()<span class="op">;</span> <span class="co">// Q?</span></span>
+<span id="cb8-4"><a href="lec12.html#cb8-4"></a>    </span>
+<span id="cb8-5"><a href="lec12.html#cb8-5"></a>s<span class="op">.</span>push_str(<span class="st">" World!"</span>)<span class="op">;</span> <span class="co">// Q?</span></span>
+<span id="cb8-6"><a href="lec12.html#cb8-6"></a></span>
+<span id="cb8-7"><a href="lec12.html#cb8-7"></a><span class="pp">dbg!</span>(c)<span class="op">;</span> <span class="co">// Q?</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="thinking-of-cell"><div>
+<h1>Thinking of Cell</h1>
+<ul>
+<li>Perhaps, safe as far as the compiler doesn’t optimize Cell<t>?
+<ul>
+<li>Given &amp;T, a compiler knows there is no mutably aliased references</li>
+<li>Introducing <code>UnsafeCell&lt;T&gt;</code>!</li>
+</ul></t></li>
+<li>Permitting mutability in a <strong><em>controlled</em></strong> manner
+<ul>
+<li><code>Copy</code>-able types can be stored/loaded to/from <code>Cell</code> as a whole</li>
+</ul></li>
+</ul>
+<p>Note, not thread safe to access them concurrently, more on this topic later</p>
+</div></section>
+<section class="slide level1" id="example-implementation"><div>
+<h1>Example implementation</h1>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb9-1"><a href="lec12.html#cb9-1"></a><span class="kw">impl</span><span class="op">&lt;</span>T<span class="op">&gt;</span> Cell<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb9-2"><a href="lec12.html#cb9-2"></a>  <span class="kw">pub</span> <span class="kw">fn</span> set(<span class="op">&amp;</span><span class="kw">self</span><span class="op">,</span> val<span class="op">:</span> T) <span class="op">{</span></span>
+<span id="cb9-3"><a href="lec12.html#cb9-3"></a>    <span class="kw">let</span> old <span class="op">=</span> <span class="kw">self</span><span class="op">.</span>replace(val)<span class="op">;</span></span>
+<span id="cb9-4"><a href="lec12.html#cb9-4"></a>    drop(old)<span class="op">;</span></span>
+<span id="cb9-5"><a href="lec12.html#cb9-5"></a>  <span class="op">}</span></span>
+<span id="cb9-6"><a href="lec12.html#cb9-6"></a></span>
+<span id="cb9-7"><a href="lec12.html#cb9-7"></a>  <span class="kw">pub</span> <span class="kw">fn</span> replace(<span class="op">&amp;</span><span class="kw">self</span><span class="op">,</span> val<span class="op">:</span> T) <span class="op">-&gt;</span> T <span class="op">{</span></span>
+<span id="cb9-8"><a href="lec12.html#cb9-8"></a>    <span class="co">// Q. Safety is well-justified?</span></span>
+<span id="cb9-9"><a href="lec12.html#cb9-9"></a>    <span class="pp">mem::</span>replace(<span class="kw">unsafe</span> <span class="op">{</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="op">*</span><span class="kw">self</span><span class="op">.</span>value<span class="op">.</span>get() <span class="op">},</span> val)</span>
+<span id="cb9-10"><a href="lec12.html#cb9-10"></a>  <span class="op">}</span></span>
+<span id="cb9-11"><a href="lec12.html#cb9-11"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="thinking-of-interior-mutability"><div>
+<h1>Thinking of “Interior mutability”</h1>
+<ul>
+<li>The safety rule is <strong>too restrictive</strong>, excluding truly safe code!</li>
+<li>Example: what if there is <strong><em>no</em></strong> reference at the first place?
+<ul>
+<li>Clear copy in and out</li>
+<li>Not shareable across threads</li>
+<li>Then, is it safe to modify when other outstanding immutable references exit?</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="core-type-unsafecell"><div>
+<h1>Core type: UnsafeCell<t></t></h1>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb10-1"><a href="lec12.html#cb10-1"></a><span class="at">#[</span>repr<span class="at">(</span>transparent<span class="at">)]</span> <span class="co">// Q?</span></span>
+<span id="cb10-2"><a href="lec12.html#cb10-2"></a><span class="kw">pub</span> <span class="kw">struct</span> Cell<span class="op">&lt;</span>T<span class="op">:</span> <span class="op">?</span><span class="bu">Sized</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb10-3"><a href="lec12.html#cb10-3"></a>    value<span class="op">:</span> UnsafeCell<span class="op">&lt;</span>T<span class="op">&gt;,</span></span>
+<span id="cb10-4"><a href="lec12.html#cb10-4"></a><span class="op">}</span></span>
+<span id="cb10-5"><a href="lec12.html#cb10-5"></a></span>
+<span id="cb10-6"><a href="lec12.html#cb10-6"></a><span class="at">#[</span>lang <span class="op">=</span> <span class="st">"unsafe_cell"</span><span class="at">]</span></span>
+<span id="cb10-7"><a href="lec12.html#cb10-7"></a><span class="at">#[</span>repr<span class="at">(</span>transparent<span class="at">)]</span></span>
+<span id="cb10-8"><a href="lec12.html#cb10-8"></a><span class="kw">pub</span> <span class="kw">struct</span> UnsafeCell<span class="op">&lt;</span>T<span class="op">:</span> <span class="op">?</span><span class="bu">Sized</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb10-9"><a href="lec12.html#cb10-9"></a>    value<span class="op">:</span> T<span class="op">,</span></span>
+<span id="cb10-10"><a href="lec12.html#cb10-10"></a><span class="op">}</span></span>
+<span id="cb10-11"><a href="lec12.html#cb10-11"></a></span>
+<span id="cb10-12"><a href="lec12.html#cb10-12"></a><span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> get(<span class="op">&amp;</span><span class="kw">self</span>) <span class="op">-&gt;</span> <span class="op">*</span><span class="kw">mut</span> T <span class="op">{</span></span>
+<span id="cb10-13"><a href="lec12.html#cb10-13"></a>  <span class="co">// We can just cast the pointer from `UnsafeCell&lt;T&gt;` to `T` because of</span></span>
+<span id="cb10-14"><a href="lec12.html#cb10-14"></a>  <span class="co">// #[repr(transparent)]</span></span>
+<span id="cb10-15"><a href="lec12.html#cb10-15"></a>  <span class="kw">self</span> <span class="kw">as</span> <span class="op">*</span><span class="kw">const</span> UnsafeCell<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="kw">as</span> <span class="op">*</span><span class="kw">const</span> T <span class="kw">as</span> <span class="op">*</span><span class="kw">mut</span> T</span>
+<span id="cb10-16"><a href="lec12.html#cb10-16"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="refcell-dynamically-checked-borrowing-rules"><div>
+<h1>RefCell: dynamically checked borrowing rules</h1>
+<ul>
+<li>The safety rule (aliasing <strong><em>xor</em></strong> mutability) is dynamically enforced</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb11-1"><a href="lec12.html#cb11-1"></a><span class="kw">let</span> c <span class="op">=</span> <span class="pp">RefCell::</span>new(<span class="dv">10</span>)<span class="op">;</span></span>
+<span id="cb11-2"><a href="lec12.html#cb11-2"></a><span class="kw">let</span> s1 <span class="op">=</span> c<span class="op">.</span>borrow()<span class="op">;</span></span>
+<span id="cb11-3"><a href="lec12.html#cb11-3"></a><span class="kw">let</span> s2 <span class="op">=</span> c<span class="op">.</span>borrow()<span class="op">;</span></span>
+<span id="cb11-4"><a href="lec12.html#cb11-4"></a></span>
+<span id="cb11-5"><a href="lec12.html#cb11-5"></a><span class="kw">let</span> <span class="kw">mut</span> m1 <span class="op">=</span> c<span class="op">.</span>borrow_mut()<span class="op">;</span> <span class="co">// Q. what should happen?</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="thinking-of-interior-mutability-1"><div>
+<h1>Thinking of “Interior mutability”</h1>
+<ul>
+<li>Q. Is it safe to modify in that way?</li>
+<li>Example: what if we can guarantee there is only one mutable reference at runtime?
+<ul>
+<li>Clear tracking of references generation: <code>borrow()</code>/<code>borrow_mut()</code></li>
+<li>Not shareable across threads</li>
+<li>Any violation of this rule → panic!</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="bonus-what-if-we-wait-instead-of-panicing"><div>
+<h1>Bonus, what if we wait instead of panicing?</h1>
+<ol type="1">
+<li>What if there exists only one outstanding sharable/immutable reference at runtime?</li>
+<li>Is the safety rule correctly enforced at runtime?</li>
+<li>Thus, is it safe to let immutable variables modifiable?</li>
+</ol>
+<p style="text-align:center;margin:0"><img src="img/mutex.svg" style="width: 80%"/></p>
+</div></section>
+<section class="slide level1" id="summary"><div>
+<h1>Summary</h1>
+<ul>
+<li>Safe abstractions that Rust can’t statically assure:
+<ul>
+<li><code>Rc</code> allowing multiple <strong>ownership</strong> (via reference counting)</li>
+<li><code>Cell</code> concerning on limited uses of <strong>inherited mutability</strong> (by restricting references)</li>
+<li><code>RefCell</code> bypassing the borrow checks at <strong>compilation time</strong> (via check at runtime)</li>
+</ul></li>
+<li>Core abstraction: <code>UnsafeCell</code> restricts Rustc’s reasoning on aliasing/mutability</li>
+</ul>
+<p>Note. limited our discussion to a single thread context</p>
+</div></section>
+<section class="slide level1" id="compositing-rc-and-cell"><div>
+<h1>Compositing <code>Rc</code> and <code>Cell</code></h1>
+<ul>
+<li>Multiple owners, writing to immutable variable</li>
+<li>Q. falling back to C? should we consider unsafe?</li>
+</ul>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb12-1"><a href="lec12.html#cb12-1"></a>    <span class="kw">let</span> r <span class="op">=</span> <span class="pp">Rc::</span>new(<span class="pp">Cell::</span>new(<span class="dv">10</span>))<span class="op">;</span></span>
+<span id="cb12-2"><a href="lec12.html#cb12-2"></a></span>
+<span id="cb12-3"><a href="lec12.html#cb12-3"></a>    <span class="kw">let</span> c1 <span class="op">=</span> <span class="pp">Rc::</span>clone(<span class="op">&amp;</span>r)<span class="op">;</span></span>
+<span id="cb12-4"><a href="lec12.html#cb12-4"></a>    <span class="kw">let</span> c2 <span class="op">=</span> <span class="pp">Rc::</span>clone(<span class="op">&amp;</span>r)<span class="op">;</span></span>
+<span id="cb12-5"><a href="lec12.html#cb12-5"></a></span>
+<span id="cb12-6"><a href="lec12.html#cb12-6"></a>    c1<span class="op">.</span>set(<span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb12-7"><a href="lec12.html#cb12-7"></a>    c2<span class="op">.</span>set(<span class="dv">30</span>)<span class="op">;</span></span>
+<span id="cb12-8"><a href="lec12.html#cb12-8"></a></span>
+<span id="cb12-9"><a href="lec12.html#cb12-9"></a>    <span class="pp">dbg!</span>(c1)<span class="op">;</span> <span class="co">//=&gt; Q?</span></span>
+<span id="cb12-10"><a href="lec12.html#cb12-10"></a>    <span class="pp">dbg!</span>(c2)<span class="op">;</span> <span class="co">//=&gt; Q?</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="interior-mutability-patterns"><div>
+<h1>“Interior Mutability” Patterns</h1>
+<ul>
+<li>Never handing out references: <code>Cell</code> (<code>Atomic</code>)</li>
+<li>Ensuring at runtime a mutable reference is unique: <code>RefCell</code> (<code>Mutex</code>, <code>RWLock</code>)</li>
+<li>Mutability only during initialization: <code>OnceCell</code>, <code>lazy_static</code></li>
+</ul>
+<p>Ref. <a href="https://pitdicker.github.io/Interior-mutability-patterns/">Interior mutability patterns</a></p>
+</div></section>
+<section class="slide level1" id="references"><div>
+<h1>References</h1>
+<ul>
+<li><a href="https://pitdicker.github.io/Interior-mutability-patterns/">Interior mutability patterns</a></li>
+<li><a href="https://www.reddit.com/r/rust/comments/755a5x/i_have_finally_understood_what_cell_and_refcell/">Reddit Q&amp;A</a></li>
+<li><a href="https://stackoverflow.com/questions/30831037/situations-where-cell-or-refcell-is-the-best-choice">StackOverflow Q&amp;A</a></li>
+<li><a href="https://limpet.net/mbrubeck/2019/02/07/rust-a-unique-perspective.html">Rust: A unique perspective</a></li>
+</ul>
+</div></section>
+<div class="progress"><div></div></div>
+<script src="../shower/js/shower.js"></script>
+</body>
+</html>

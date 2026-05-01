@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Introduction to Raspberry Pi 3</title>
+<meta charset="utf-8"/>
+<meta content="ie=edge" http-equiv="x-ua-compatible"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="../shower/styles/ribbon.css" rel="stylesheet"/>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+  position: relative; left: -1em; text-align: right; vertical-align: baseline;
+  border: none; display: inline-block;
+  -webkit-touch-callout: none; -webkit-user-select: none;
+  -khtml-user-select: none; -moz-user-select: none;
+  -ms-user-select: none; user-select: none;
+  padding: 0 4px; width: 4em;
+  color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+{   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style>
+section pre code {
+  line-height: 1.4 !important;
+  font-size: 20px !important;
+}
+.compact code {
+  line-height: 1.4 !important;
+  font-size: 16px !important;
+}
+ul.compact {
+  line-height: 1.5 !important;
+  font-size: 20px !important;
+}
+.writeup {
+    font-size: 20px !important;
+}
+a.sourceLine { background: none !important; }
+section.region { display: none !important; }
+pre.numberSource { margin-left: 2em; }
+div.sourceCode { overflow: hidden; }
+a.sourceLine::before { text-decoration: none; }
+
+pre > code.sourceCode > span > a:first-child::before { text-decoration: none !important; }
+</style>
+<script src="../shower/js/jquery-2.2.0.min.js"></script>
+</head>
+<body class="shower list">
+<header class="caption">
+<h1>CS3210 Design Operating Systems</h1>
+<p>Taesoo Kim</p>
+</header>
+<header class="caption">
+</header>
+<section class="slide" id="cover">
+<br/><br/><br/><br/>
+<h2>Introduction to Raspberry Pi 3</h2>
+<p> Taesoo Kim</p>
+<style>
+ #cover h2 {
+   /* margin:180px 0 0; */
+   color: #666;
+   text-align:center;
+   font-size: 60px;
+   font-weight: bold;
+   margin-bottom: 0em;
+ }
+ #cover p {
+   margin:30px 0 0;
+   text-align:center;
+   font-style:italic;
+   font-size:40px;
+ }
+ </style>
+</section>
+
+<section class="slide level1" id="administrivia"><div>
+<h1>Administrivia</h1>
+<ul>
+<li>“Lab 1: Bootstrapping Raspberry Pi” is due on <mark>Jan 27</mark></li>
+<li>TA office hours
+<ul>
+<li><strong>Fri</strong> at Coda C0915, <strong>10-11 AM</strong>, Yechan Bae</li>
+<li><strong>Tue</strong> at Coda C0906, <strong>05-06 PM</strong>, Sujin Park</li>
+<li><strong>Wed</strong> at Coda C1008, <strong>11-12 PM</strong>, Mansour Alharthi</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="qa"><div>
+<h1>Q&amp;A</h1>
+<ul>
+<li>Q. + / - of 64-bit OS?
+<ul>
+<li>What do we mean by 64-bit?</li>
+<li>Virtual address space??</li>
+<li>Memory usage??</li>
+<li>Performance??</li>
+</ul></li>
+</ul>
+<p>Common answers:</p>
+<blockquote>
+<p>It is important to support 64-bit by an operating system because a 64-bit processor can handle more data at once.</p>
+</blockquote>
+</div></section>
+<section class="slide level1" id="qa-1"><div>
+<h1>Q&amp;A</h1>
+<ul>
+<li>What about the RPi’s default kernel, Raspbian?</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/raspbian.png" style="width:80%"/></p>
+</div></section>
+<section class="slide level1" id="qa-2"><div>
+<h1>Q&amp;A</h1>
+<ul>
+<li>Q. Have you used Rpi before?
+<ul>
+<li>Vision tasks, in-person queuing system</li>
+<li>VPN server</li>
+<li>RPG game</li>
+<li>IoT projects</li>
+<li>Wake-on-book to manage desktop</li>
+<li>Smart speaker (Echo alternative)</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="qa-3"><div>
+<h1>Q&amp;A</h1>
+<ul>
+<li>Q. Is there any problem of running a 32-bit OS on 64-bit processor?</li>
+<li>Q. Why Pi 3 and not Pi 4? Just curious?</li>
+<li>Q. What exactly is so special about Raspberry Pi? Why not Arduino?</li>
+</ul>
+</div></section>
+<section class="slide level1" id="qa-4"><div>
+<h1>Q&amp;A</h1>
+<p style="text-align:center;margin:0"><img src="img/retropi.png" style="width:80%"/></p>
+</div></section>
+<section class="slide level1" id="raspberry-pi-3"><div>
+<h1>Raspberry Pi 3</h1>
+<p style="text-align:center;margin:0"><img src="img/rpi3b.png" style="width: 80%"/></p>
+</div></section>
+<section class="slide level1 cover"><img height="100%" src="img/rpi3b-diagram.png" width="100%"/></section>
+<section class="slide level1 cover"><img height="100%" src="img/pi3-block-diagram-rev4.png" width="100%"/></section>
+<section class="slide level1" id="specification-of-raspberry-pi-3"><div>
+<h1>Specification of Raspberry Pi 3</h1>
+<p style="text-align:center;margin:0"><img src="img/rpi3b-spec.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="specification-of-raspberry-pi-3-1"><div>
+<h1>Specification of Raspberry Pi 3</h1>
+<p style="text-align:center;margin:0"><img src="img/rpi3b-spec-cpu.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="about-bcm2837"><div>
+<h1>About BCM2837</h1>
+<ul>
+<li>BCM2836: Raspberry Pi 2 chip</li>
+<li>BCM2837: Raspberry Pi 3 chip</li>
+</ul>
+<blockquote>
+<p>This is the Broadcom chip used in the Raspberry Pi 3, and in later models of the Raspberry Pi 2. The underlying architecture of the BCM2837 is identical to the BCM2836. The only significant difference is the replacement of the ARMv7 quad core cluster with a quad-core ARM Cortex A53 (ARMv8) cluster.</p>
+</blockquote>
+<p>Ref. <a href="https://www.raspberrypi.org/documentation/hardware/raspberrypi/bcm2837/README.md">BCM2837</a></p>
+</div></section>
+<section class="slide level1" id="specification-of-raspberry-pi-3-2"><div>
+<h1>Specification of Raspberry Pi 3</h1>
+<p style="text-align:center;margin:0"><img src="img/rpi3b-spec-ram.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="specification-of-raspberry-pi-3-3"><div>
+<h1>Specification of Raspberry Pi 3</h1>
+<p style="text-align:center;margin:0"><img src="img/rpi3b-spec-peripherals.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="general-purpose-inputoutput-gpio"><div>
+<h1><a href="https://www.raspberrypi.org/documentation/usage/gpio/">General-purpose input/output (GPIO)</a></h1>
+<ul>
+<li>I/O pins whose roles can be configurable by software</li>
+<li>Alternative function: e.g., UART TX/RX, PWM, etc</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/GPIO-Pinout-Diagram-2.png" style="width:75%"/></p>
+</div></section>
+<section class="slide level1 cover"><img height="100%" src="img/gpio-closedup.png" width="100%"/></section>
+<section class="slide level1" id="example-using-a-gpio-pin-as-output"><div>
+<h1>Example: using a GPIO pin as output</h1>
+<ul>
+<li>Using 3.3V power and ground pins (left)</li>
+<li>One GPIO pin as <strong>output</strong>, and drives a led (right)</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/ex-gpio-led.png" style="width:90%"/></p>
+</div></section>
+<section class="slide level1" id="how-to-configure-and-drive-gpio-pins"><div>
+<h1>How to configure and drive GPIO pins?</h1>
+<ul>
+<li>GPIO is one of peripherals inside the BCM2837 package</li>
+<li>Configurable via Memory-mapped I/O (via the I/O peripheral map)</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/bcm2837-datasheet.png" style="width:50%"/></p>
+<p>Ref. <a href="https://cs140e.sergio.bz/docs/BCM2837-ARM-Peripherals.pdf">BCM2837 Data sheet</a></p>
+</div></section>
+<section class="slide level1 cover"><img height="100%" src="img/bcm2837-gpio.png" width="100%"/></section>
+<section class="slide level1" id="note.-pull-uppull-down-resistor"><div>
+<h1>Note. <a href="https://en.wikipedia.org/wiki/Pull-up_resistor">pull-up/pull-down resistor</a></h1>
+<ul>
+<li>Ensuring the known state: up (high) and down (low)</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/pullup-resistor.png" style="width:30%"/></p>
+</div></section>
+<section class="slide level1" id="peripherals"><div>
+<h1>Peripherals</h1>
+<ul>
+<li>BCM2837 packages a few peripherals inside SoC that are accessible by the ARM CPU
+<ul>
+<li>GPIO (Lab1)</li>
+<li>UART (Lab2)</li>
+<li>Timers (Lab1/Lab4)</li>
+<li>Interrupt controller (Lab4)</li>
+<li>USB (Lab5)</li>
+<li>PWM (perhaps, final project? e.g., controlling a robot)</li>
+<li>…</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1 cover"><img height="100%" src="img/bcm2836-peripherals.png" width="100%"/></section>
+<section class="slide level1" id="about-videocore-iv"><div>
+<h1>About VideoCore IV</h1>
+<ul>
+<li>VideoCore is a low-power multimedia processor (i.e., GPU)</li>
+<li>Compare how much current is being used when idle and during the game play!</li>
+</ul>
+<iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" frameborder="0" height="315" src="https://www.youtube.com/embed/TslSiWZI7rY?start=62" width="560">
+</iframe>
+<p>Ref. <a href="https://en.wikipedia.org/wiki/VideoCore">VideoCore</a></p>
+</div></section>
+<section class="slide level1" id="videocore-iv-has-a-role-beyond-gpu"><div>
+<h1>VideoCore IV has a role beyond GPU</h1>
+<ul>
+<li>GPU boots first when the power is on (using software in the ROM)</li>
+<li>Loads <code>bootcode.bin</code> (see <code>ext/firmware</code>)</li>
+<li>Initialize peripherals and, in fact, ARM cores!</li>
+</ul>
+</div></section>
+<section class="slide level1" id="firmware"><div>
+<h1>Firmware</h1>
+<ul>
+<li>VideoCore loads the firmware to launch <code>kernel8.img</code></li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="lec05.html#cb1-1"></a>$ <span class="fu">ls</span> ext/rpi3-uart</span>
+<span id="cb1-2"><a href="lec05.html#cb1-2"></a><span class="ex">bootcode.bin</span></span>
+<span id="cb1-3"><a href="lec05.html#cb1-3"></a><span class="ex">fixup.dat</span></span>
+<span id="cb1-4"><a href="lec05.html#cb1-4"></a><span class="ex">start.elf</span></span>
+<span id="cb1-5"><a href="lec05.html#cb1-5"></a><span class="ex">config.txt</span></span>
+<span id="cb1-6"><a href="lec05.html#cb1-6"></a><span class="ex">kernel8.img</span></span>
+<span id="cb1-7"><a href="lec05.html#cb1-7"></a></span>
+<span id="cb1-8"><a href="lec05.html#cb1-8"></a>$ <span class="fu">cat</span> config.txt</span>
+<span id="cb1-9"><a href="lec05.html#cb1-9"></a><span class="va">arm_control=</span>0x200        ; <span class="ex">AArch64</span></span>
+<span id="cb1-10"><a href="lec05.html#cb1-10"></a><span class="va">kernel_address=</span>0x4000000 ; <span class="ex">Address</span> for loading kernel8.img</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="configuring-peripherals-via-mmio"><div>
+<h1>Configuring peripherals via MMIO</h1>
+<ul>
+<li>Accessing to 0x3f00_0000 (physical address) → 0x7e00_0000 (bus address)</li>
+<li>MMIO: <code>str</code>/<code>ldr</code> to access peripheral registers</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/paddr.svg" style="width:90%"/></p>
+</div></section>
+<section class="slide level1" id="example-gpio"><div>
+<h1>Example: GPIO</h1>
+<ul>
+<li>54 GPIO in BCM2837, which can be configured by 41 registers (p 89)</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/gpio-reg.png" style="width:80%"/></p>
+</div></section>
+<section class="slide level1 cover"><img height="100%" src="img/gpio-reg-sel1.png" width="100%"/></section>
+<section class="slide level1 cover"><img height="100%" src="img/gpio-alt.png" width="100%"/></section>
+<section class="slide level1" id="example-uart-lab-2"><div>
+<h1>Example: UART (Lab 2)</h1>
+<ul>
+<li>Configuring mini UART via 0x3f21_5000 (physical address)</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/uart.png" style="width:80%"/></p>
+</div></section>
+<section class="slide level1" id="accessing-peripheral-region-in-c"><div>
+<h1>Accessing peripheral region in C</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource c numberLines"><code class="sourceCode c"><span id="cb2-1"><a href="lec05.html#cb2-1"></a><span class="pp">#define GPIO_BASE (0x3F000000 + 0x200000)</span></span>
+<span id="cb2-2"><a href="lec05.html#cb2-2"></a></span>
+<span id="cb2-3"><a href="lec05.html#cb2-3"></a><span class="dt">volatile</span> <span class="dt">unsigned</span> *GPIO_FSEL1 = (<span class="dt">volatile</span> <span class="dt">unsigned</span> *)(GPIO_BASE + <span class="bn">0x04</span>);</span>
+<span id="cb2-4"><a href="lec05.html#cb2-4"></a></span>
+<span id="cb2-5"><a href="lec05.html#cb2-5"></a><span class="dt">int</span> kmain(<span class="dt">void</span>) {</span>
+<span id="cb2-6"><a href="lec05.html#cb2-6"></a>  <span class="co">// reading</span></span>
+<span id="cb2-7"><a href="lec05.html#cb2-7"></a>  <span class="dt">unsigned</span> <span class="dt">int</span> sel1 = *GPIO_FSEL1;</span>
+<span id="cb2-8"><a href="lec05.html#cb2-8"></a>  </span>
+<span id="cb2-9"><a href="lec05.html#cb2-9"></a>  <span class="co">// writing</span></span>
+<span id="cb2-10"><a href="lec05.html#cb2-10"></a>  *GPIO_FSEL1 = sel1;</span>
+<span id="cb2-11"><a href="lec05.html#cb2-11"></a>}</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="accessing-peripheral-regions-in-rust"><div>
+<h1>Accessing peripheral regions in Rust</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb3-1"><a href="lec05.html#cb3-1"></a><span class="kw">const</span> GPIO_BASE: <span class="dt">usize</span> = <span class="dv">0x3F000000</span> + <span class="dv">0x200000</span>;</span>
+<span id="cb3-2"><a href="lec05.html#cb3-2"></a></span>
+<span id="cb3-3"><a href="lec05.html#cb3-3"></a><span class="kw">const</span> GPIO_FSEL1: *<span class="kw">mut</span> <span class="dt">u32</span> = (GPIO_BASE + <span class="dv">0x04</span>) <span class="kw">as</span> *<span class="kw">mut</span> <span class="dt">u32</span>;</span>
+<span id="cb3-4"><a href="lec05.html#cb3-4"></a></span>
+<span id="cb3-5"><a href="lec05.html#cb3-5"></a><span class="kw">unsafe</span> <span class="kw">fn</span> kmain() -&gt; ! <span class="op">{</span></span>
+<span id="cb3-6"><a href="lec05.html#cb3-6"></a>    <span class="co">// reading</span></span>
+<span id="cb3-7"><a href="lec05.html#cb3-7"></a>    <span class="kw">let</span> <span class="kw">mut</span> sel1 =  GPIO_FSEL1.read_volatile();</span>
+<span id="cb3-8"><a href="lec05.html#cb3-8"></a></span>
+<span id="cb3-9"><a href="lec05.html#cb3-9"></a>    <span class="co">// writing</span></span>
+<span id="cb3-10"><a href="lec05.html#cb3-10"></a>    GPIO_FSEL1.write_volatile(sel1);</span>
+<span id="cb3-11"><a href="lec05.html#cb3-11"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="next-lecture"><div>
+<h1>Next lecture</h1>
+<ul>
+<li>Next lecture: recitation on lab01!</li>
+<li>“Lab 1: Bootstrapping Raspberry Pi” is due on <mark>Jan 27</mark></li>
+</ul>
+</div></section>
+<section class="slide level1" id="references"><div>
+<h1>References</h1>
+<ul>
+<li><a href="https://www.raspberrypi.org/documentation/hardware/raspberrypi/gpio/README.md">Rpi GPIO</a></li>
+<li><a href="https://www.raspberrypi.org/documentation/hardware/raspberrypi/gpio/gpio_pads_control.md">GPIO pads control</a></li>
+<li><a href="http://doc.xdevs.com/doc/RPi/pi3-block-diagram-rev4.png">Raspberry Pi 3 Block Diagram</a></li>
+</ul>
+</div></section>
+<div class="progress"><div></div></div>
+<script src="../shower/js/shower.js"></script>
+</body>
+</html>

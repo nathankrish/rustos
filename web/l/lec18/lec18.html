@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>CS3210: Multicore and Synchronization</title>
+<meta charset="utf-8"/>
+<meta content="ie=edge" http-equiv="x-ua-compatible"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="../shower/styles/ribbon.css" rel="stylesheet"/>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+  position: relative; left: -1em; text-align: right; vertical-align: baseline;
+  border: none; display: inline-block;
+  -webkit-touch-callout: none; -webkit-user-select: none;
+  -khtml-user-select: none; -moz-user-select: none;
+  -ms-user-select: none; user-select: none;
+  padding: 0 4px; width: 4em;
+  color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+{   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style>
+section pre code {
+  line-height: 1.4 !important;
+  font-size: 20px !important;
+}
+.compact code {
+  line-height: 1.4 !important;
+  font-size: 16px !important;
+}
+ul.compact {
+  line-height: 1.5 !important;
+  font-size: 20px !important;
+}
+.writeup {
+    font-size: 20px !important;
+}
+a.sourceLine { background: none !important; }
+section.region { display: none !important; }
+pre.numberSource { margin-left: 2em; }
+div.sourceCode { overflow: hidden; }
+a.sourceLine::before { text-decoration: none; }
+
+pre > code.sourceCode > span > a:first-child::before { text-decoration: none !important; }
+</style>
+<script src="../shower/js/jquery-2.2.0.min.js"></script>
+</head>
+<body class="shower list">
+<header class="caption">
+<h1>CS3210 Design Operating Systems</h1>
+<p>Taesoo Kim</p>
+</header>
+<header class="caption">
+</header>
+<section class="slide" id="cover">
+<br/><br/><br/><br/>
+<h2>CS3210: Multicore and Synchronization</h2>
+<p> Taesoo Kim</p>
+<style>
+ #cover h2 {
+   /* margin:180px 0 0; */
+   color: #666;
+   text-align:center;
+   font-size: 60px;
+   font-weight: bold;
+   margin-bottom: 0em;
+ }
+ #cover p {
+   margin:30px 0 0;
+   text-align:center;
+   font-style:italic;
+   font-size:40px;
+ }
+ </style>
+</section>
+
+<section class="slide level1" id="administrivia"><div>
+<h1>Administrivia</h1>
+<ul>
+<li>First off, be safe/healthy!</li>
+<li>Last miles:
+<ol type="1">
+<li><strong><em>Virtual</em></strong> final project demo/presentation: 7 to 10-min video (DUE: <mark>Apr 13</mark>)</li>
+<li>Final project peer-evaluation (DUE: <mark>Apr 14</mark>/<mark>Apr 16</mark>)</li>
+<li>Final write-up/code (DUE: <mark>May 1</mark>)</li>
+<li>Quiz #2 will be distributed at <mark>9am on Apr 21</mark> (take-home/open-ended, 24h)</li>
+<li>Lab4 (DUE: <mark>Apr 20</mark> w/ 2-week late days)</li>
+</ol></li>
+</ul>
+</div></section>
+<section class="slide level1" id="virtual-final-project-demopresentation"><div>
+<h1>Virtual final project demo/presentation</h1>
+<ul>
+<li>7-10 min video (depending on #members in the team)</li>
+<li>Upload the video to Youtube</li>
+<li>Submit the link to us!</li>
+</ul>
+</div></section>
+<section class="slide level1" id="quiz2"><div>
+<h1>Quiz2</h1>
+<ul>
+<li>P1. TAF2: In-memory Filesystem for Tiny Allocation</li>
+<li>P2. VM Application: Demand Paging / Lazy Loading</li>
+<li>P3. Blocking I/O and Scheduling</li>
+<li>P4. Designing Signal Handler Interface</li>
+</ul>
+<p>Ref. Please check the <a href="../q2/review.pdf">review material</a> for Quiz 2!</p>
+</div></section>
+<section class="slide level1" id="grading-policy-new"><div>
+<h1>Grading policy (new)</h1>
+<ul>
+<li>Preparation: 10%</li>
+<li>Quiz: 30%
+<ul>
+<li>20%: <strong><em>max(Q1, Q2)</em></strong></li>
+<li>10%: <strong><em>min(Q1, Q2)</em></strong></li>
+</ul></li>
+<li>Lab: 40%: 8% + 8% + 8% + 8% + 8% (<strong><em>bonus 8% for lab5</em></strong>)</li>
+<li>Final project: 20%
+<ul>
+<li>Demo &amp; presentation: <strong><em>5%</em></strong> (peer evaluation)</li>
+<li>Write-up/code: 15% (by TAs)</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="qa"><div>
+<h1>Q&amp;A</h1>
+<blockquote>
+<p>What exactly is meant by the size of a virtual address space? For example, if you have two 64 bit computers with 16GB of physical RAM but one has a 2^40 address space whereas the other has 2^64 address space what’s different because won’t the size of each memory address in either system be 8 bytes since it is a 64 bit architecture? Why don’t they always max out the virtual address space? ie for 64 bit architecture give 2^64 address space?</p>
+</blockquote>
+</div></section>
+<section class="slide level1" id="qa-in-x86_64"><div>
+<h1>Q&amp;A (in x86_64)</h1>
+<p style="text-align:center;margin:0"><img src="img/canonical.png" style="width: 80%"/></p>
+</div></section>
+<section class="slide level1" id="qa-in-aarch64"><div>
+<h1>Q&amp;A (in AArch64)</h1>
+<p style="text-align:center;margin:0"><img src="img/aarch64-vm.png" style="width: 80%"/></p>
+</div></section>
+<section class="slide level1" id="qa-applications-in-aarch64"><div>
+<h1>Q&amp;A (Applications in AArch64)</h1>
+<ul>
+<li>TBI (Top-Byte Ignore) for sw-based tagged address/memory</li>
+<li>MTE (Memory Tagging Extension) for hw-based tagged address/memory</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/tag.png" style="width:50%"/></p>
+<p>Ref. <a href="https://community.arm.com/developer/ip-products/processors/b/processors-ip-blog/posts/enhancing-memory-safety">AArch64: Memory Tagging Extension</a></p>
+</div></section>
+<section class="slide level1" id="today-multicore-and-locking"><div>
+<h1>Today: Multicore (and locking)</h1>
+<p style="text-align:center;margin:0"><img src="img/35y-cpu-trend:amd11.png" style="width:50%"/></p>
+<ul>
+<li>The increasing number of core counts per CPU instead of the clock speed</li>
+<li>Multicore and locking: how to correctly utilize available cores?</li>
+</ul>
+</div></section>
+<section class="slide level1" id="example-counting"><div>
+<h1>Example: counting</h1>
+<ul>
+<li>DEMO: <code>count.c</code></li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="lec18.html#cb1-1"></a>$ <span class="ex">./count</span> 1 10</span>
+<span id="cb1-2"><a href="lec18.html#cb1-2"></a><span class="ex">cpu</span> = 1, count = 10</span>
+<span id="cb1-3"><a href="lec18.html#cb1-3"></a></span>
+<span id="cb1-4"><a href="lec18.html#cb1-4"></a>$ <span class="ex">./count</span> 1 100</span>
+<span id="cb1-5"><a href="lec18.html#cb1-5"></a><span class="ex">cpu</span> = 1, count = 100</span>
+<span id="cb1-6"><a href="lec18.html#cb1-6"></a></span>
+<span id="cb1-7"><a href="lec18.html#cb1-7"></a>$ <span class="ex">./count</span> 2 10</span>
+<span id="cb1-8"><a href="lec18.html#cb1-8"></a><span class="ex">cpu</span> = 2, count = 20</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-correctness"><div>
+<h1>Example: correctness</h1>
+<ul>
+<li>Q: What if we increase the count?</li>
+<li>Q: can the global <code>count</code> be lower than say, 100000 in below?</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="lec18.html#cb2-1"></a>$ <span class="ex">./count</span> 2 100000</span>
+<span id="cb2-2"><a href="lec18.html#cb2-2"></a><span class="ex">cpu</span> = 2, count = 110047</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-measuring-execution-time"><div>
+<h1>Example: measuring execution time</h1>
+<ul>
+<li>Q: Execution time reduces by half (x2 utilization)?</li>
+<li>Q: Problem?</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="lec18.html#cb3-1"></a>$ <span class="bu">time</span> ./count 1 1000000000</span>
+<span id="cb3-2"><a href="lec18.html#cb3-2"></a><span class="ex">cpu</span> = 1, count = 1000000000</span>
+<span id="cb3-3"><a href="lec18.html#cb3-3"></a><span class="ex">./count</span> 1 1000000000  1.48s user 0.00s system 99% cpu 1.484 total</span>
+<span id="cb3-4"><a href="lec18.html#cb3-4"></a></span>
+<span id="cb3-5"><a href="lec18.html#cb3-5"></a>$ <span class="bu">time</span> ./count 2  500000000</span>
+<span id="cb3-6"><a href="lec18.html#cb3-6"></a><span class="ex">cpu</span> = 2, count = 499251437</span>
+<span id="cb3-7"><a href="lec18.html#cb3-7"></a><span class="ex">./count</span> 2 500000000  2.13s user 0.00s system 199% cpu 1.068 total</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-analysis-in-detail"><div>
+<h1>Example: analysis in detail</h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="lec18.html#cb4-1"></a>$ <span class="fu">sudo</span> perf stat -d ./count 1 1000000000</span>
+<span id="cb4-2"><a href="lec18.html#cb4-2"></a><span class="ex">cpu</span> = 1, count = 1000000000</span>
+<span id="cb4-3"><a href="lec18.html#cb4-3"></a></span>
+<span id="cb4-4"><a href="lec18.html#cb4-4"></a> <span class="ex">Performance</span> counter stats for <span class="st">'./count 1 1000000000'</span>:</span>
+<span id="cb4-5"><a href="lec18.html#cb4-5"></a></span>
+<span id="cb4-6"><a href="lec18.html#cb4-6"></a>          <span class="ex">1</span>,451.93 msec task-clock                <span class="co">#    0.999 CPUs utilized          </span></span>
+<span id="cb4-7"><a href="lec18.html#cb4-7"></a>                 <span class="ex">3</span>      context-switches          <span class="co">#    0.002 K/sec                  </span></span>
+<span id="cb4-8"><a href="lec18.html#cb4-8"></a>                 <span class="ex">0</span>      cpu-migrations            <span class="co">#    0.000 K/sec                  </span></span>
+<span id="cb4-9"><a href="lec18.html#cb4-9"></a>                <span class="ex">68</span>      page-faults               <span class="co">#    0.047 K/sec                  </span></span>
+<span id="cb4-10"><a href="lec18.html#cb4-10"></a>     <span class="ex">5</span>,523,257,353      cycles                    <span class="co">#    3.804 GHz                      (62.61%)</span></span>
+<span id="cb4-11"><a href="lec18.html#cb4-11"></a>     <span class="ex">4</span>,025,305,227      instructions              <span class="co">#    0.73  insn per cycle           (75.21%)</span></span>
+<span id="cb4-12"><a href="lec18.html#cb4-12"></a>     <span class="ex">1</span>,002,727,356      branches                  <span class="co">#  690.617 M/sec                    (75.21%)</span></span>
+<span id="cb4-13"><a href="lec18.html#cb4-13"></a>            <span class="ex">21</span>,014      branch-misses             <span class="co">#    0.00% of all branches          (75.21%)</span></span>
+<span id="cb4-14"><a href="lec18.html#cb4-14"></a>       <span class="ex">994</span>,765,813      L1-dcache-loads           <span class="co">#  685.133 M/sec                    (75.21%)</span></span>
+<span id="cb4-15"><a href="lec18.html#cb4-15"></a>            <span class="ex">52</span>,550      L1-dcache-load-misses     <span class="co">#    0.01% of all L1-dcache hits    (75.21%)</span></span>
+<span id="cb4-16"><a href="lec18.html#cb4-16"></a>             <span class="ex">8</span>,480      LLC-loads                 <span class="co">#    0.006 M/sec                    (49.59%)</span></span>
+<span id="cb4-17"><a href="lec18.html#cb4-17"></a>             <span class="ex">1</span>,359      LLC-load-misses           <span class="co">#   16.03% of all LL-cache hits     (49.59%)</span></span>
+<span id="cb4-18"><a href="lec18.html#cb4-18"></a></span>
+<span id="cb4-19"><a href="lec18.html#cb4-19"></a>       <span class="ex">1.453028001</span> seconds time elapsed</span>
+<span id="cb4-20"><a href="lec18.html#cb4-20"></a></span>
+<span id="cb4-21"><a href="lec18.html#cb4-21"></a>       <span class="ex">1.451706000</span> seconds user</span>
+<span id="cb4-22"><a href="lec18.html#cb4-22"></a>       <span class="ex">0.000000000</span> seconds sys</span></code></pre></div>
+<script> $('#example-analysis-in-detail pre').addClass('compact') </script>
+</div></section>
+<section class="slide level1" id="example-analysis-in-detail-1"><div>
+<h1>Example: analysis in detail</h1>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb5-1"><a href="lec18.html#cb5-1"></a>$ <span class="fu">sudo</span> perf stat -d ./count 2 500000000</span>
+<span id="cb5-2"><a href="lec18.html#cb5-2"></a><span class="ex">cpu</span> = 2, count = 501651355</span>
+<span id="cb5-3"><a href="lec18.html#cb5-3"></a></span>
+<span id="cb5-4"><a href="lec18.html#cb5-4"></a> <span class="ex">Performance</span> counter stats for <span class="st">'./count 2 500000000'</span>:</span>
+<span id="cb5-5"><a href="lec18.html#cb5-5"></a></span>
+<span id="cb5-6"><a href="lec18.html#cb5-6"></a>          <span class="ex">2</span>,151.63 msec task-clock                <span class="co">#    1.995 CPUs utilized          </span></span>
+<span id="cb5-7"><a href="lec18.html#cb5-7"></a>                <span class="ex">29</span>      context-switches          <span class="co">#    0.013 K/sec                  </span></span>
+<span id="cb5-8"><a href="lec18.html#cb5-8"></a>                 <span class="ex">3</span>      cpu-migrations            <span class="co">#    0.001 K/sec                  </span></span>
+<span id="cb5-9"><a href="lec18.html#cb5-9"></a>                <span class="ex">70</span>      page-faults               <span class="co">#    0.033 K/sec                  </span></span>
+<span id="cb5-10"><a href="lec18.html#cb5-10"></a>     <span class="ex">8</span>,069,084,968      cycles                    <span class="co">#    3.750 GHz                      (61.02%)</span></span>
+<span id="cb5-11"><a href="lec18.html#cb5-11"></a>     <span class="ex">4</span>,028,632,000      instructions              <span class="co">#    0.50  insn per cycle           (74.03%)</span></span>
+<span id="cb5-12"><a href="lec18.html#cb5-12"></a>     <span class="ex">1</span>,004,762,321      branches                  <span class="co">#  466.978 M/sec                    (74.88%)</span></span>
+<span id="cb5-13"><a href="lec18.html#cb5-13"></a>            <span class="ex">30</span>,428      branch-misses             <span class="co">#    0.00% of all branches          (75.75%)</span></span>
+<span id="cb5-14"><a href="lec18.html#cb5-14"></a>       <span class="ex">994</span>,061,232      L1-dcache-loads           <span class="co">#  462.004 M/sec                    (75.84%)</span></span>
+<span id="cb5-15"><a href="lec18.html#cb5-15"></a>        <span class="ex">44</span>,806,280      L1-dcache-load-misses     <span class="co">#    4.51% of all L1-dcache hits    (75.84%)</span></span>
+<span id="cb5-16"><a href="lec18.html#cb5-16"></a>         <span class="ex">9</span>,355,986      LLC-loads                 <span class="co">#    4.348 M/sec                    (49.29%)</span></span>
+<span id="cb5-17"><a href="lec18.html#cb5-17"></a>             <span class="ex">6</span>,268      LLC-load-misses           <span class="co">#    0.07% of all LL-cache hits     (48.41%)</span></span>
+<span id="cb5-18"><a href="lec18.html#cb5-18"></a></span>
+<span id="cb5-19"><a href="lec18.html#cb5-19"></a>       <span class="ex">1.078321208</span> seconds time elapsed</span>
+<span id="cb5-20"><a href="lec18.html#cb5-20"></a></span>
+<span id="cb5-21"><a href="lec18.html#cb5-21"></a>       <span class="ex">2.150210000</span> seconds user</span>
+<span id="cb5-22"><a href="lec18.html#cb5-22"></a>       <span class="ex">0.000000000</span> seconds sys</span></code></pre></div>
+<script> $('#example-analysis-in-detail-1 pre').addClass('compact') </script>
+</div></section>
+<section class="slide level1" id="q-how-to-fix-this-problem"><div>
+<h1>Q: How to fix this problem?</h1>
+<ul>
+<li>Q: plan?</li>
+<li>Two goals:
+<ul>
+<li><mark>Correctness</mark>: no missing counts</li>
+<li><mark>Performance</mark>: execution time</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="attempt-1-use-only-one-cpu"><div>
+<h1>Attempt 1: use only one CPU</h1>
+<ul>
+<li>Fix its execution to the first CPU (id = 0)</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb6-1"><a href="lec18.html#cb6-1"></a>$ <span class="ex">taskset</span> --help</span>
+<span id="cb6-2"><a href="lec18.html#cb6-2"></a><span class="ex">Usage</span>: taskset [options] [mask <span class="kw">|</span> <span class="ex">cpu-list</span>] [pid<span class="kw">|</span><span class="ex">cmd</span> [args...]]</span>
+<span id="cb6-3"><a href="lec18.html#cb6-3"></a></span>
+<span id="cb6-4"><a href="lec18.html#cb6-4"></a><span class="ex">Show</span> or change the CPU affinity of a process.</span>
+<span id="cb6-5"><a href="lec18.html#cb6-5"></a></span>
+<span id="cb6-6"><a href="lec18.html#cb6-6"></a><span class="ex">Options</span>:</span>
+<span id="cb6-7"><a href="lec18.html#cb6-7"></a> <span class="ex">-a</span>, --all-tasks         operate on all the tasks (threads) <span class="kw">for</span> <span class="ex">a</span> given pid</span>
+<span id="cb6-8"><a href="lec18.html#cb6-8"></a> <span class="ex">-p</span>, --pid               operate on existing given pid</span>
+<span id="cb6-9"><a href="lec18.html#cb6-9"></a> <span class="ex">-c</span>, --cpu-list          display and specify cpus in list format</span>
+<span id="cb6-10"><a href="lec18.html#cb6-10"></a> <span class="ex">-h</span>, --help              display this help</span>
+<span id="cb6-11"><a href="lec18.html#cb6-11"></a> <span class="ex">-V</span>, --version           display version</span>
+<span id="cb6-12"><a href="lec18.html#cb6-12"></a><span class="ex">...</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="result"><div>
+<h1>Result</h1>
+<ul>
+<li>Q: correctness? performance?</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb7-1"><a href="lec18.html#cb7-1"></a>$ <span class="ex">taskset</span> 1 time ./count 1 1000000000</span>
+<span id="cb7-2"><a href="lec18.html#cb7-2"></a><span class="ex">cpu</span> = 1, count = 1000000000</span>
+<span id="cb7-3"><a href="lec18.html#cb7-3"></a><span class="ex">1.41user</span> 0.00system 0:01.42elapsed 99%CPU (0avgtext+0avgdata 1740maxresident)<span class="ex">k</span></span>
+<span id="cb7-4"><a href="lec18.html#cb7-4"></a><span class="ex">0inputs+0outputs</span> (0major+81minor)<span class="ex">pagefaults</span> 0swaps</span>
+<span id="cb7-5"><a href="lec18.html#cb7-5"></a></span>
+<span id="cb7-6"><a href="lec18.html#cb7-6"></a>$ <span class="ex">taskset</span> 1 time ./count 2 500000000</span>
+<span id="cb7-7"><a href="lec18.html#cb7-7"></a><span class="ex">cpu</span> = 2, count = 1000000000</span>
+<span id="cb7-8"><a href="lec18.html#cb7-8"></a><span class="ex">1.41user</span> 0.00system 0:01.42elapsed 99%CPU (0avgtext+0avgdata 1656maxresident)<span class="ex">k</span></span>
+<span id="cb7-9"><a href="lec18.html#cb7-9"></a><span class="ex">0inputs+0outputs</span> (0major+80minor)<span class="ex">pagefaults</span> 0swaps</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="attempt-2-use-atomic-operation"><div>
+<h1>Attempt 2: use atomic operation</h1>
+<ul>
+<li>Add a lock prefix (all memory ops)</li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource c numberLines"><code class="sourceCode c"><span id="cb8-1"><a href="lec18.html#cb8-1"></a>asm <span class="dt">volatile</span>(<span class="st">"lock incl %0"</span></span>
+<span id="cb8-2"><a href="lec18.html#cb8-2"></a>              : <span class="st">"+m"</span>(count)</span>
+<span id="cb8-3"><a href="lec18.html#cb8-3"></a>              : <span class="st">"m"</span>(count)</span>
+<span id="cb8-4"><a href="lec18.html#cb8-4"></a>              : <span class="st">"memory"</span>);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="result-1"><div>
+<h1>Result</h1>
+<ul>
+<li>Q: correctness? performance?</li>
+</ul>
+<div class="sourceCode" id="cb9"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb9-1"><a href="lec18.html#cb9-1"></a>$ <span class="bu">time</span> ./count 1 1000000000</span>
+<span id="cb9-2"><a href="lec18.html#cb9-2"></a><span class="ex">cpu</span> = 1, count = 1000000000</span>
+<span id="cb9-3"><a href="lec18.html#cb9-3"></a><span class="ex">4.77user</span> 0.00system 0:04.78elapsed 99%CPU (0avgtext+0avgdata 1672maxresident)<span class="ex">k</span></span>
+<span id="cb9-4"><a href="lec18.html#cb9-4"></a><span class="ex">0inputs+0outputs</span> (0major+79minor)<span class="ex">pagefaults</span> 0swaps</span>
+<span id="cb9-5"><a href="lec18.html#cb9-5"></a></span>
+<span id="cb9-6"><a href="lec18.html#cb9-6"></a>$ <span class="bu">time</span> ./count 2 500000000</span>
+<span id="cb9-7"><a href="lec18.html#cb9-7"></a><span class="ex">cpu</span> = 2, count = 1000000000</span>
+<span id="cb9-8"><a href="lec18.html#cb9-8"></a><span class="ex">33.37user</span> 0.00system 0:17.04elapsed 195%CPU (0avgtext+0avgdata 1668maxresident)<span class="ex">k</span></span>
+<span id="cb9-9"><a href="lec18.html#cb9-9"></a><span class="ex">0inputs+0outputs</span> (0major+79minor)<span class="ex">pagefaults</span> 0swaps</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="analysis-see-ips"><div>
+<h1>Analysis (see IPS)</h1>
+<div class="sourceCode" id="cb10"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb10-1"><a href="lec18.html#cb10-1"></a>$ <span class="fu">sudo</span> perf stat -d ./count 1 1000000000</span>
+<span id="cb10-2"><a href="lec18.html#cb10-2"></a><span class="ex">cpu</span> = 1, count = 1000000000</span>
+<span id="cb10-3"><a href="lec18.html#cb10-3"></a></span>
+<span id="cb10-4"><a href="lec18.html#cb10-4"></a> <span class="ex">Performance</span> counter stats for <span class="st">'./count 1 1000000000'</span>:</span>
+<span id="cb10-5"><a href="lec18.html#cb10-5"></a></span>
+<span id="cb10-6"><a href="lec18.html#cb10-6"></a>          <span class="ex">4</span>,872.17 msec task-clock                <span class="co">#    1.000 CPUs utilized</span></span>
+<span id="cb10-7"><a href="lec18.html#cb10-7"></a>                <span class="ex">10</span>      context-switches          <span class="co">#    0.002 K/sec</span></span>
+<span id="cb10-8"><a href="lec18.html#cb10-8"></a>                 <span class="ex">0</span>      cpu-migrations            <span class="co">#    0.000 K/sec</span></span>
+<span id="cb10-9"><a href="lec18.html#cb10-9"></a>                <span class="ex">67</span>      page-faults               <span class="co">#    0.014 K/sec</span></span>
+<span id="cb10-10"><a href="lec18.html#cb10-10"></a>    <span class="ex">18</span>,205,583,156      cycles                    <span class="co">#    3.737 GHz                      (62.44%)</span></span>
+<span id="cb10-11"><a href="lec18.html#cb10-11"></a>     <span class="ex">4</span>,008,942,183      instructions              <span class="co">#    0.22  insn per cycle           (74.96%)</span></span>
+<span id="cb10-12"><a href="lec18.html#cb10-12"></a>     <span class="ex">1</span>,002,553,661      branches                  <span class="co">#  205.771 M/sec                    (74.96%)</span></span>
+<span id="cb10-13"><a href="lec18.html#cb10-13"></a>            <span class="ex">39</span>,674      branch-misses             <span class="co">#    0.00% of all branches          (74.96%)</span></span>
+<span id="cb10-14"><a href="lec18.html#cb10-14"></a>       <span class="ex">999</span>,210,530      L1-dcache-loads           <span class="co">#  205.085 M/sec                    (74.96%)</span></span>
+<span id="cb10-15"><a href="lec18.html#cb10-15"></a>           <span class="ex">128</span>,514      L1-dcache-load-misses     <span class="co">#    0.01% of all L1-dcache hits    (75.11%)</span></span>
+<span id="cb10-16"><a href="lec18.html#cb10-16"></a>            <span class="ex">37</span>,522      LLC-loads                 <span class="co">#    0.008 M/sec                    (50.08%)</span></span>
+<span id="cb10-17"><a href="lec18.html#cb10-17"></a>             <span class="ex">8</span>,030      LLC-load-misses           <span class="co">#   21.40% of all LL-cache hits     (49.93%)</span></span>
+<span id="cb10-18"><a href="lec18.html#cb10-18"></a></span>
+<span id="cb10-19"><a href="lec18.html#cb10-19"></a>       <span class="ex">4.873511073</span> seconds time elapsed</span>
+<span id="cb10-20"><a href="lec18.html#cb10-20"></a></span>
+<span id="cb10-21"><a href="lec18.html#cb10-21"></a>       <span class="ex">4.868987000</span> seconds user</span>
+<span id="cb10-22"><a href="lec18.html#cb10-22"></a>       <span class="ex">0.000000000</span> seconds sys</span></code></pre></div>
+<script> $('#analysis-see-ips pre').addClass('compact') </script>
+</div></section>
+<section class="slide level1" id="analysis-see-ips-1"><div>
+<h1>Analysis (see IPS)</h1>
+<div class="sourceCode" id="cb11"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb11-1"><a href="lec18.html#cb11-1"></a>$ <span class="fu">sudo</span> perf stat -d ./count 2 500000000</span>
+<span id="cb11-2"><a href="lec18.html#cb11-2"></a><span class="ex">cpu</span> = 2, count = 1000000000</span>
+<span id="cb11-3"><a href="lec18.html#cb11-3"></a></span>
+<span id="cb11-4"><a href="lec18.html#cb11-4"></a> <span class="ex">Performance</span> counter stats for <span class="st">'./count 2 500000000'</span>:</span>
+<span id="cb11-5"><a href="lec18.html#cb11-5"></a></span>
+<span id="cb11-6"><a href="lec18.html#cb11-6"></a>         <span class="ex">33</span>,874.88 msec task-clock                <span class="co">#    1.953 CPUs utilized</span></span>
+<span id="cb11-7"><a href="lec18.html#cb11-7"></a>                <span class="ex">59</span>      context-switches          <span class="co">#    0.002 K/sec</span></span>
+<span id="cb11-8"><a href="lec18.html#cb11-8"></a>                 <span class="ex">3</span>      cpu-migrations            <span class="co">#    0.000 K/sec</span></span>
+<span id="cb11-9"><a href="lec18.html#cb11-9"></a>                <span class="ex">70</span>      page-faults               <span class="co">#    0.002 K/sec</span></span>
+<span id="cb11-10"><a href="lec18.html#cb11-10"></a>   <span class="ex">121</span>,053,878,992      cycles                    <span class="co">#    3.574 GHz                      (62.46%)</span></span>
+<span id="cb11-11"><a href="lec18.html#cb11-11"></a>     <span class="ex">4</span>,025,737,317      instructions              <span class="co">#    0.03  insn per cycle           (74.97%)</span></span>
+<span id="cb11-12"><a href="lec18.html#cb11-12"></a>     <span class="ex">1</span>,005,310,106      branches                  <span class="co">#   29.677 M/sec                    (74.97%)</span></span>
+<span id="cb11-13"><a href="lec18.html#cb11-13"></a>           <span class="ex">226</span>,866      branch-misses             <span class="co">#    0.02% of all branches          (74.98%)</span></span>
+<span id="cb11-14"><a href="lec18.html#cb11-14"></a>     <span class="ex">1</span>,005,112,429      L1-dcache-loads           <span class="co">#   29.671 M/sec                    (75.01%)</span></span>
+<span id="cb11-15"><a href="lec18.html#cb11-15"></a>       <span class="ex">554</span>,644,791      L1-dcache-load-misses     <span class="co">#   55.18% of all L1-dcache hits    (75.05%)</span></span>
+<span id="cb11-16"><a href="lec18.html#cb11-16"></a>           <span class="ex">299</span>,123      LLC-loads                 <span class="co">#    0.009 M/sec                    (50.02%)</span></span>
+<span id="cb11-17"><a href="lec18.html#cb11-17"></a>            <span class="ex">55</span>,176      LLC-load-misses           <span class="co">#   18.45% of all LL-cache hits     (49.97%)</span></span>
+<span id="cb11-18"><a href="lec18.html#cb11-18"></a></span>
+<span id="cb11-19"><a href="lec18.html#cb11-19"></a>      <span class="ex">17.348257458</span> seconds time elapsed</span>
+<span id="cb11-20"><a href="lec18.html#cb11-20"></a></span>
+<span id="cb11-21"><a href="lec18.html#cb11-21"></a>      <span class="ex">33.839990000</span> seconds user</span>
+<span id="cb11-22"><a href="lec18.html#cb11-22"></a>       <span class="ex">0.000000000</span> seconds sys</span></code></pre></div>
+<script> $('#analysis-see-ips-1 pre').addClass('compact') </script>
+</div></section>
+<section class="slide level1" id="attempt-3-compute-locally-per-cpu"><div>
+<h1>Attempt 3: compute locally (per CPU)</h1>
+<ul>
+<li>Q: correctness? performance?</li>
+<li>Q: how to improve perf even further?</li>
+<li>Q: how to trigger a race?</li>
+</ul>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource c numberLines"><code class="sourceCode c"><span id="cb12-1"><a href="lec18.html#cb12-1"></a>   <span class="dt">int</span> local = <span class="dv">0</span>;</span>
+<span id="cb12-2"><a href="lec18.html#cb12-2"></a>   <span class="cf">for</span> (<span class="dt">register</span> <span class="dt">int</span> i = <span class="dv">0</span>; i &lt; cnt; i++)</span>
+<span id="cb12-3"><a href="lec18.html#cb12-3"></a>     local ++;</span>
+<span id="cb12-4"><a href="lec18.html#cb12-4"></a></span>
+<span id="cb12-5"><a href="lec18.html#cb12-5"></a>   count += local;</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="result-2"><div>
+<h1>Result</h1>
+<ul>
+<li>Try, <code>while true; do ./count 2 10 | grep 10 ; done</code></li>
+</ul>
+<div class="sourceCode" id="cb13"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb13-1"><a href="lec18.html#cb13-1"></a>$ <span class="bu">time</span> ./count 1 1000000000</span>
+<span id="cb13-2"><a href="lec18.html#cb13-2"></a><span class="ex">cpu</span> = 1, count = 1000000000</span>
+<span id="cb13-3"><a href="lec18.html#cb13-3"></a><span class="ex">1.50user</span> 0.00system 0:01.51elapsed 99%CPU (0avgtext+0avgdata 1728maxresident)<span class="ex">k</span></span>
+<span id="cb13-4"><a href="lec18.html#cb13-4"></a><span class="ex">0inputs+0outputs</span> (0major+80minor)<span class="ex">pagefaults</span> 0swaps</span>
+<span id="cb13-5"><a href="lec18.html#cb13-5"></a></span>
+<span id="cb13-6"><a href="lec18.html#cb13-6"></a>$ <span class="bu">time</span> ./count 2 500000000</span>
+<span id="cb13-7"><a href="lec18.html#cb13-7"></a><span class="ex">cpu</span> = 2, count = 1000000000</span>
+<span id="cb13-8"><a href="lec18.html#cb13-8"></a><span class="ex">1.61user</span> 0.00system 0:00.80elapsed 199%CPU (0avgtext+0avgdata 1644maxresident)<span class="ex">k</span></span>
+<span id="cb13-9"><a href="lec18.html#cb13-9"></a><span class="ex">0inputs+0outputs</span> (0major+80minor)<span class="ex">pagefaults</span> 0swaps</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="attempt-4-using-locks"><div>
+<h1>Attempt 4: using locks</h1>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource c numberLines"><code class="sourceCode c"><span id="cb14-1"><a href="lec18.html#cb14-1"></a>    <span class="dt">int</span> local = <span class="dv">0</span>;</span>
+<span id="cb14-2"><a href="lec18.html#cb14-2"></a>    <span class="cf">for</span> (<span class="dt">register</span> <span class="dt">int</span> i = <span class="dv">0</span>; i &lt; cnt; i++)</span>
+<span id="cb14-3"><a href="lec18.html#cb14-3"></a>      local ++;</span>
+<span id="cb14-4"><a href="lec18.html#cb14-4"></a></span>
+<span id="cb14-5"><a href="lec18.html#cb14-5"></a>    acquire(&amp;lock);</span>
+<span id="cb14-6"><a href="lec18.html#cb14-6"></a>    count += local;</span>
+<span id="cb14-7"><a href="lec18.html#cb14-7"></a>    release(&amp;lock)</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="result-3"><div>
+<h1>Result</h1>
+<ul>
+<li>Try, <code>while true; do ./count 2 10 | grep 10 ; done</code></li>
+</ul>
+<div class="sourceCode" id="cb15"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb15-1"><a href="lec18.html#cb15-1"></a>$ <span class="bu">time</span> ./count 1 1000000000</span>
+<span id="cb15-2"><a href="lec18.html#cb15-2"></a><span class="ex">cpu</span> = 1, count = 1000000000</span>
+<span id="cb15-3"><a href="lec18.html#cb15-3"></a><span class="ex">1.41user</span> 0.00system 0:01.41elapsed 99%CPU (0avgtext+0avgdata 1584maxresident)<span class="ex">k</span></span>
+<span id="cb15-4"><a href="lec18.html#cb15-4"></a><span class="ex">0inputs+0outputs</span> (0major+75minor)<span class="ex">pagefaults</span> 0swaps</span>
+<span id="cb15-5"><a href="lec18.html#cb15-5"></a></span>
+<span id="cb15-6"><a href="lec18.html#cb15-6"></a>$ <span class="bu">time</span> ./count 2 500000000</span>
+<span id="cb15-7"><a href="lec18.html#cb15-7"></a><span class="ex">cpu</span> = 2, count = 1000000000</span>
+<span id="cb15-8"><a href="lec18.html#cb15-8"></a><span class="ex">1.44user</span> 0.00system 0:00.72elapsed 200%CPU (0avgtext+0avgdata 1596maxresident)<span class="ex">k</span></span>
+<span id="cb15-9"><a href="lec18.html#cb15-9"></a><span class="ex">0inputs+0outputs</span> (0major+78minor)<span class="ex">pagefaults</span> 0swaps</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="locks"><div>
+<h1>Locks</h1>
+<ul>
+<li><mark>Mutual exclusion</mark>: only one core can hold a given lock
+<ul>
+<li>concurrent access to the same memory location, at least one write</li>
+<li>example: <code>acquire(l); x = x + 1; release(l);</code></li>
+</ul></li>
+<li><mark>Serialize</mark> critical section: hide intermediate state
+<ul>
+<li>another example: transfer money from account A to B</li>
+<li><code>put(a + 100)</code> and <code>put(b - 100)</code> must be both effective, or neither</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="strawman-locking"><div>
+<h1>Strawman: locking</h1>
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource c numberLines"><code class="sourceCode c"><span id="cb16-1"><a href="lec18.html#cb16-1"></a>    <span class="kw">struct</span> lock { <span class="dt">int</span> locked; };</span>
+<span id="cb16-2"><a href="lec18.html#cb16-2"></a></span>
+<span id="cb16-3"><a href="lec18.html#cb16-3"></a>    <span class="dt">void</span> acquire(<span class="kw">struct</span> lock *l) {</span>
+<span id="cb16-4"><a href="lec18.html#cb16-4"></a>      <span class="cf">for</span> (;;) {</span>
+<span id="cb16-5"><a href="lec18.html#cb16-5"></a>        <span class="cf">if</span> (l=&gt;locked == <span class="dv">0</span>) { <span class="co">// A: test</span></span>
+<span id="cb16-6"><a href="lec18.html#cb16-6"></a>          l=&gt;locked = <span class="dv">1</span>;      <span class="co">// B: set</span></span>
+<span id="cb16-7"><a href="lec18.html#cb16-7"></a>          <span class="cf">return</span>;</span>
+<span id="cb16-8"><a href="lec18.html#cb16-8"></a>        }</span>
+<span id="cb16-9"><a href="lec18.html#cb16-9"></a>      }</span>
+<span id="cb16-10"><a href="lec18.html#cb16-10"></a>    }</span>
+<span id="cb16-11"><a href="lec18.html#cb16-11"></a></span>
+<span id="cb16-12"><a href="lec18.html#cb16-12"></a>    <span class="dt">void</span> release(<span class="kw">struct</span> lock *l) {</span>
+<span id="cb16-13"><a href="lec18.html#cb16-13"></a>      l=&gt;locked = <span class="dv">0</span>;</span>
+<span id="cb16-14"><a href="lec18.html#cb16-14"></a>    }</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="relying-on-an-atomic-operation"><div>
+<h1>Relying on an atomic operation</h1>
+<ul>
+<li>Q: correctness? performance?</li>
+</ul>
+<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource c numberLines"><code class="sourceCode c"><span id="cb17-1"><a href="lec18.html#cb17-1"></a>    <span class="kw">struct</span> lock { <span class="dt">int</span> locked; };</span>
+<span id="cb17-2"><a href="lec18.html#cb17-2"></a></span>
+<span id="cb17-3"><a href="lec18.html#cb17-3"></a>    <span class="dt">void</span> acquire(<span class="kw">struct</span> lock *l) {</span>
+<span id="cb17-4"><a href="lec18.html#cb17-4"></a>      <span class="cf">for</span> (;;) {</span>
+<span id="cb17-5"><a href="lec18.html#cb17-5"></a>        <span class="cf">if</span> (xchg(&amp;l=&gt;locked, <span class="dv">1</span>) == <span class="dv">0</span>)</span>
+<span id="cb17-6"><a href="lec18.html#cb17-6"></a>          <span class="cf">return</span>;</span>
+<span id="cb17-7"><a href="lec18.html#cb17-7"></a>      }</span>
+<span id="cb17-8"><a href="lec18.html#cb17-8"></a>    }</span>
+<span id="cb17-9"><a href="lec18.html#cb17-9"></a></span>
+<span id="cb17-10"><a href="lec18.html#cb17-10"></a>    <span class="dt">void</span> release(<span class="kw">struct</span> lock *l) {</span>
+<span id="cb17-11"><a href="lec18.html#cb17-11"></a>      xchg(&amp;l=&gt;locked, <span class="dv">0</span>);</span>
+<span id="cb17-12"><a href="lec18.html#cb17-12"></a>    }</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="different-aspects-of-performance"><div>
+<h1>Different aspects of performance?</h1>
+<ul>
+<li>Q: what about its performance with the increasing number of cpus?</li>
+<li>DEMO: in 80-core machine (160!)</li>
+</ul>
+<div class="sourceCode" id="cb18"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb18-1"><a href="lec18.html#cb18-1"></a> ; <span class="kw">in</span> <span class="ex">optimus</span>:</span>
+<span id="cb18-2"><a href="lec18.html#cb18-2"></a>   $ <span class="bu">cd</span> lock</span>
+<span id="cb18-3"><a href="lec18.html#cb18-3"></a>   $ <span class="ex">./count-mp.py</span> 160 1000000</span>
+<span id="cb18-4"><a href="lec18.html#cb18-4"></a> ; <span class="kw">in</span> <span class="ex">host</span></span>
+<span id="cb18-5"><a href="lec18.html#cb18-5"></a>   $ <span class="fu">scp</span> optimus:lock/plot.dat .</span>
+<span id="cb18-6"><a href="lec18.html#cb18-6"></a>   $ <span class="ex">plot.py</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="results-on-the-80-core-machine"><div>
+<h1>Results on the 80-core machine</h1>
+<p style="text-align:center;margin:0"><img src="img/plot-inc.png" style="width:60%"/></p>
+<ul>
+<li>Y-axis: sec, X-axis: #core</li>
+</ul>
+</div></section>
+<section class="slide level1" id="results-on-the-80-core-machine-1"><div>
+<h1>Results on the 80-core machine</h1>
+<p style="text-align:center;margin:0"><img src="img/plot-merge.png" style="width:60%"/></p>
+<ul>
+<li>Y-axis: sec, X-axis: #core</li>
+</ul>
+</div></section>
+<section class="slide level1" id="results-on-the-80-core-machine-2"><div>
+<h1>Results on the 80-core machine</h1>
+<p style="text-align:center;margin:0"><img src="img/plot-atomic.png" style="width:60%"/></p>
+<ul>
+<li>Y-axis: sec, X-axis: #core</li>
+</ul>
+</div></section>
+<section class="slide level1" id="results-on-the-80-core-machine-3"><div>
+<h1>Results on the 80-core machine</h1>
+<p style="text-align:center;margin:0"><img src="img/plot-spinlock.png" style="width:60%"/></p>
+<ul>
+<li>Y-axis: sec, X-axis: #core</li>
+</ul>
+</div></section>
+<section class="slide level1" id="lock-in-rustos"><div>
+<h1>Lock in RustOS</h1>
+<div class="sourceCode" id="cb19"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb19-1"><a href="lec18.html#cb19-1"></a><span class="kw">impl</span><span class="op">&lt;</span>T<span class="op">&gt;</span> Mutex<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb19-2"><a href="lec18.html#cb19-2"></a>    <span class="kw">pub</span> <span class="kw">fn</span> lock(<span class="op">&amp;</span><span class="kw">self</span>) <span class="op">-&gt;</span> MutexGuard<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb19-3"><a href="lec18.html#cb19-3"></a>        <span class="kw">if</span> <span class="op">!</span>is_mmu_ready() <span class="op">{</span> <span class="kw">return</span> MutexGuard <span class="op">{</span> lock<span class="op">:</span> <span class="op">&amp;</span><span class="kw">self</span> <span class="op">};</span> <span class="op">}</span></span>
+<span id="cb19-4"><a href="lec18.html#cb19-4"></a>        <span class="kw">loop</span> <span class="op">{</span></span>
+<span id="cb19-5"><a href="lec18.html#cb19-5"></a>            <span class="kw">if</span> <span class="op">!</span><span class="kw">self</span><span class="op">.</span>locked<span class="op">.</span>swap(<span class="cn">true</span><span class="op">,</span> <span class="pp">Ordering::</span>Acquire) <span class="op">{</span></span>
+<span id="cb19-6"><a href="lec18.html#cb19-6"></a>                <span class="kw">return</span> MutexGuard <span class="op">{</span> lock<span class="op">:</span> <span class="op">&amp;</span><span class="kw">self</span> <span class="op">};</span></span>
+<span id="cb19-7"><a href="lec18.html#cb19-7"></a>            <span class="op">}</span></span>
+<span id="cb19-8"><a href="lec18.html#cb19-8"></a>        <span class="op">}</span></span>
+<span id="cb19-9"><a href="lec18.html#cb19-9"></a>    <span class="op">}</span></span>
+<span id="cb19-10"><a href="lec18.html#cb19-10"></a>    <span class="kw">fn</span> unlock(<span class="op">&amp;</span><span class="kw">self</span>) <span class="op">{</span></span>
+<span id="cb19-11"><a href="lec18.html#cb19-11"></a>        <span class="kw">if</span> <span class="op">!</span>is_mmu_ready() <span class="op">{</span> <span class="kw">return</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb19-12"><a href="lec18.html#cb19-12"></a></span>
+<span id="cb19-13"><a href="lec18.html#cb19-13"></a>        <span class="kw">self</span><span class="op">.</span>locked<span class="op">.</span>store(<span class="cn">false</span><span class="op">,</span> <span class="pp">Ordering::</span>Release)<span class="op">;</span></span>
+<span id="cb19-14"><a href="lec18.html#cb19-14"></a>    <span class="op">}</span></span>
+<span id="cb19-15"><a href="lec18.html#cb19-15"></a><span class="op">}</span></span></code></pre></div>
+<ul>
+<li>Ref. <a href="https://doc.rust-lang.org/nomicon/atomics.html">Nomicon: Atomics</a>, <a href="http://eel.is/c++draft/atomics.order">C++ Atomics: Order and consistency</a></li>
+</ul>
+</div></section>
+<section class="slide level1" id="note-on-terminology"><div>
+<h1>Note on terminology</h1>
+<ul>
+<li>Non-blocking synchronization → <code>spinlock</code></li>
+<li>Blocking synchronization → <code>mutex</code> (sleeping locks)</li>
+</ul>
+</div></section>
+<section class="slide level1" id="lock-in-aarchlinux64"><div>
+<h1>Lock in AArch/Linux64</h1>
+<p style="text-align:center;margin:0"><img src="img/aarch64-lock.png" style="width:50%"/></p>
+<ul>
+<li>Ref. <a href="https://elixir.bootlin.com/linux/v4.4/source/arch/arm64/include/asm/spinlock.h">Spinlock in AArch64/Linux</a></li>
+</ul>
+</div></section>
+<section class="slide level1" id="multicore-in-rpi3-armstub8.s"><div>
+<h1>Multicore in Rpi3 (<a href="https://github.com/raspberrypi/tools/blob/master/armstubs/armstub8.S">armstub8.S</a>)</h1>
+<div class="sourceCode" id="cb20"><pre class="sourceCode S"><code class="sourceCode gnuassembler"><span id="cb20-1"><a href="lec18.html#cb20-1"></a><span class="kw">_start:</span></span>
+<span id="cb20-2"><a href="lec18.html#cb20-2"></a>    ...</span>
+<span id="cb20-3"><a href="lec18.html#cb20-3"></a>    adr x5, spin_cpu0</span>
+<span id="cb20-4"><a href="lec18.html#cb20-4"></a><span class="kw">secondary_spin:</span></span>
+<span id="cb20-5"><a href="lec18.html#cb20-5"></a>    wfe</span>
+<span id="cb20-6"><a href="lec18.html#cb20-6"></a>    ldr x4, [x5, x6, lsl <span class="co">#3]</span></span>
+<span id="cb20-7"><a href="lec18.html#cb20-7"></a>    cbz x4, secondary_spin</span>
+<span id="cb20-8"><a href="lec18.html#cb20-8"></a></span>
+<span id="cb20-9"><a href="lec18.html#cb20-9"></a>...</span>
+<span id="cb20-10"><a href="lec18.html#cb20-10"></a><span class="kw">.org</span> <span class="bn">0xd8</span></span>
+<span id="cb20-11"><a href="lec18.html#cb20-11"></a><span class="kw">.globl</span> spin_cpu0</span>
+<span id="cb20-12"><a href="lec18.html#cb20-12"></a><span class="kw">spin_cpu0:</span></span>
+<span id="cb20-13"><a href="lec18.html#cb20-13"></a>    <span class="kw">.quad</span> <span class="dv">0</span></span>
+<span id="cb20-14"><a href="lec18.html#cb20-14"></a></span>
+<span id="cb20-15"><a href="lec18.html#cb20-15"></a><span class="kw">.org</span> <span class="bn">0xe0</span></span>
+<span id="cb20-16"><a href="lec18.html#cb20-16"></a><span class="kw">.globl</span> spin_cpu1</span>
+<span id="cb20-17"><a href="lec18.html#cb20-17"></a><span class="kw">spin_cpu1:</span></span>
+<span id="cb20-18"><a href="lec18.html#cb20-18"></a>    <span class="kw">.quad</span> <span class="dv">0</span></span>
+<span id="cb20-19"><a href="lec18.html#cb20-19"></a>...</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="waking-up-application-cores-in-rustos"><div>
+<h1>Waking up application cores in RustOS</h1>
+<div class="sourceCode" id="cb21"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb21-1"><a href="lec18.html#cb21-1"></a>    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> initialize_app_cores(<span class="op">&amp;</span><span class="kw">self</span>) <span class="op">{</span></span>
+<span id="cb21-2"><a href="lec18.html#cb21-2"></a>        <span class="kw">for</span> core <span class="kw">in</span> <span class="dv">1</span><span class="op">..=</span><span class="dv">3</span> <span class="op">{</span></span>
+<span id="cb21-3"><a href="lec18.html#cb21-3"></a>            <span class="kw">let</span> v <span class="op">=</span> <span class="pp">pi::common::</span>SPINNING_BASE<span class="op">.</span>add(core)<span class="op">;</span></span>
+<span id="cb21-4"><a href="lec18.html#cb21-4"></a>            v<span class="op">.</span>write_volatile(<span class="kw">crate</span><span class="pp">::init::</span>start2 <span class="kw">as</span> <span class="dt">usize</span>)<span class="op">;</span></span>
+<span id="cb21-5"><a href="lec18.html#cb21-5"></a>            sev()<span class="op">;</span></span>
+<span id="cb21-6"><a href="lec18.html#cb21-6"></a></span>
+<span id="cb21-7"><a href="lec18.html#cb21-7"></a>            <span class="kw">while</span> v<span class="op">.</span>read_volatile() <span class="op">!=</span> <span class="dv">0</span> <span class="op">{</span></span>
+<span id="cb21-8"><a href="lec18.html#cb21-8"></a>                spin_sleep(<span class="pp">core::time::Duration::</span>from_millis(<span class="dv">200</span>))<span class="op">;</span></span>
+<span id="cb21-9"><a href="lec18.html#cb21-9"></a>            <span class="op">}</span></span>
+<span id="cb21-10"><a href="lec18.html#cb21-10"></a>        <span class="op">}</span></span>
+<span id="cb21-11"><a href="lec18.html#cb21-11"></a>    <span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="running-fib-in-rustos"><div>
+<h1>Running ‘/fib’ in RustOS</h1>
+<ul>
+<li>Q: execution time on one core vs four cores! (in Lab5)</li>
+</ul>
+<div class="sourceCode" id="cb22"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb22-1"><a href="lec18.html#cb22-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> initialize_scheduler(<span class="op">&amp;</span><span class="kw">self</span>) <span class="op">{</span></span>
+<span id="cb22-2"><a href="lec18.html#cb22-2"></a>        <span class="kw">let</span> <span class="kw">mut</span> inner <span class="op">=</span> <span class="kw">self</span><span class="op">.</span><span class="dv">0</span><span class="op">.</span>lock()<span class="op">;</span></span>
+<span id="cb22-3"><a href="lec18.html#cb22-3"></a>        <span class="kw">if</span> <span class="kw">let</span> <span class="cn">None</span> <span class="op">=</span> <span class="op">*</span>inner <span class="op">{</span></span>
+<span id="cb22-4"><a href="lec18.html#cb22-4"></a>            <span class="co">// populate userspace processes as needed</span></span>
+<span id="cb22-5"><a href="lec18.html#cb22-5"></a>            <span class="kw">let</span> <span class="kw">mut</span> scheduler <span class="op">=</span> <span class="pp">Scheduler::</span>new()<span class="op">;</span></span>
+<span id="cb22-6"><a href="lec18.html#cb22-6"></a>            <span class="kw">for</span> pn <span class="kw">in</span> <span class="op">&amp;</span>[<span class="st">"/fib"</span><span class="op">,</span> <span class="st">"/fib"</span><span class="op">,</span> <span class="st">"/fib"</span><span class="op">,</span> <span class="st">"/fib"</span>] <span class="op">{</span></span>
+<span id="cb22-7"><a href="lec18.html#cb22-7"></a>                scheduler<span class="op">.</span>add(<span class="pp">Process::</span>load(pn)<span class="op">.</span>unwrap())<span class="op">;</span></span>
+<span id="cb22-8"><a href="lec18.html#cb22-8"></a>            <span class="op">}</span></span>
+<span id="cb22-9"><a href="lec18.html#cb22-9"></a></span>
+<span id="cb22-10"><a href="lec18.html#cb22-10"></a>            <span class="op">*</span>inner <span class="op">=</span> <span class="cn">Some</span>(scheduler)<span class="op">;</span></span>
+<span id="cb22-11"><a href="lec18.html#cb22-11"></a>        <span class="op">}</span></span>
+<span id="cb22-12"><a href="lec18.html#cb22-12"></a>    <span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="your-next-steps"><div>
+<h1>Your next steps</h1>
+<ul>
+<li>Please check, if you are interested in:
+<ol type="1">
+<li>Rust 9: Concurrency (Watch: <a href="https://youtu.be/lJ3NC-R3gSI">Rust’s Journey to Async/Await</a>)</li>
+<li><a href="https://os.phil-opp.com/async-await/">Writing an OS in Rust: Async/Await</a></li>
+<li>Send/Sync in <a href="https://doc.rust-lang.org/book/ch16-04-extensible-concurrency-sync-and-send.html">Rust Book</a></li>
+<li>Send/Sync in <a href="https://doc.rust-lang.org/nomicon/send-and-sync.html">Nomicon</a></li>
+<li><a href="https://stackoverflow.com/questions/59428096/understanding-the-send-trait">Understanding the Send trait</a></li>
+</ol></li>
+</ul>
+<p>→ Lab5 (release soon!)</p>
+</div></section>
+<section class="slide level1" id="references"><div>
+<h1>References</h1>
+<ul>
+<li><a href="https://static.docs.arm.com/100934/0100/armv8_a_synchronization_primitives_100934_0100_en.pdf">ARMv8-A Synchronization primitives</a></li>
+<li><a href="https://github.com/torvalds/linux/blob/master/Documentation/arm64/booting.rst">Booting AArch64 Linux</a></li>
+</ul>
+</div></section>
+<div class="progress"><div></div></div>
+<script src="../shower/js/shower.js"></script>
+</body>
+</html>

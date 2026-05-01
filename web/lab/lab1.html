@@ -1,0 +1,776 @@
+
+
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Lab 1: Bootstrapping Raspberry Pi &mdash; CS-3210, Spring 2020 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lab 2: Shell and Bootloader" href="lab2.html" />
+    <link rel="prev" title="Lab 0: Rustlings" href="lab0.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> CS-3210, Spring 2020
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../info.html">General Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cal.html">Schedule</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../lab.html">Lab</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tools.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab0.html">Lab 0: Rustlings</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="lab1.html#">Lab 1: Bootstrapping Raspberry Pi</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="lab1.html#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lab1.html#phase-0-preflight-check">Phase 0: Preflight Check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lab1.html#phase-1-baking-pi">Phase 1: Baking Pi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lab1.html#phase-2-led-there-be-light">Phase 2: LED There Be Light</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lab1.html#phase-3-shining-c">Phase 3: Shining C</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lab1.html#phase-4-rusting-away">Phase 4: Rusting Away</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="lab2.html">Lab 2: Shell and Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab3.html">Lab 3: FAT32 Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab4.html">Lab 4: Preemptive Multitasking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab5.html">Lab 5: Multicore and Networking</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proj.html">Final Project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refs.html">Reference Materials</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CS-3210, Spring 2020</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../lab.html">Lab</a> &raquo;</li>
+        
+      <li>Lab 1: Bootstrapping Raspberry Pi</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/lab/lab1.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="lab-1-bootstrapping-raspberry-pi">
+<h1>Lab 1: Bootstrapping Raspberry Pi<a class="headerlink" href="lab1.html#lab-1-bootstrapping-raspberry-pi" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><strong>Handed out:</strong> Tuesday, January 21, 2020</p></li>
+<li><p><strong>Due:</strong> Monday, January 27, 2020</p></li>
+</ul>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="lab1.html#introduction" title="Permalink to this headline">¶</a></h2>
+<p>In this assignment, you will set up and test a Raspberry Pi 3,
+ARM64 development environment for your use throughout the rest of
+the course. You’ll install the necessary tools and write your
+first bare-metal application, an LED blinky program, in two
+languages: C and Rust.</p>
+<p>This assignment is divided into 4 phases. In the first phase,
+you’ll install the necessary software to communicate with your Pi
+from your machine. You’ll also ensure that your Pi works as
+expected by running a pre-compiled program. In the second phase,
+you’ll connect GPIO pin 16 on your Raspberry Pi to an LED
+and run a second pre-compiled program to ensure your
+connections are sound. In the third phase, you’ll write,
+cross-compile, and link a C program that toggles GPIO pin 16 on and off,
+blinking the LED connected to your Pi. Finally, in phase 4, you’ll
+write, cross-compile, and link the same program
+in <a class="reference external" href="https://www.rust-lang.org/en-US/">Rust</a>.</p>
+</div>
+<div class="section" id="phase-0-preflight-check">
+<h2>Phase 0: Preflight Check<a class="headerlink" href="lab1.html#phase-0-preflight-check" title="Permalink to this headline">¶</a></h2>
+<p>First and foremost,
+check that your Raspberry Pi kit
+includes all of the following materials:</p>
+<ul class="simple">
+<li><p>1 x Raspberry Pi 3/B/B+</p></li>
+<li><p>1 x microSD card (4-32GB)</p></li>
+<li><p>1 x microSD reader</p></li>
+</ul>
+<p>We will provide you these items in class:</p>
+<ul class="simple">
+<li><p>1 x CP2102 USB</p></li>
+<li><p>4 x female-female jumper cables</p></li>
+<li><p>5 x multicolored LEDs</p></li>
+<li><p>5 x 100 ohm resistors</p></li>
+<li><p>10 x female-male DuPont jumper cables</p></li>
+</ul>
+<p>Electronics are sensitive to electrostatic discharge,
+so ensure that you ground yourself by
+touching something conductive before touching any electronics.
+Prepare two male to female jumper cables for use as well as one
+resistor (any resistor!) and one LED. Finally, ready the USB
+microSD card adapter.</p>
+<div class="section" id="getting-the-skeleton-code">
+<h3>Getting the Skeleton Code<a class="headerlink" href="lab1.html#getting-the-skeleton-code" title="Permalink to this headline">¶</a></h3>
+<p>To get the skeleton code for lab1,
+you should fetch the updates
+from our git repository
+to your development machine.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ git fetch skeleton
+$ git merge skeleton/lab1
+</pre></div>
+</div>
+<p>This is the directory structure of our repository.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>.
+├── bin : common binaries/utilities
+├── doc : reference documents
+├── ext : external files (e.g., resources for testing)
+└── tut : tutorial/practices
+    ├── 0-rustlings
+    └── 1-blinky : this contains files for lab1
+</pre></div>
+</div>
+<p>As your changes in the previous lab are in <code class="docutils literal notranslate"><span class="pre">tut/0-rustlings</span></code>,
+it’s unlikely that the merging process should be seamless.
+If not, please
+<a class="reference external" href="https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging">resolve the conflict</a>
+and proceed to the next phase.</p>
+<p>Feel free to explore the contents of the repository.</p>
+</div>
+</div>
+<div class="section" id="phase-1-baking-pi">
+<h2>Phase 1: Baking Pi<a class="headerlink" href="lab1.html#phase-1-baking-pi" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/uart.png"><img alt="../_images/uart.png" src="../_images/uart.png" style="width: 240px;" /></a>
+</div>
+<p>The primary means through which you’ll be powering and
+communicating with your Pi is via a CP2102 USB module. That’s the
+red USB dongle with the five pins.</p>
+<p>If you are working on virtual machine, you need to configure some
+setting to enable USB port for microSD card adapter and CP2102.
+Please refer the <a class="reference external" href="tools.html">Tools</a> page if you haven’t set up yet.</p>
+<p>To test if your CP2102 is working properly, plug it in to
+a USB port of the development machine
+with the <strong>yellow cap attached</strong>.
+The cap should connext TXD and RXD pins of the serial device.
+It simply wires both input and output pins of the serial,
+so you will receive what you send.</p>
+<p>To see the data you receive from the module,
+you’ll need to run a serial console emulator that connects to the CP2102
+module and reads the incoming data. We’ll use
+<a class="reference external" href="https://www.gnu.org/software/screen/manual/screen.html#Overview">screen</a>
+since it comes preinstalled on Linux. Recalling the
+<code class="docutils literal notranslate"><span class="pre">/dev</span></code> path for your CP2102 module (this will likely be <code class="docutils literal notranslate"><span class="pre">/dev/ttyUSB0</span></code>),
+connect to the CP2102 USB module with screen by running:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ screen /dev/&lt;your-path&gt; <span class="m">115200</span>
+</pre></div>
+</div>
+<p>You may have to use <code class="docutils literal notranslate"><span class="pre">sudo</span></code> to run the command.
+Alternatively, you can add yourself to the <code class="docutils literal notranslate"><span class="pre">dialout</span></code> user group
+to avoid using <code class="docutils literal notranslate"><span class="pre">sudo</span></code>:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ sudo gpasswd --add &lt;your-username&gt; dialout
+</pre></div>
+</div>
+<p>If everything goes well,
+you will see what you type in the <code class="docutils literal notranslate"><span class="pre">screen</span></code> console
+as well as the small led lights on the USB module blinking
+whenever you type.
+If your CP2102 works as expected,
+it’s time to wire CP2102 to Raspberry Pi. To exit <code class="docutils literal notranslate"><span class="pre">screen</span></code>, use <code class="docutils literal notranslate"><span class="pre">&lt;ctrl-a&gt;</span> <span class="pre">k</span></code>
+then answer <code class="docutils literal notranslate"><span class="pre">y</span></code> at the prompt.</p>
+<div class="section" id="powering-the-pi">
+<h3>Powering the Pi<a class="headerlink" href="lab1.html#powering-the-pi" title="Permalink to this headline">¶</a></h3>
+<p>First, disconnect the CP2102 module from your computer. Now connect the
+Raspberry Pi to the CP2102 module using the
+four female-female jumper cables.
+The table below shows which pins on the CP2102 module you should
+connect to which pins on the Raspberry Pi. You can see the CP2102 module
+pins’ names if you look at the back of the module’s board.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 42%" />
+<col style="width: 58%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>CP2102 Pin</p></th>
+<th class="head"><p>Pi Physical Pin</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>+5v</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-odd"><td><p>GND</p></td>
+<td><p>6</p></td>
+</tr>
+<tr class="row-even"><td><p>RXD</p></td>
+<td><p>8</p></td>
+</tr>
+<tr class="row-odd"><td><p>TXD</p></td>
+<td><p>10</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Here’s how the pins are numbered on the Raspberry Pi 3:</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/pi3-gpio-pinout.svg"><img alt="../_images/pi3-gpio-pinout.svg" src="../_images/pi3-gpio-pinout.svg" width="550px" /></a>
+</div>
+<p>Here’s what the connections should look like
+(connections not ordered in this pic, just look at the name of the pins):</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/usb-ttl-pi3.png"><img alt="../_images/usb-ttl-pi3.png" src="../_images/usb-ttl-pi3.png" style="width: 450px;" /></a>
+</div>
+<p>Double-check, triple-check, and quadruple-check your connections!
+Then, get a friend to double-check your connections! Incorrect
+wiring can result in a fried Raspberry Pi, which will result in an
+automatic F in this course. Okay, that last bit isn’t true, but
+Raspberry Pi 3’s are expensive, and we don’t want to pass out
+additional ones if we can prevent it. So, quintuple-check your
+connections before continuing!</p>
+<p>If you’re confident in your connections, it’s time to plug in your
+CP2102 module into your computer. If all went well, you should see
+a red LED light on your Raspberry Pi shining bright.
+Congratulations! You’re now able to power and communicate with
+your Pi.</p>
+</div>
+<div class="section" id="running-programs">
+<h3>Running Programs<a class="headerlink" href="lab1.html#running-programs" title="Permalink to this headline">¶</a></h3>
+<p>As discussed in lecture, the Raspberry Pi loads programs on boot
+from the on-board microSD card. We’ll now set up our microSD card
+with a custom program for the Raspberry Pi to load.</p>
+<p>In the repo, you can find a testing programs:
+<code class="docutils literal notranslate"><span class="pre">ext/rpi3-gpio16</span></code>.
+To load this program on the Pi,
+you can simply copy files in the directory
+to the microSD card -
+take the microSD card and insert it into the USB microSD card reader.
+Then, plug the adapter into your machine. You should see
+a new volume mounted on your machine. (If not, see <a class="reference external" href="tools.html">tools</a> page)
+Format the microSD card with <em>FAT32</em> filesystem.
+Then copy the all files inside
+the directory
+(i.e., <code class="docutils literal notranslate"><span class="pre">bootcode.bin</span></code>, <code class="docutils literal notranslate"><span class="pre">config.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">fixup.dat</span></code>, <code class="docutils literal notranslate"><span class="pre">start.elf</span></code> and <code class="docutils literal notranslate"><span class="pre">kernel8.img</span></code>),
+to the root of the microSD card.
+As discussed in lecture, these are four of the five files read by
+the GPU on boot. The fifth, <code class="docutils literal notranslate"><span class="pre">kernel8.img</span></code>, is the boot program,
+which we are about to install.</p>
+<div class="note admonition">
+<p class="admonition-title">What are bootcode.bin, config.txt, and start.elf?</p>
+<p>These specially-named files are recognized by the Raspberry
+Pi’s GPU on boot-up and used to configure and boostrap the
+system. <code class="docutils literal notranslate"><span class="pre">bootcode.bin</span></code> is the GPU’s first-stage bootloader.
+Its primary job is to load <code class="docutils literal notranslate"><span class="pre">start.elf</span></code>, the GPU’s
+second-stage bootloader. <code class="docutils literal notranslate"><span class="pre">start.elf</span></code> initializes the ARM CPU,
+configuring it as indicated in <code class="docutils literal notranslate"><span class="pre">config.txt</span></code>, loads
+<code class="docutils literal notranslate"><span class="pre">kernel8.img</span></code> into memory, and instructs the CPU to start
+executing the newly loaded code from <code class="docutils literal notranslate"><span class="pre">kernel8.img</span></code>.</p>
+</div>
+<p>Now, let’s ensure your pi and serial works as expected.
+Having copied all the five files inside <code class="docutils literal notranslate"><span class="pre">ext/rpi3-gpio16</span></code> from the repo to
+the root of the microSD card,unmount the microSD card, disconnect the USB adapter from your
+machine, and remove the microSD card from the USB adapter. Ensure
+your Raspberry Pi 3 isn’t currently powered. Then, insert the
+microSD card into the Rasperry Pi 3. Plug in the Pi. In just a
+short moment, you should see a green LED on the Raspberry Pi board
+blinking very fast. You should also see a red LED on the USB CP2102
+adapter blinking at the same frequency. This indicates that data
+is being sent to/from the Raspberry Pi.</p>
+<p>This process is very tedious and error-prone.
+Feel free to use a script prepared (<cite>bin/install-kernel.py</cite>).
+You can simply specify a kernel or directory
+for installation, like <cite>bin/install-kernel.py ext/rpi3-gpio16</cite>. The script will
+prompt you for the directory where the microSD card was mounted, after you
+provide that, the script will copy all the files inside the directory you gave
+in the arguments to the microSD and unmount the microSD for you; so you can
+directly disconnect it from the computer.</p>
+<p>To see the data the Raspberry Pi is sending, you’ll
+need to run a serial console emulator that connects to the CP2102
+module and reads the incoming data, like described above.</p>
+<div class="warning admonition">
+<p class="admonition-title">Make sure your Pi has enough power</p>
+<p>Your Pi will get its power from your computer, through the CP2102 module.
+Your computer may not supply enough power, which will cause your Pi to
+be under-powered. An under-powered Pi have indeterministic behavior, it may
+even corrupt your microSD card. Make sure that your Pi has enough power by
+checking the red led light on the corner of your Pi: it should be a steady
+ON when your Pi is connected.</p>
+</div>
+</div>
+</div>
+<div class="section" id="phase-2-led-there-be-light">
+<h2>Phase 2: LED There Be Light<a class="headerlink" href="lab1.html#phase-2-led-there-be-light" title="Permalink to this headline">¶</a></h2>
+<p>In this phase, you’ll connect GPIO pin 16 (physical pin 36) on the
+Raspberry Pi to an LED light. You’ll test the LED
+using a pre-compiled binary. Before starting, ensure your
+Raspberry Pi is unplugged.</p>
+<div class="note admonition">
+<p class="admonition-title">Is it <em>safe</em> to simply unplug the USB TTL adapter?</p>
+<p>Yes! On a traditional computer, and later on in the course,
+removing the power source without consideration is a bad idea
+because operations, typically on the disk, may be in-flight.
+Stopping these operations midway can result in damaged hardware
+or inconsistent state on the next boot-up. For now, our Pis
+have no state or moving hardware, so we don’t need to worry
+about this. Feel free to simply unplug its power source!</p>
+</div>
+<div class="section" id="gpio-general-purpose-i-o">
+<h3>GPIO: General Purpose I/O<a class="headerlink" href="lab1.html#gpio-general-purpose-i-o" title="Permalink to this headline">¶</a></h3>
+<p>GPIO stands for General Purpose Input/Output. As the name implies,
+GPIO is a general mechanism for transmitting data/signals into and
+out of some device through electrical pins, known as GPIO pins.</p>
+<p>A GPIO pin can act as either an output or input. When a GPIO pin
+is acting as an output, it can either be set on or off. When on,
+the Raspberry Pi drives the pin at 3.3v. When the GPIO pin is off,
+no current flows through the pin. When a GPIO pin is acting as an
+input, the Raspberry Pi reports whether the pin is being driven at
+3.3v or not.</p>
+<p>GPIO pins are incredibly versatile and can be used to implement a
+wide array of functionality. You can read more about GPIO on the
+Raspberry Pi Foundation’s <a class="reference external" href="https://www.raspberrypi.org/documentation/usage/gpio-plus-and-raspi2/README.md">GPIO Usage
+Documentation</a>.</p>
+</div>
+<div class="section" id="testing-the-led">
+<h3>Testing the LED<a class="headerlink" href="lab1.html#testing-the-led" title="Permalink to this headline">¶</a></h3>
+<p>We’ll start by constructing the circuit below:</p>
+<div class="figure align-default">
+<img alt="../_images/always-on-led-circuit.svg" src="../_images/always-on-led-circuit.svg" /></div>
+<p>This circuit connects an LED to always-on 3.3v power on the
+Raspberry Pi. Note that pin 1 (+3.3v) on the Raspberry Pi should
+go to the <em>longer</em> leg of your LED. The shorter leg is connected
+to the resistor which in-turn is connected to pin 14 (ground) on
+the Pi.</p>
+<p>After you’ve confirmed your connections, plug the Raspberry Pi in.
+Your LED should turn on. After you’ve confirmed that the LED works
+as expected, unplug your Rapsberry Pi. Then, move the jumper cable
+from pin 1 on the Pi to pin 36 (GPIO Pin 16) as illustrated below:</p>
+<div class="figure align-default">
+<img alt="../_images/gpio-16-led-circuit.svg" src="../_images/gpio-16-led-circuit.svg" /></div>
+<p>Having installed our <code class="docutils literal notranslate"><span class="pre">ext/rpi3-gpio16</span></code> kernel in the microSD card, which
+drives GPIO pin 16 on and off repeatedly; once you plug your Pi in with the
+microSD inserted, you should see your LED start blinking.</p>
+</div>
+</div>
+<div class="section" id="phase-3-shining-c">
+<h2>Phase 3: Shining C<a class="headerlink" href="lab1.html#phase-3-shining-c" title="Permalink to this headline">¶</a></h2>
+<p>In this phase, you’ll write the program that produced
+<code class="docutils literal notranslate"><span class="pre">ext/rpi3-gpio16/kernel8.img</span></code> <em>in C</em>.
+You’ll write your code in
+<code class="docutils literal notranslate"><span class="pre">tut/1-blinky/phase3/blinky.c</span></code>.
+To be able to compile C and assembly programs
+for the Raspberry Pi, we’ll use a cross compiler for the
+<code class="docutils literal notranslate"><span class="pre">aarch64-none-elf</span></code> target
+that is in the <code class="docutils literal notranslate"><span class="pre">bin</span></code> directory on the repository.</p>
+<div class="section" id="talking-to-hardware">
+<h3>Talking to Hardware<a class="headerlink" href="lab1.html#talking-to-hardware" title="Permalink to this headline">¶</a></h3>
+<p>The vast majority of modern hardware devices communicate with
+software through <em>memory-mapped I/O</em>. The concept is simple:
+devices expose their functionality through the machine’s memory
+and provide a specification about what will happen if certain
+addresses are read or written to. Addresses are usually separated
+into 32 or 64-bit sized regions known as <em>registers</em>. Registers
+are usually named to indicate their functionality. Registers can
+be read-only, write-only, or read/write.</p>
+<p>How do we know which registers a device exposes, where in memory
+they’re mapped, and what they do? Device manufacturers document
+all of this information in what is typically referred to as a
+“data sheet”, “device manual”, or simply “documentation”. There is
+no widespread format for how devices are documented, and
+documentation quality is hit or miss. Reading and understanding
+hardware documentation is a skill and art.</p>
+</div>
+<div class="section" id="gpio-memory-mapped-interface">
+<h3>GPIO Memory-Mapped Interface<a class="headerlink" href="lab1.html#gpio-memory-mapped-interface" title="Permalink to this headline">¶</a></h3>
+<p>The documentation for many of the peripherals on-board the
+Rasperry Pi can be found in Broadcom’s <a class="reference external" href="https://cs140e.sergio.bz/docs/BCM2837-ARM-Peripherals.pdf">BCM2837 ARM Peripherals
+Manual</a>
+(or in <code class="docutils literal notranslate"><span class="pre">doc/BCM2837-ARM-Peripherals.pdf</span></code>).
+The documentation for GPIO, for example, is on page 89.</p>
+<div class="note admonition">
+<p class="admonition-title">Wait, aren’t we using a BCM2837 chip?</p>
+<p>If you open the manual we’ve linked you to, you’ll see
+references to the BCM2835 chip everywhere. This is because
+we’ve simply taken the documentation for the BCM2835 chip,
+fixed relevant errata, and fixed the title to say BCM2837.</p>
+<p>The BCM2837 and BCM2835 share the same peripherals with the
+same <em>relative</em> memory-mapped interfaces. The main difference
+is that the chips differ in their physical memory
+configuration. This results in the BCM2837 having a peripheral
+physical base address of <code class="docutils literal notranslate"><span class="pre">0x3F000000</span></code> as opposed to the
+BCM2835’s <code class="docutils literal notranslate"><span class="pre">0x20000000</span></code>. But both chips map this range to the
+<em>peripheral</em> base address of <code class="docutils literal notranslate"><span class="pre">0x7E000000</span></code>. In short, a
+peripheral address <code class="docutils literal notranslate"><span class="pre">0x7EXXXXXX</span></code> is at physical address
+<code class="docutils literal notranslate"><span class="pre">0x3FXXXXXX</span></code> on the BCM2837. The “BCM2837” documentation
+we’ve linked to contains this change.</p>
+</div>
+<p>For this assignment, we’ll only need to use the following three
+registers:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 28%" />
+<col style="width: 35%" />
+<col style="width: 11%" />
+<col style="width: 15%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>name</p></th>
+<th class="head"><p>peripheral address</p></th>
+<th class="head"><p>description</p></th>
+<th class="head"><p>size</p></th>
+<th class="head"><p>read/write</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GPFSEL1</p></td>
+<td><p>0x7E200004</p></td>
+<td><p>GPIO Function Select 1</p></td>
+<td><p>32 bits</p></td>
+<td><p>R/W</p></td>
+</tr>
+<tr class="row-odd"><td><p>GPSET0</p></td>
+<td><p>0x7E20001C</p></td>
+<td><p>GPIO Pin Output Set 0</p></td>
+<td><p>32 bits</p></td>
+<td><p>W</p></td>
+</tr>
+<tr class="row-even"><td><p>GPCLR0</p></td>
+<td><p>0x7E200028</p></td>
+<td><p>GPIO Pin Output Clear 0</p></td>
+<td><p>32 bits</p></td>
+<td><p>W</p></td>
+</tr>
+</tbody>
+</table>
+<p>We’ve copied this information directly from page 90 of the
+documentation.</p>
+<p>Now, read the documentation for <code class="docutils literal notranslate"><span class="pre">GPFSELn</span></code> register on pages 91
+and 92. We write to this register to set up a pin as an output or
+input. Which value to which field in register <code class="docutils literal notranslate"><span class="pre">GPFSEL1</span></code> must be
+written so that GPIO pin 16 is set as an output?</p>
+<p>Now, read the documentation for the <code class="docutils literal notranslate"><span class="pre">GPSET0</span></code> and <code class="docutils literal notranslate"><span class="pre">GPCLR0</span></code>
+registers on page 95. We write to <code class="docutils literal notranslate"><span class="pre">GPSET0</span></code> to <em>set</em> a pin (turn
+it on) and write to <code class="docutils literal notranslate"><span class="pre">GPCLR0</span></code> to <em>clear</em> a pin (turn it off).
+Which value do we write to which field in these registers to
+set/clear pin 16?</p>
+</div>
+<div class="section" id="writing-the-code">
+<h3>Writing the Code<a class="headerlink" href="lab1.html#writing-the-code" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">tut/1-blinky/phase3/</span></code> directory in the assignment skeleton contains a
+scaffold for building a binary suitable for running on the
+Raspberry Pi 3. We won’t explain <code class="docutils literal notranslate"><span class="pre">crt0.S</span></code>, <code class="docutils literal notranslate"><span class="pre">layout.ld</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">Makefile</span></code> for now. Instead, you’ll work on <code class="docutils literal notranslate"><span class="pre">blinky.c</span></code>.</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">blinky.c</span></code>, you’ll find that we’ve declared the physical
+addresses of the three relevant registers at the top of the file.
+Your task is to complete the <code class="docutils literal notranslate"><span class="pre">main()</span></code> function so that GPIO pin
+16 is set-up as an output and then continuously set and cleared to
+blink the LED. We’ve also provided rudimentary “sleep” functions
+that stall the CPU for roughly the amount of time the function
+name indicates. You can use these to pause between sets and
+clears.</p>
+<p>When you are ready to test your program, compile it by running
+<code class="docutils literal notranslate"><span class="pre">make</span></code> in your shell. If all goes well, this will create the
+file <code class="docutils literal notranslate"><span class="pre">blinky.bin</span></code> which is our first bare metal program
+running on the Pi. To run the program on the Raspberry Pi,
+copy it as <code class="docutils literal notranslate"><span class="pre">kernel8.img</span></code> to the microSD,
+unmount the microSD,
+and insert the microSD back to your Pi.
+We provide a convenient script to copy the kernel image to the sdcard -
+try <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code>.</p>
+<p>If your program blinks the led as expected, proceed to phase 4.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Pin function selection, setting, and clearing can each be
+implemented in one line of code.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Recall the <code class="docutils literal notranslate"><span class="pre">&lt;&lt;</span></code>, <code class="docutils literal notranslate"><span class="pre">|</span></code>, <code class="docutils literal notranslate"><span class="pre">&amp;</span></code>, and <code class="docutils literal notranslate"><span class="pre">~</span></code> bitwise
+operators in C.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Recall that binary/hex numbers in C are written as
+<code class="docutils literal notranslate"><span class="pre">0b011</span></code> and <code class="docutils literal notranslate"><span class="pre">0x03</span></code>, respectively.</p>
+</div>
+</div>
+</div>
+<div class="section" id="phase-4-rusting-away">
+<h2>Phase 4: Rusting Away<a class="headerlink" href="lab1.html#phase-4-rusting-away" title="Permalink to this headline">¶</a></h2>
+<p>In this phase, you’ll write the same program in phase 3,
+but with Rust! You’ll write your code in <code class="docutils literal notranslate"><span class="pre">tut/1-blinky/phase4/src/main.rs</span></code>.</p>
+<p>All required programs have already been installed
+to your system via <code class="docutils literal notranslate"><span class="pre">bin/setup.sh</span></code> before. Let’s double check.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ make --version
+GNU Make <span class="m">4</span>.1
+...
+$ rustc --version
+rustc <span class="m">1</span>.37.0-nightly <span class="o">(</span>0af8e872e <span class="m">2019</span>-06-30<span class="o">)</span>
+$ cargo xbuild --version
+cargo-xbuild <span class="m">0</span>.5.20
+$ cargo objcopy --version
+cargo-objcopy <span class="m">0</span>.1.7
+</pre></div>
+</div>
+<p>That’s it! You have everything ready for this assignment.</p>
+<div class="warning admonition">
+<p class="admonition-title">Check your Rust compiler version</p>
+<p>Make sure your Rust version matches <code class="docutils literal notranslate"><span class="pre">rustc</span> <span class="pre">1.37.0-nightly</span> <span class="pre">(0af8e872e</span> <span class="pre">2019-06-30)</span></code>.
+The toolchain name for this version is <code class="docutils literal notranslate"><span class="pre">nightly-2019-07-01</span></code>.
+We will use a few unstable features of Rust from this assignment
+(e.g., inline assembly),
+and not matching the compiler version may result in
+spurious compile error due to the incompatibility.</p>
+</div>
+<div class="section" id="id1">
+<h3>Writing the Code<a class="headerlink" href="lab1.html#id1" title="Permalink to this headline">¶</a></h3>
+<p>To write the required code in <code class="docutils literal notranslate"><span class="pre">tut/1-blinky/phase4/src/main.rs</span></code>, you’ll only
+need to know the following Rust:</p>
+<ol class="arabic">
+<li><p>You can read and write from a raw pointer (<code class="docutils literal notranslate"><span class="pre">*mut</span> <span class="pre">T</span></code>) using
+the <a class="reference external" href="https://doc.rust-lang.org/std/ptr/fn.read_volatile.html">read_volatile()</a>
+and <a class="reference external" href="https://doc.rust-lang.org/std/ptr/fn.write_volatile.html">write_volatile()</a> methods.</p>
+<p>For example, if we have the following declarations:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">const</span><span class="w"> </span><span class="n">A</span>: <span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="kt">u32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x12</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="kt">u32</span><span class="p">;</span><span class="w"></span>
+<span class="k">const</span><span class="w"> </span><span class="n">B</span>: <span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="kt">u32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x34</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="kt">u32</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>We can write the 32-bit unsigned integer at address <code class="docutils literal notranslate"><span class="pre">0x12</span></code> to
+<code class="docutils literal notranslate"><span class="pre">0x34</span></code> with the following:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="n">B</span><span class="p">.</span><span class="n">write_volatile</span><span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">read_volatile</span><span class="p">());</span><span class="w"></span>
+</pre></div>
+</div>
+</li>
+<li><p>Local variables can be declared with
+<code class="docutils literal notranslate"><span class="pre">let</span> <span class="pre">variable_name</span> <span class="pre">=</span> <span class="pre">expression;</span></code>.</p>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">A</span></code> declaration from the previous example, we can
+read the value at address <code class="docutils literal notranslate"><span class="pre">0x12</span></code> to a local variable
+<code class="docutils literal notranslate"><span class="pre">value</span></code> as follows:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">A</span><span class="p">.</span><span class="n">read_volatile</span><span class="p">()</span><span class="w"></span>
+</pre></div>
+</div>
+</li>
+<li><p>You can call a function <code class="docutils literal notranslate"><span class="pre">fn</span> <span class="pre">f(param:</span> <span class="pre">usize);</span></code> with
+<code class="docutils literal notranslate"><span class="pre">f(123);</span></code>.</p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">loop</span></code> block can be used to repeat a block infinitely:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">loop</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">do_this_again_and_again</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</li>
+<li><p>Rust defines the following bitwise operators:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">!</span></code>: unary bitwise inversion</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;&lt;</span></code>: left shift binary operator</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code>: right shift binary operator</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">|</span></code>: bitwise OR binary operator</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&amp;</span></code>: bitwise AND binary operator</p></li>
+</ul>
+</li>
+</ol>
+<p>You are now ready to implement the blink program in
+<code class="docutils literal notranslate"><span class="pre">tut/1-blinky/phase4/src/main.rs</span></code>. Translate your C implementation into Rust
+in the <code class="docutils literal notranslate"><span class="pre">kmain</span></code> function. You’ll find that we’ve declared the
+physical addresses of the three relevant registers at the top of
+the file. We’ve also provided a rudimentary “sleep” function that
+stalls the CPU for roughly the amount of time the function name
+indicates. You can use the function to pause between sets and
+clears.</p>
+<p>When you are ready to test your program, compile it by running
+<code class="docutils literal notranslate"><span class="pre">make</span></code> from the <code class="docutils literal notranslate"><span class="pre">phase4</span></code> directory in your shell. If all goes
+well, this will create the file <code class="docutils literal notranslate"><span class="pre">build/blinky.bin</span></code>. You can
+install <code class="docutils literal notranslate"><span class="pre">blinky.bin</span></code> to the microSD via <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code>.
+If your Rust program starts blinking the led,
+you have successfully completed assignment 0!
+Proceed to the next phase for
+submission instructions.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Your Rust and C code should look <em>very</em> similar.</p>
+</div>
+</div>
+<div class="section" id="submission">
+<h3>Submission<a class="headerlink" href="lab1.html#submission" title="Permalink to this headline">¶</a></h3>
+<p>Once you’ve completed the tasks above, you’re done and ready to
+submit! Ensure you’ve committed your changes. Any uncommitted
+changes <em>will not</em> be visible to us, thus unconsidered for grading.</p>
+<p>When you’re ready, push a commit to your GitHub repository
+with a tag named <code class="docutils literal notranslate"><span class="pre">lab1-done</span></code>.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ git status
+$ git add -A
+$ git commit -a -m <span class="s2">&quot;yay, lab1 done!&quot;</span>
+
+$ git tag lab1-done
+$ git push --tags
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="lab2.html" class="btn btn-neutral float-right" title="Lab 2: Shell and Bootloader" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="lab0.html" class="btn btn-neutral float-left" title="Lab 0: Rustlings" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Dec 14, 2021.
+      </span>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    
+
+<script src="../_static/email.js"></script>
+<script src="../_static/custom.js"></script>
+
+
+
+</body>
+</html>

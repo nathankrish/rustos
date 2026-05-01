@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Process and Scheduling</title>
+<meta charset="utf-8"/>
+<meta content="ie=edge" http-equiv="x-ua-compatible"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="../shower/styles/ribbon.css" rel="stylesheet"/>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+  position: relative; left: -1em; text-align: right; vertical-align: baseline;
+  border: none; display: inline-block;
+  -webkit-touch-callout: none; -webkit-user-select: none;
+  -khtml-user-select: none; -moz-user-select: none;
+  -ms-user-select: none; user-select: none;
+  padding: 0 4px; width: 4em;
+  color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+{   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style>
+section pre code {
+  line-height: 1.4 !important;
+  font-size: 20px !important;
+}
+.compact code {
+  line-height: 1.4 !important;
+  font-size: 16px !important;
+}
+ul.compact {
+  line-height: 1.5 !important;
+  font-size: 20px !important;
+}
+.writeup {
+    font-size: 20px !important;
+}
+a.sourceLine { background: none !important; }
+section.region { display: none !important; }
+pre.numberSource { margin-left: 2em; }
+div.sourceCode { overflow: hidden; }
+a.sourceLine::before { text-decoration: none; }
+
+pre > code.sourceCode > span > a:first-child::before { text-decoration: none !important; }
+</style>
+<script src="../shower/js/jquery-2.2.0.min.js"></script>
+</head>
+<body class="shower list">
+<header class="caption">
+<h1>CS3210 Design Operating Systems</h1>
+<p>Taesoo Kim</p>
+</header>
+<header class="caption">
+</header>
+<section class="slide" id="cover">
+<br/><br/><br/><br/>
+<h2>Process and Scheduling</h2>
+<p> Taesoo Kim</p>
+<style>
+ #cover h2 {
+   /* margin:180px 0 0; */
+   color: #666;
+   text-align:center;
+   font-size: 60px;
+   font-weight: bold;
+   margin-bottom: 0em;
+ }
+ #cover p {
+   margin:30px 0 0;
+   text-align:center;
+   font-style:italic;
+   font-size:40px;
+ }
+ </style>
+</section>
+
+<section class="slide level1" id="administrivia"><div>
+<h1>Administrivia</h1>
+<ul>
+<li>First off, be safe/healthy!</li>
+<li>Last miles:
+<ol type="1">
+<li><strong><em>Virtual</em></strong> final project demo/presentation: 7 to 10-min video (DUE: <mark>Apr 13</mark>)</li>
+<li>Final project peer-evaluation (DUE: <mark>Apr 14</mark>/<mark>Apr 16</mark>)</li>
+<li>Final write-up/code (DUE: <mark>May 1</mark>)</li>
+<li>Quiz #2 will be distributed at <mark>9am on Apr 21</mark> (take-home/open-ended, 24h)</li>
+<li>Lab4 (DUE: <mark>Apr 20</mark> w/ 2-week late days)</li>
+</ol></li>
+</ul>
+</div></section>
+<section class="slide level1" id="grading-policy-old"><div>
+<h1>Grading policy (old)</h1>
+<ul>
+<li>Preparation: 10%</li>
+<li>Quiz: 30% (10% + <strong><em>20%</em></strong>)</li>
+<li>Lab: 40%: 8% + 8% + 8% + 8% + <strong><em>8%</em></strong> (<strong><em>bonus 8% for lab5</em></strong>)</li>
+<li>Final project: <strong><em>20%</em></strong>
+<ul>
+<li>Demo &amp; presentation: 15% (peer evaluation)</li>
+<li>Write-up/code: 5% (by TAs)</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="grading-policy-seeking-betterappropriate-one"><div>
+<h1>Grading policy (seeking better/appropriate one)</h1>
+<ul>
+<li><strong>Quiz</strong>: 30% (10% + 20%)
+<ol type="1">
+<li>15% / 15%</li>
+<li>10% / 20%</li>
+<li>higher one for 20% lower one for 10%</li>
+</ol></li>
+<li><strong>Final project</strong>: 20% (15%/5%, demo/write-up)
+<ol type="1">
+<li>15% / 5%</li>
+<li>10% / 10%</li>
+<li>5% / 15%</li>
+</ol></li>
+</ul>
+</div></section>
+<section class="slide level1" id="about-quiz-2"><div>
+<h1>About Quiz 2</h1>
+<ul>
+<li>We will provide “review materials” for Quiz #2 (on <mark>Apr 9</mark>)</li>
+<li>Topics include <mark>Lab 1-4</mark> and <mark>Lec 1-17</mark> (<strong><em>not</em></strong> Lab5 and Lec 18/19)</li>
+<li><mark>24h</mark>, so no rustling-type questions but open-ended/book questions</li>
+</ul>
+</div></section>
+<section class="slide level1" id="qa"><div>
+<h1>Q&amp;A</h1>
+<blockquote>
+<p>Given that it would be impossible for group members to meet in-person to handle final project matters, would expectations for the final project adapt, and if so, how would changes occur?</p>
+</blockquote>
+<p>→ Short answer: we can! The bigger open-source projects like Linux have been developed and maintained (~30y) in that way.</p>
+</div></section>
+<section class="slide level1" id="qa-1"><div>
+<h1>Q&amp;A</h1>
+<blockquote>
+<p>In Lab4, once a process is done running, how does it switch to State::Dead?</p>
+</blockquote>
+<blockquote>
+<p>What do real-time operating systems’ schedulers offer and how do they compare to these mentioned in this excerpt?</p>
+</blockquote>
+<blockquote>
+<p>Is there a way we can compute how the runtime of a process?</p>
+</blockquote>
+</div></section>
+<section class="slide level1" id="agenda"><div>
+<h1>Agenda</h1>
+<ul>
+<li>LEC 15: Interrupt and Exception (Lab4, Phase 1)</li>
+<li>LEC 16: Process and Scheduling (Lab4, Phase 2)</li>
+<li>LEC 17: Virtual Memory (Lab4, Phase 3/4)</li>
+<li>LEC 18/19: Synchronization (Lab5, Phase 1)</li>
+</ul>
+</div></section>
+<section class="slide level1" id="summary-exception-level-execution-states"><div>
+<h1>Summary: Exception level / Execution states</h1>
+<ul>
+<li>A logical separation of software execution privilege
+<ul>
+<li>Similar to hierarchical protection domains (e.g., ring in x86)</li>
+</ul></li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/el.png" style="width:70%"/></p>
+</div></section>
+<section class="slide level1" id="summary-interrupt-handling"><div>
+<h1>Summary: Interrupt handling</h1>
+<p style="text-align:center;margin:0"><img src="img/irq.png" style="width:70%"/></p>
+</div></section>
+<section class="slide level1" id="interrupt-handling-routines"><div>
+<h1>Interrupt handling routines</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb1-1"><a href="lec16.html#cb1-1"></a><span class="at">#[</span>no_mangle<span class="at">]</span></span>
+<span id="cb1-2"><a href="lec16.html#cb1-2"></a><span class="kw">pub</span> <span class="kw">extern</span> <span class="st">"C"</span> <span class="kw">fn</span> handle_exception( <span class="op">...</span> ) <span class="op">{</span></span>
+<span id="cb1-3"><a href="lec16.html#cb1-3"></a>    <span class="kw">match</span> info<span class="op">.</span>kind <span class="op">{</span></span>
+<span id="cb1-4"><a href="lec16.html#cb1-4"></a>        <span class="pp">Kind::</span>Synchronous <span class="op">=&gt;</span> <span class="op">{</span></span>
+<span id="cb1-5"><a href="lec16.html#cb1-5"></a>            <span class="kw">let</span> syndrome <span class="op">=</span> <span class="pp">Syndrome::</span>from(esr)<span class="op">;</span></span>
+<span id="cb1-6"><a href="lec16.html#cb1-6"></a>            <span class="kw">match</span> syndrome <span class="op">{</span></span>
+<span id="cb1-7"><a href="lec16.html#cb1-7"></a>                <span class="pp">Syndrome::</span>Brk(_) <span class="op">=&gt;</span> <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span>
+<span id="cb1-8"><a href="lec16.html#cb1-8"></a>                <span class="pp">Syndrome::</span>Svc(n) <span class="op">=&gt;</span> <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span>
+<span id="cb1-9"><a href="lec16.html#cb1-9"></a>        <span class="op">}</span></span>
+<span id="cb1-10"><a href="lec16.html#cb1-10"></a>        <span class="pp">Kind::</span>Irq <span class="op">=&gt;</span> <span class="op">{</span></span>
+<span id="cb1-11"><a href="lec16.html#cb1-11"></a>            <span class="kw">let</span> ic <span class="op">=</span> <span class="pp">Controller::</span>new()<span class="op">;</span></span>
+<span id="cb1-12"><a href="lec16.html#cb1-12"></a>            <span class="kw">for</span> v <span class="kw">in</span> <span class="pp">Interrupt::</span>iter() <span class="op">{</span></span>
+<span id="cb1-13"><a href="lec16.html#cb1-13"></a>                <span class="kw">if</span> ic<span class="op">.</span>is_pending(v) <span class="op">{</span></span>
+<span id="cb1-14"><a href="lec16.html#cb1-14"></a>                    <span class="kw">crate</span><span class="pp">::</span>IRQ<span class="op">.</span>invoke(v<span class="op">,</span> tf)<span class="op">;</span></span>
+<span id="cb1-15"><a href="lec16.html#cb1-15"></a>                <span class="op">}</span></span>
+<span id="cb1-16"><a href="lec16.html#cb1-16"></a>            <span class="op">}</span></span>
+<span id="cb1-17"><a href="lec16.html#cb1-17"></a>        <span class="op">}</span></span>
+<span id="cb1-18"><a href="lec16.html#cb1-18"></a>        <span class="op">...</span></span>
+<span id="cb1-19"><a href="lec16.html#cb1-19"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="abstraction-process-ref"><div>
+<h1>Abstraction: “process” (<a href="http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-intro.pdf">ref</a>)</h1>
+<ul>
+<li>The problems of a single process model (i.e., firmware)
+<ol type="1">
+<li>Only one program is allowed to run</li>
+<li>Need to develop a program with consideration of running programs</li>
+</ol></li>
+</ul>
+<p>→ How to provide the illusion of owning the hardware?</p>
+</div></section>
+<section class="slide level1" id="wait-how-does-it-related-to-exception-handling"><div>
+<h1>Wait, how does it related to exception handling?</h1>
+<ol type="1">
+<li><strong>Exception level</strong> → provides a strong <em>isolation</em> for <em>user</em> “processes”
+<ul>
+<li>Note, there are <em>kernel</em> processes that you will first implement in Lab4</li>
+</ul></li>
+<li><strong>Interrupt handling</strong> → allowing non-cooperative scheduling of “processes”
+<ul>
+<li>Aka, <em>preemptive multitasking</em></li>
+<li>Guaranteeing <em>preemption</em> of a user process after N ms (e.g., 10-20 ms)</li>
+</ul></li>
+</ol>
+</div></section>
+<section class="slide level1" id="abstraction-process-ref-1"><div>
+<h1>Abstraction: “process” (<a href="http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-intro.pdf">ref</a>)</h1>
+<ul>
+<li>Key idea: abstracting the <em>memory</em> (virtual address space) and CPU (time sharing)</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/loading.png" style="width:40%"/></p>
+</div></section>
+<section class="slide level1" id="process-in-rustos"><div>
+<h1>Process in RustOS</h1>
+<ol type="1">
+<li>Stack/Heap/Code: data associated with the process</li>
+<li>Virtual address space: keeping data structure to maintain address space</li>
+<li>States: scheduling state / execution context</li>
+</ol>
+</div></section>
+<section class="slide level1" id="process-in-rustos-1"><div>
+<h1>Process in RustOS</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb2-1"><a href="lec16.html#cb2-1"></a><span class="co">/// A structure that represents the complete state of a process.</span></span>
+<span id="cb2-2"><a href="lec16.html#cb2-2"></a><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">)]</span></span>
+<span id="cb2-3"><a href="lec16.html#cb2-3"></a><span class="kw">pub</span> <span class="kw">struct</span> Process <span class="op">{</span></span>
+<span id="cb2-4"><a href="lec16.html#cb2-4"></a>    <span class="co">/// The saved trap frame of a process.</span></span>
+<span id="cb2-5"><a href="lec16.html#cb2-5"></a>    <span class="kw">pub</span> context<span class="op">:</span> <span class="dt">Box</span><span class="op">&lt;</span>TrapFrame<span class="op">&gt;,</span></span>
+<span id="cb2-6"><a href="lec16.html#cb2-6"></a>    <span class="co">/// The memory allocation used for the process's stack.</span></span>
+<span id="cb2-7"><a href="lec16.html#cb2-7"></a>    <span class="kw">pub</span> stack<span class="op">:</span> Stack<span class="op">,</span></span>
+<span id="cb2-8"><a href="lec16.html#cb2-8"></a>    <span class="co">/// The page table describing the Virtual Memory of the process</span></span>
+<span id="cb2-9"><a href="lec16.html#cb2-9"></a>    <span class="kw">pub</span> vmap<span class="op">:</span> <span class="dt">Box</span><span class="op">&lt;</span>UserPageTable<span class="op">&gt;,</span></span>
+<span id="cb2-10"><a href="lec16.html#cb2-10"></a>    <span class="co">/// The scheduling state of the process.</span></span>
+<span id="cb2-11"><a href="lec16.html#cb2-11"></a>    <span class="kw">pub</span> state<span class="op">:</span> State<span class="op">,</span></span>
+<span id="cb2-12"><a href="lec16.html#cb2-12"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="scheduling-states-of-process-in-rustos"><div>
+<h1>Scheduling states of process (in RustOS)</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb3-1"><a href="lec16.html#cb3-1"></a><span class="co">/// The scheduling state of a process.</span></span>
+<span id="cb3-2"><a href="lec16.html#cb3-2"></a><span class="kw">pub</span> <span class="kw">enum</span> State <span class="op">{</span></span>
+<span id="cb3-3"><a href="lec16.html#cb3-3"></a>    <span class="co">/// The process is ready to be scheduled.</span></span>
+<span id="cb3-4"><a href="lec16.html#cb3-4"></a>    Ready<span class="op">,</span></span>
+<span id="cb3-5"><a href="lec16.html#cb3-5"></a>    <span class="co">/// The process is waiting on an event to occur before it can</span></span>
+<span id="cb3-6"><a href="lec16.html#cb3-6"></a>    <span class="co">/// be scheduled.</span></span>
+<span id="cb3-7"><a href="lec16.html#cb3-7"></a>    Waiting(EventPollFn)<span class="op">,</span></span>
+<span id="cb3-8"><a href="lec16.html#cb3-8"></a>    <span class="co">/// The process is currently running.</span></span>
+<span id="cb3-9"><a href="lec16.html#cb3-9"></a>    Running<span class="op">,</span></span>
+<span id="cb3-10"><a href="lec16.html#cb3-10"></a>    <span class="co">/// The process is currently dead (ready to be reclaimed).</span></span>
+<span id="cb3-11"><a href="lec16.html#cb3-11"></a>    Dead<span class="op">,</span></span>
+<span id="cb3-12"><a href="lec16.html#cb3-12"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="scheduling-states-of-process-in-rustos-1"><div>
+<h1>Scheduling states of process (in RustOS)</h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb4-1"><a href="lec16.html#cb4-1"></a><span class="co">/// Type of a function used to determine if a process is ready to</span></span>
+<span id="cb4-2"><a href="lec16.html#cb4-2"></a><span class="co">/// be scheduled again. The scheduler calls this function when it</span></span>
+<span id="cb4-3"><a href="lec16.html#cb4-3"></a><span class="co">/// is the process's turn to execute. If the function returns</span></span>
+<span id="cb4-4"><a href="lec16.html#cb4-4"></a><span class="co">/// `true`, the process is scheduled. If it returns `false`, the</span></span>
+<span id="cb4-5"><a href="lec16.html#cb4-5"></a><span class="co">/// process is not scheduled, and this function will be called on</span></span>
+<span id="cb4-6"><a href="lec16.html#cb4-6"></a><span class="co">/// the next time slice.</span></span>
+<span id="cb4-7"><a href="lec16.html#cb4-7"></a><span class="kw">pub</span> <span class="kw">type</span> EventPollFn <span class="op">=</span> <span class="dt">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="bu">FnMut</span>(<span class="op">&amp;</span><span class="kw">mut</span> Process) <span class="op">-&gt;</span> <span class="dt">bool</span> <span class="op">+</span> <span class="bu">Send</span><span class="op">&gt;;</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="scheduling-processes"><div>
+<h1>Scheduling processes</h1>
+<ul>
+<li>In what order, we should schedule processes (or their time slices)?</li>
+<li>Example: given process PA[0-1], PB[0-1], PC[0-1] (assume: all start at the same time)
+<ol type="1">
+<li>PA, PB, PC (in order)</li>
+<li>PC, PB, PA (shorted execution in order)</li>
+<li>PA0, PB0, PC0, PA1, PB1, PC1 (fair)</li>
+<li>PA, PB0, PC0, PB1, PC1 (priority)</li>
+<li>…</li>
+</ol></li>
+</ul>
+</div></section>
+<section class="slide level1" id="thinking-of-scheduling"><div>
+<h1>Thinking of scheduling</h1>
+<ul>
+<li>A/B/C executed in order (w/ same execution time):</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/fifo1.png" style="width:80%"/></p>
+<p>→ Average execution time: (10+20+30)/3 = 20</p>
+</div></section>
+<section class="slide level1" id="thinking-of-scheduling-1"><div>
+<h1>Thinking of scheduling</h1>
+<ul>
+<li>A/B/C executed in order (w/ <em>different</em> execution time):</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/fifo2.png" style="width:80%"/></p>
+<p>→ Average execution time: (100+110+120)/3 = 110</p>
+</div></section>
+<section class="slide level1" id="shortest-job-first"><div>
+<h1>Shortest Job First</h1>
+<ul>
+<li>B/C/A executed in order (w/ <em>different</em> execution time):</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/sjf.png" style="width:80%"/></p>
+<p>→ Average execution time: (10+20+120)/3 = 50</p>
+</div></section>
+<section class="slide level1" id="thinking-of-scheduling-online-process"><div>
+<h1>Thinking of scheduling: online process</h1>
+<ul>
+<li>B/C arrive while executing A</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/sjf2.png" style="width:80%"/></p>
+<p>→ Average execution time: (100 + 100 + 110)/3 = 103.3</p>
+</div></section>
+<section class="slide level1" id="shortest-time-to-completion-first"><div>
+<h1>Shortest Time-to-Completion First</h1>
+<ul>
+<li>B/C arrive while executing A, but schedules out A</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/stcf.png" style="width:80%"/></p>
+<p>→ Average execution time: (120 + 10 + 20)/3 = 50</p>
+</div></section>
+<section class="slide level1" id="thinking-of-scheduling-response-time"><div>
+<h1>Thinking of scheduling: response time</h1>
+<ul>
+<li>Seeking better metrics: average execution time doesn’t capture <em>response</em> time</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/resp.png" style="width:50%"/></p>
+</div></section>
+<section class="slide level1" id="thinking-of-scheduling-no-prior-knowledge"><div>
+<h1>Thinking of scheduling: no prior knowledge</h1>
+<ul>
+<li>No known execution time: e.g., browser? emacs?</li>
+<li>Introducing time-slicing</li>
+</ul>
+</div></section>
+<section class="slide level1" id="preemptive-multitasking-ref"><div>
+<h1>Preemptive multitasking (<a href="https://os.phil-opp.com/async-await/#multitasking">ref</a>)</h1>
+<p style="text-align:center;margin:0"><img src="img/regain-control-on-interrupt.svg" style="width: 80%"/></p>
+</div></section>
+<section class="slide level1" id="lots-of-scheduling-policy"><div>
+<h1>Lots of scheduling policy</h1>
+<ul>
+<li>Proportional/fair share: Tickets (non-deterministic), Stride (deterministic)</li>
+<li>Linux’s Completely Fair Scheduler (CFS)
+<ul>
+<li>Fair among priority groups</li>
+<li>Fast in terms of selecting next process (i.e., O(1))</li>
+<li>Fast on manycore architecture</li>
+</ul></li>
+</ul>
+<p>Ref. <a href="http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-lottery.pdf">Scheduling: Proportional Share</a></p>
+</div></section>
+<section class="slide level1" id="example-round-robin-in-rustos"><div>
+<h1>Example: round robin in RustOS</h1>
+<p style="text-align:center;margin:0"><img src="img/round-robin1.png" style="width:80%"/></p>
+</div></section>
+<section class="slide level1" id="example-round-robin-in-rustos-1"><div>
+<h1>Example: round robin in RustOS</h1>
+<p style="text-align:center;margin:0"><img src="img/round-robin2.png" style="width:80%"/></p>
+</div></section>
+<section class="slide level1" id="example-scheduler-in-rustos"><div>
+<h1>Example: Scheduler in RustOS</h1>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb5-1"><a href="lec16.html#cb5-1"></a><span class="kw">pub</span> <span class="kw">struct</span> Scheduler <span class="op">{</span></span>
+<span id="cb5-2"><a href="lec16.html#cb5-2"></a>    processes<span class="op">:</span> VecDeque<span class="op">&lt;</span>Process<span class="op">&gt;,</span></span>
+<span id="cb5-3"><a href="lec16.html#cb5-3"></a>    last_id<span class="op">:</span> <span class="dt">Option</span><span class="op">&lt;</span>Id<span class="op">&gt;,</span></span>
+<span id="cb5-4"><a href="lec16.html#cb5-4"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-scheduler-in-rustos-1"><div>
+<h1>Example: Scheduler in RustOS</h1>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb6-1"><a href="lec16.html#cb6-1"></a><span class="kw">fn</span> switch_to(<span class="op">&amp;</span><span class="kw">mut</span> <span class="kw">self</span><span class="op">,</span> tf<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> TrapFrame) <span class="op">-&gt;</span> <span class="dt">Option</span><span class="op">&lt;</span>Id<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb6-2"><a href="lec16.html#cb6-2"></a>    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0</span><span class="op">..</span><span class="kw">self</span><span class="op">.</span>processes<span class="op">.</span>len() <span class="op">{</span></span>
+<span id="cb6-3"><a href="lec16.html#cb6-3"></a>        <span class="kw">if</span> <span class="kw">self</span><span class="op">.</span>processes[i]<span class="op">.</span>is_ready() <span class="op">{</span></span>
+<span id="cb6-4"><a href="lec16.html#cb6-4"></a>            <span class="co">// push the selected one to the front</span></span>
+<span id="cb6-5"><a href="lec16.html#cb6-5"></a>            <span class="kw">let</span> <span class="kw">mut</span> next <span class="op">=</span> <span class="kw">self</span><span class="op">.</span>processes<span class="op">.</span>remove(i)<span class="op">.</span>unwrap()<span class="op">;</span></span>
+<span id="cb6-6"><a href="lec16.html#cb6-6"></a>            next<span class="op">.</span>state <span class="op">=</span> <span class="pp">State::</span>Running<span class="op">;</span></span>
+<span id="cb6-7"><a href="lec16.html#cb6-7"></a>            <span class="op">*</span>tf <span class="op">=</span> <span class="op">*</span>next<span class="op">.</span>context<span class="op">;</span></span>
+<span id="cb6-8"><a href="lec16.html#cb6-8"></a>            <span class="kw">self</span><span class="op">.</span>processes<span class="op">.</span>push_front(next)<span class="op">;</span></span>
+<span id="cb6-9"><a href="lec16.html#cb6-9"></a>            <span class="kw">return</span> <span class="cn">Some</span>(tf<span class="op">.</span>tpidr)<span class="op">;</span></span>
+<span id="cb6-10"><a href="lec16.html#cb6-10"></a>        <span class="op">}</span></span>
+<span id="cb6-11"><a href="lec16.html#cb6-11"></a>    <span class="op">}</span></span>
+<span id="cb6-12"><a href="lec16.html#cb6-12"></a>    <span class="kw">return</span> <span class="cn">None</span><span class="op">;</span></span>
+<span id="cb6-13"><a href="lec16.html#cb6-13"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="incorporating-io-in-scheduling"><div>
+<h1>Incorporating I/O in scheduling</h1>
+<p style="text-align:center;margin:0"><img src="img/io.png" style="width:65%"/></p>
+</div></section>
+<section class="slide level1" id="references"><div>
+<h1>References</h1>
+<ul>
+<li><a href="https://os.phil-opp.com/async-await">Async/Await</a></li>
+<li><a href="http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-intro.pdf">The Abstraction: The Process</a></li>
+<li><a href="http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched.pdf">Scheduling: Introduction</a></li>
+<li><a href="http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-lottery.pdf">Scheduling: Proportional Share</a></li>
+</ul>
+</div></section>
+<div class="progress"><div></div></div>
+<script src="../shower/js/shower.js"></script>
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>CS3210: Design Operating Systems</title>
+<meta charset="utf-8"/>
+<meta content="ie=edge" http-equiv="x-ua-compatible"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="../shower/styles/ribbon.css" rel="stylesheet"/>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+  position: relative; left: -1em; text-align: right; vertical-align: baseline;
+  border: none; display: inline-block;
+  -webkit-touch-callout: none; -webkit-user-select: none;
+  -khtml-user-select: none; -moz-user-select: none;
+  -ms-user-select: none; user-select: none;
+  padding: 0 4px; width: 4em;
+  color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+{   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style>
+section pre code {
+  line-height: 1.4 !important;
+  font-size: 20px !important;
+}
+.compact code {
+  line-height: 1.4 !important;
+  font-size: 16px !important;
+}
+ul.compact {
+  line-height: 1.5 !important;
+  font-size: 20px !important;
+}
+.writeup {
+    font-size: 20px !important;
+}
+a.sourceLine { background: none !important; }
+section.region { display: none !important; }
+pre.numberSource { margin-left: 2em; }
+div.sourceCode { overflow: hidden; }
+a.sourceLine::before { text-decoration: none; }
+
+</style>
+<script src="../shower/js/jquery-2.2.0.min.js"></script>
+</head>
+<body class="shower list">
+<header class="caption">
+<h1>CS3210 Design Operating Systems</h1>
+<p>Taesoo Kim</p>
+</header>
+<header class="caption">
+</header>
+<section class="slide" id="cover">
+<br/><br/><br/><br/>
+<h2>CS3210: Design Operating Systems</h2>
+<p> Taesoo Kim</p>
+<style>
+ #cover h2 {
+   /* margin:180px 0 0; */
+   color: #666;
+   text-align:center;
+   font-size: 60px;
+   font-weight: bold;
+   margin-bottom: 0em;
+ }
+ #cover p {
+   margin:30px 0 0;
+   text-align:center;
+   font-style:italic;
+   font-size:40px;
+ }
+ </style>
+</section>
+
+<section class="slide level1" id="what-is-an-operating-system"><div>
+<h1>What is an <em>operating system</em>?</h1>
+<ul>
+<li>e.g., macOS, Windows, Linux, FreeBSD, Android, iOS, etc.</li>
+</ul>
+</div></section>
+<section class="slide level1" id="what-is-an-operating-system-1"><div>
+<h1>What is an <em>operating system</em>?</h1>
+<ul>
+<li>e.g., macOS, Windows, Linux, FreeBSD, Android, iOS, etc.</li>
+<li>What does an OS do for you?
+<ul>
+<li><strong>Abstract</strong> the hardware for convenience and portability</li>
+<li><strong>Multiplex</strong> the hardware among multiple applications (or virtualization)</li>
+<li><strong>Isolate</strong> applications to contain bugs</li>
+<li>Allow <strong>sharing</strong> among applications</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="view-1-layered-organization"><div>
+<h1>View 1: layered organization</h1>
+<ul>
+<li><strong>User</strong>: applications (e.g., vi and gcc)</li>
+<li><strong>Kernel</strong>: file system, process, etc. (← often considered as an OS)</li>
+<li><strong>Hardware</strong>: CPU, mem, disk, etc.</li>
+</ul>
+<p>→ OS is an <mark>Interface</mark> b/w two layers, user and hardware</p>
+</div></section>
+<section class="slide level1" id="view-2-consisting-of-core-services"><div>
+<h1>View 2: consisting of core services</h1>
+<ul>
+<li>Core/system services:
+<ul>
+<li><strong>Processes</strong> (not CPU)</li>
+<li><strong>Virtual memory</strong> (not physical DRAM)</li>
+<li><strong>File</strong> and <strong>directory</strong> (not storage like HDD or SSD)</li>
+<li>Many others: users, IPC, network, time, terminals, security, etc.</li>
+</ul></li>
+</ul>
+<p>→ OS provides <mark>Abstraction</mark> to applications</p>
+</div></section>
+<section class="slide level1" id="example-system-calls"><div>
+<h1>Example: system calls</h1>
+<ul>
+<li><mark>Interface</mark>: applications talk to an OS via system calls</li>
+<li><mark>Abstraction</mark>: process and file descriptor</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="lec01.html#cb1-1"></a>  fd = open(<span class="st">"out"</span>, <span class="dv">1</span>);      <span class="co">// opening a file</span></span>
+<span id="cb1-2"><a href="lec01.html#cb1-2"></a>  write(fd, <span class="st">"hello</span><span class="sc">\n</span><span class="st">"</span>, <span class="dv">6</span>);  <span class="co">// reading the file's content</span></span>
+<span id="cb1-3"><a href="lec01.html#cb1-3"></a>  pid = fork();             <span class="co">// creating a new process</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="why-is-designing-os-challenging"><div>
+<h1>Why is designing OS challenging?</h1>
+<ul>
+<li><em>Conflicting</em> design goals and trade-offs:
+<ul>
+<li>Performant yet portable</li>
+<li>Isolated yet sharable</li>
+<li>Extensible yet secure</li>
+<li>Compatible yet efficient</li>
+</ul></li>
+</ul>
+<p>→ <strong>Open problems</strong>: sandboxing for security, scalability on manycore, etc.</p>
+</div></section>
+<section class="slide level1" id="who-should-take-cs3210"><div>
+<h1>Who should take CS3210?</h1>
+<ul>
+<li>Anyone wants to work on the above problems</li>
+<li>Anyone cares about what’s going on under the hood</li>
+<li>Anyone has to build high-performance systems (e.g., Cloud, Trading)</li>
+<li>Anyone wants to build embedded/IoT firmware (e.g., Robot)</li>
+<li>Anyone needs to diagnose bugs or security problems</li>
+</ul>
+<p>Also, you (have to) have <strong><em>lots of free time</em></strong> …</p>
+</div></section>
+<section class="slide level1" id="cs3210-design-operating-systems"><div>
+<h1>CS3210: Design Operating Systems</h1>
+<ul>
+<li>Designing an <strong><em>Embedded Operating System</em></strong> with <strong><em>Rust</em></strong>
+<ul>
+<li><strong>Embedded OS</strong>: 32-bit x86 → 64-bit AArch64 (ARMv8)</li>
+<li><strong>Real hardware</strong>: x86 laptop → Raspberry Pi 3</li>
+<li><strong>Modern language</strong>: asm/C → Rust!</li>
+</ul></li>
+</ul>
+<p>→ Experimental course, lots of bumps expected :)</p>
+</div></section>
+<section class="slide level1" id="cool-kids-speak-rust"><div>
+<h1>Cool kids speak Rust!</h1>
+<ul>
+<li>Q. How many people heard about Rust?</li>
+<li>Q. How many people tried learning Rust?</li>
+<li>Q. How many people thought of learning Rust at some point?</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/rust.png" style="width:80%"/></p>
+<p>→ Check out <a class="uri" href="https://www.rust-lang.org/">https://www.rust-lang.org/</a></p>
+</div></section>
+<section class="slide level1" id="course-goals-and-objectives"><div>
+<h1>Course goals and objectives</h1>
+<ul>
+<li>Not just about OS, but more about “how-to” learn:
+<ol type="1">
+<li><strong>Learn by coding</strong></li>
+<li><strong>Learn by guidance</strong></li>
+<li><strong>Learn from peers</strong></li>
+</ol></li>
+</ul>
+<p>→ So you can <em>continue to learn</em> OS even after graduation!</p>
+</div></section>
+<section class="slide level1" id="prerequisite"><div>
+<h1>Prerequisite</h1>
+<ul>
+<li>C programming (strict)</li>
+<li>CS 2200: Systems and Networks (strict)</li>
+<li>CS 2110: Computer Organization and Programming (recommended)</li>
+<li>CS 3220: Processor Design (recommended)</li>
+</ul>
+<blockquote>
+<p>I’m doing a (free) operating system (just a hobby, won’t be big and professional like gnu) for 386(486) AT clones. – Linus Torvalds</p>
+</blockquote>
+</div></section>
+<section class="slide level1" id="general-information"><div>
+<h1>General information</h1>
+<ul>
+<li>Web: <a class="uri" href="https://tc.gts3.org/cs3210/2020/spring">https://tc.gts3.org/cs3210/2020/spring</a></li>
+<li>Piazza: <a class="uri" href="https://piazza.com/class/k4iwq4owaka7pc">https://piazza.com/class/k4iwq4owaka7pc</a></li>
+<li>Text: freely available online
+<ul>
+<li><a href="https://doc.rust-lang.org/book/">The Rust Book</a></li>
+<li><a href="https://doc.rust-lang.org/rust-by-example/">Rust by Example</a></li>
+<li>(optional) <a href="http://pages.cs.wisc.edu/~remzi/OSTEP">Operating Systems: Three Easy Pieces</a></li>
+<li>(optional) <a href="http://proquest.safaribooksonline.com/book/programming/linux/9780768696974">Linux Kernel Development</a></li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="general-information-1"><div>
+<h1>General information</h1>
+<ul>
+<li><strong>Team</strong>: send us an email for an appointment (<a class="email" href="mailto:3210-staff@cc.gatech.edu">3210-staff@cc.gatech.edu</a>)</li>
+<li><strong>Office hours</strong>: will be announced on Thursday</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/team.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="grading-policy"><div>
+<h1>Grading policy</h1>
+<ul>
+<li>Preparation (10%)</li>
+<li>Quiz (30%: 10%/20%)</li>
+<li>Lab (40%)</li>
+<li>Final project (20%)
+<ul>
+<li>Proposal presentation (5%)</li>
+<li>Demo &amp; presentation (15%)</li>
+<li>Write-up (5%)</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="grading-policy-1"><div>
+<h1>Grading policy</h1>
+<ul>
+<li>Negotiating your grade after Quiz 1 (Feb 25):
+<ul>
+<li>Based on what you’ve done until Quiz 1, we provide a <em>tentative</em> grade</li>
+<li>You offer us what you will do to get whichever grade you want</li>
+<li>We accept or offer an alternative path!</li>
+</ul></li>
+</ul>
+<p>→ Our goal is to make sure you don’t give up, and actually sit and do the coding!</p>
+</div></section>
+<section class="slide level1" id="class-structure"><div>
+<h1>Class structure</h1>
+<p style="text-align:center;margin:0"><img src="img/1week.png" style="width: 100%"/></p>
+<ul>
+<li><a href="../../cal.html">Schedule for Lab assignment/Lectures/Preparation</a></li>
+</ul>
+</div></section>
+<section class="slide level1" id="about-preparation-questions"><div>
+<h1>About preparation questions</h1>
+<ul>
+<li><a href="https://forms.gle/KAoHiKZW3FdgNkvs8">Submit</a> your <strong>answers</strong> and <strong>questions</strong> (<mark>DUE: by 10pm</mark> the day before),</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/question.png" style="width:60%"/></p>
+</div></section>
+<section class="slide level1" id="about-quiz-project"><div>
+<h1>About quiz, project</h1>
+<ul>
+<li>Two quiz (in-class, about lec/lab)</li>
+<li>About final project
+<ul>
+<li>Topics: <a class="uri" href="../../proj.html">https://tc.gts3.org/cs3210/2020/spring/proj.html</a></li>
+<li>Mark the <strong>Team Proposal</strong> (Mar 05) and <strong>Demo Days</strong> (Apr 09/14)!</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="about-lab-assignments"><div>
+<h1>About lab assignments</h1>
+<ul>
+<li>RustOS: a toy operating system written w/ Rust
+<ul>
+<li>Lab 0: Rustlings</li>
+<li>Lab 1: Bootstrapping Raspberry Pi</li>
+<li>Lab 2: Shell and Bootloader</li>
+<li>Lab 3: FAT32 Filesystem</li>
+<li>Lab 4: Multitasking and Locking</li>
+<li>Lab 5: Scalable TCP/IP</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="about-lab-0"><div>
+<h1>About lab 0</h1>
+<ul>
+<li>“Lab 0: Rustlings” is out (Due: <mark>Jan 20</mark>)</li>
+<li>Kicking-off on the Rust programming language</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/lab01.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="class-policy"><div>
+<h1>Class policy</h1>
+<ul>
+<li>Late day
+<ul>
+<li><mark>A week</mark> (i.e., 7 days) of a grace period (in total for all labs)</li>
+<li>Don’t have to inform us (e.g., job interview, sick)</li>
+</ul></li>
+<li>No cheating
+<ul>
+<li>Cheating vs. collaboration</li>
+<li>Write the name(s) of your sources/collaborators</li>
+</ul></li>
+</ul>
+<p>See, <a class="uri" href="../../info.html">https://tc.gts3.org/cs3210/2020/spring/info.html</a></p>
+</div></section>
+<section class="slide level1" id="todays-agenda"><div>
+<h1>Today’s agenda</h1>
+<ul>
+<li>Hardware trends</li>
+<li>What challenges are in developing an operating system?</li>
+<li>Why a programming language matters?</li>
+</ul>
+</div></section>
+<section class="slide level1" id="hardware-trend-cpu"><div>
+<h1>Hardware trend: CPU</h1>
+<ul>
+<li>by David A. Patterson and John L. Hennessy (2013)</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/cpu-growth.png" style="width:65%"/></p>
+</div></section>
+<section class="slide level1" id="hardware-trend-memory"><div>
+<h1>Hardware trend: Memory</h1>
+<ul>
+<li>by John C. McCallum (2015)</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/memory-price:15.png" style="width:60%"/></p>
+</div></section>
+<section class="slide level1" id="comparing-computer-performance"><div>
+<h1>Comparing computer performance</h1>
+<ul>
+<li>by Thomas E. Anderson (2015)</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/perf-over-time:tom15.png" style="width:80%"/></p>
+</div></section>
+<section class="slide level1" id="hardware-ibm-system360-3075-1964"><div>
+<h1>Hardware: IBM System/360 30/75 (1964)</h1>
+<ul>
+<li>Ref. <a href="http://www.computerhistory.org/revolution/mainframe-computers/7/intro">Computer History Museum</a>
+<ul>
+<li>CPU: 0.034/1 MIPS, 64K/8M (8-bit), $133,000+/$2.2m+</li>
+<li>Tape Operating System (TOS), Basic Operating System (BOS/360) (ASM)</li>
+</ul></li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/ibm-360-model-30.png" style="width:40%"/></p>
+</div></section>
+<section class="slide level1" id="hardware-raspberry-pi-zero-2015"><div>
+<h1>Hardware: Raspberry Pi Zero (2015)</h1>
+<ul>
+<li>Ref. <a href="https://www.raspberrypi.org/products/pi-zero/">Raspberry.org</a>
+<ul>
+<li>CPU: 1k MIPS (1 Gz, Single-core), 512 MB (32-bit), $5</li>
+<li>Linux (C)</li>
+</ul></li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/pi-zero.png" style="width:65%"/></p>
+</div></section>
+<section class="slide level1" id="challenges-in-operating-systems"><div>
+<h1>Challenges in operating systems</h1>
+<p>OS (software) seamlessly adopts to slow/fast, small/large hardware!</p>
+<ul>
+<li>Portability</li>
+<li>Performance</li>
+<li>Reliability</li>
+<li>Usability</li>
+<li>Security</li>
+</ul>
+</div></section>
+<section class="slide level1" id="about-compatibility"><div>
+<h1>About “compatibility”</h1>
+<ul>
+<li><a class="uri" href="https://lkml.org/lkml/2012/3/8/495">https://lkml.org/lkml/2012/3/8/495</a></li>
+</ul>
+<blockquote>
+<p>Seriously. Binary compatibility is <em>so</em> important that I do not want to have anything to do with kernel developers who don’t understand that importance. If you continue to pooh-pooh the issue, you only show yourself to be unreliable. Don’t do it. – Linus</p>
+</blockquote>
+</div></section>
+<section class="slide level1" id="future-operating-systems-xkcd"><div>
+<h1>Future operating systems (xkcd)</h1>
+<ul>
+<li>Large scale: lots of cores, bigger memory, huge storage</li>
+<li>Small scale: dust?</li>
+<li>Heterogeneity</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/xkcd-os.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="programming-languages-for-os-development"><div>
+<h1>Programming languages for OS development</h1>
+<p>What language is used for all commodity OSes (e.g., Linux, Windows)?</p>
+<ul>
+<li>1964: PL/I for Multics</li>
+<li>1969: C for Unix</li>
+<li>1995: javaOS by Sun</li>
+<li>2014: Swift for macOS (in part)</li>
+</ul>
+<p>Ref. <a href="https://en.wikipedia.org/wiki/System_programming_language">Wikipedia</a></p>
+</div></section>
+<section class="slide level1" id="why-using-c-for-os-development"><div>
+<h1>Why using C for OS development?</h1>
+<ul>
+<li>Portability</li>
+<li>No runtime</li>
+<li>Direct hardware/memory access</li>
+<li>(decent) Usability</li>
+</ul>
+<p>→ Why not A, B, and C (e.g., Python, JavaScript, C++, etc)?</p>
+</div></section>
+<section class="slide level1" id="comparing-system-programming-languages"><div>
+<h1>Comparing system programming languages</h1>
+<p style="text-align:center;margin:0"><img src="img/oxidation.png" style="width:85%"/></p>
+<p>Ref. <a href="https://youtu.be/cDFSrVhnZKo">A Case for Oxidation: The Rust Programming Language</a></p>
+</div></section>
+<section class="slide level1" id="hello-rust"><div>
+<h1>Hello, Rust!</h1>
+<p style="text-align:center;margin:0"><img src="img/rust.svg" style="width: 80%"/></p>
+</div></section>
+<section class="slide level1" id="hardware-for-cs3210-raspberry-pi-3"><div>
+<h1>Hardware for CS3210: Raspberry Pi 3</h1>
+<ul>
+<li><a href="https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/">Raspberry Pi 3 Model B+</a> (e.g., <a href="https://www.amazon.com/CanaKit-Raspberry-Starter-Premium-Black/dp/B07BCC8PK7">Starter Kit from Amazon</a>, $84.99)</li>
+<li><a href="https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/">Online/offline shops</a> from the official site</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/rpi3.png" style="width:55%"/></p>
+</div></section>
+<section class="slide level1" id="other-purchasing-options"><div>
+<h1>Other purchasing options</h1>
+<p style="text-align:center;margin:0"><img src="img/microcenter.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="next-lecture"><div>
+<h1>Next lecture</h1>
+<ul>
+<li>Next: introducing Rust!</li>
+<li>Visit our course website: <a class="uri" href="https://tc.gts3.org/cs3210/2020/spring">https://tc.gts3.org/cs3210/2020/spring</a></li>
+<li>Don’t forget to submit “preparation question” (<mark>DUE: 10pm, Jan 8</mark>)</li>
+<li>“Lab 0: Rustlings” is out (<mark>DUE: Jan 20</mark> in 2 weeks!)</li>
+<li>Perpetration: Rpi 3 + sdcard + reader (in two weeks, from Lab 1)</li>
+</ul>
+</div></section>
+<div class="progress"><div></div></div>
+<script src="../shower/js/shower.js"></script>
+</body>
+</html>

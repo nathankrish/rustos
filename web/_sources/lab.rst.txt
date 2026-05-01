@@ -1,0 +1,41 @@
+===
+Lab
+===
+
+.. toctree::
+    :hidden:
+    :glob:
+
+    lab/tools
+    lab/lab0
+    lab/lab1
+    lab/lab2
+    lab/lab3
+    lab/lab4
+    lab/lab5
+
+In this course, we are going to build an operating system in
+`Rust programming language <https://www.rust-lang.org>`__.
+The operating system that we will build targets ``AArch64 (ARM)`` architecture,
+and it will run on Raspberry Pi 3.
+
+These are the topics that we will cover in this course:
+
+- `Tools Guide <lab/tools.html>`__
+- `Lab 0: Rustlings <lab/lab0.html>`__
+- `Lab 1: Bootstrapping Raspberry Pi <lab/lab1.html>`__
+- `Lab 2: Shell and Bootloader <lab/lab2.html>`__
+- `Lab 3: FAT32 Filesystem <lab/lab3.html>`__
+- `Lab 4: Preemptive Multitasking <lab/lab4.html>`__
+- `Lab 5: Multicore and Networking <lab/lab5.html>`__
+
+We built our labs based on the materials originally
+developed for
+`CS140e: An Experimental Course on Operating Systems <https://cs140e.sergio.bz/>`__
+by `Sergio Benitez <https://sergio.bz/>`__.
+We have ported it to use newer toolchains such as Rust 2018 edition,
+``cargo-xbuild`` (instead of ``xargo``),
+and ``no_std`` Rust with a minimal shim library (instead of custom built std).
+We've also developed it further to include topics such as
+virtual memory management, multicore scheduling, mutex designing,
+and implementing a networking stack.

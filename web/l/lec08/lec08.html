@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Rust 5: Generics and Traits</title>
+<meta charset="utf-8"/>
+<meta content="ie=edge" http-equiv="x-ua-compatible"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="../shower/styles/ribbon.css" rel="stylesheet"/>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+  position: relative; left: -1em; text-align: right; vertical-align: baseline;
+  border: none; display: inline-block;
+  -webkit-touch-callout: none; -webkit-user-select: none;
+  -khtml-user-select: none; -moz-user-select: none;
+  -ms-user-select: none; user-select: none;
+  padding: 0 4px; width: 4em;
+  color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+{   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style>
+section pre code {
+  line-height: 1.4 !important;
+  font-size: 20px !important;
+}
+.compact code {
+  line-height: 1.4 !important;
+  font-size: 16px !important;
+}
+ul.compact {
+  line-height: 1.5 !important;
+  font-size: 20px !important;
+}
+.writeup {
+    font-size: 20px !important;
+}
+a.sourceLine { background: none !important; }
+section.region { display: none !important; }
+pre.numberSource { margin-left: 2em; }
+div.sourceCode { overflow: hidden; }
+a.sourceLine::before { text-decoration: none; }
+
+pre > code.sourceCode > span > a:first-child::before { text-decoration: none !important; }
+</style>
+<script src="../shower/js/jquery-2.2.0.min.js"></script>
+</head>
+<body class="shower list">
+<header class="caption">
+<h1>CS3210 Design Operating Systems</h1>
+<p>Taesoo Kim</p>
+</header>
+<header class="caption">
+</header>
+<section class="slide" id="cover">
+<br/><br/><br/><br/>
+<h2>Rust 5: Generics and Traits</h2>
+<p> Taesoo Kim</p>
+<style>
+ #cover h2 {
+   /* margin:180px 0 0; */
+   color: #666;
+   text-align:center;
+   font-size: 60px;
+   font-weight: bold;
+   margin-bottom: 0em;
+ }
+ #cover p {
+   margin:30px 0 0;
+   text-align:center;
+   font-style:italic;
+   font-size:40px;
+ }
+ </style>
+</section>
+
+<section class="slide level1" id="administrivia"><div>
+<h1>Administrivia</h1>
+<ul>
+<li>“Lab 2: Shell and Bootloader” is due in 1 week (<mark>DUE: Feb 10</mark>)!</li>
+<li>Final project
+<ul>
+<li>Proposal Day is on Feb 27th (slides due on 26th)</li>
+<li>About 2-4 people per team</li>
+<li>Check <a href="../../proj.html">our web site</a> for ideas</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="qa"><div>
+<h1>Q&amp;A</h1>
+<ul>
+<li>How to compare Trait with OOP? or interface/abstract classes?</li>
+</ul>
+<blockquote>
+<p>Given the benefits of traits in Rust, do traits have any disadvantages compared to interfaces or abstract classes?</p>
+</blockquote>
+<blockquote>
+<p>How are objects in memory stored in Java or traditional OOP languages?</p>
+</blockquote>
+</div></section>
+<section class="slide level1" id="qa-1"><div>
+<h1>Q&amp;A</h1>
+<blockquote>
+<p>Does rust allow for inheritance like many OOP do?</p>
+</blockquote>
+<blockquote>
+<p>What’s the difference between an implementation of Ord and PartialOrd, which implements comparisons between two items? My only thought is this: a rock-paper-scissors game, where the following comparisons do not provide a hierarchy: rock &gt; scissors, scissors &gt; paper, paper &gt; rock and it goes in a circle Is this a proper example of PartialOrd but not Ord implementation?</p>
+</blockquote>
+</div></section>
+<section class="slide level1" id="agenda"><div>
+<h1>Agenda</h1>
+<ul>
+<li>Generics overview</li>
+<li>Trait overview</li>
+<li>Trait object</li>
+<li>Common traits</li>
+</ul>
+</div></section>
+<section class="slide level1" id="generics-overview"><div>
+<h1>Generics Overview</h1>
+<ul>
+<li><code>sum()</code> in Python</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource py numberLines"><code class="sourceCode python"><span id="cb1-1"><a href="lec08.html#cb1-1"></a><span class="kw">def</span> <span class="bu">sum</span>(args):</span>
+<span id="cb1-2"><a href="lec08.html#cb1-2"></a>  v <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-3"><a href="lec08.html#cb1-3"></a>  <span class="cf">for</span> a <span class="kw">in</span> args:</span>
+<span id="cb1-4"><a href="lec08.html#cb1-4"></a>    v <span class="op">+=</span> a</span>
+<span id="cb1-5"><a href="lec08.html#cb1-5"></a>  <span class="cf">return</span> v</span>
+<span id="cb1-6"><a href="lec08.html#cb1-6"></a></span>
+<span id="cb1-7"><a href="lec08.html#cb1-7"></a><span class="bu">sum</span>([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>])         <span class="co">#=&gt; 10</span></span>
+<span id="cb1-8"><a href="lec08.html#cb1-8"></a><span class="bu">sum</span>([<span class="fl">1.0</span>, <span class="fl">2.0</span>, <span class="fl">3.0</span>, <span class="fl">4.0</span>]) <span class="co">#=&gt; Q?</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="generics-overview-1"><div>
+<h1>Generics Overview</h1>
+<ul>
+<li><code>sum()</code> in Rust</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb2-1"><a href="lec08.html#cb2-1"></a><span class="kw">fn</span> sum(args: &amp;<span class="op">[</span><span class="dt">i32</span><span class="op">]</span>) -&gt; <span class="dt">i32</span> <span class="op">{</span></span>
+<span id="cb2-2"><a href="lec08.html#cb2-2"></a>    <span class="kw">let</span> <span class="kw">mut</span> v = <span class="dv">0</span>;</span>
+<span id="cb2-3"><a href="lec08.html#cb2-3"></a>    <span class="kw">for</span> &amp;a <span class="kw">in</span> args <span class="op">{</span></span>
+<span id="cb2-4"><a href="lec08.html#cb2-4"></a>        v += a;</span>
+<span id="cb2-5"><a href="lec08.html#cb2-5"></a>    <span class="op">}</span></span>
+<span id="cb2-6"><a href="lec08.html#cb2-6"></a>    <span class="kw">return</span> v;</span>
+<span id="cb2-7"><a href="lec08.html#cb2-7"></a><span class="op">}</span></span>
+<span id="cb2-8"><a href="lec08.html#cb2-8"></a></span>
+<span id="cb2-9"><a href="lec08.html#cb2-9"></a>sum(&amp;<span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span><span class="op">]</span>)         #=&gt; <span class="dv">10</span></span>
+<span id="cb2-10"><a href="lec08.html#cb2-10"></a>sum(&amp;<span class="op">[</span><span class="dv">1.0</span>, <span class="dv">2.0</span>, <span class="dv">3.0</span>, <span class="dv">4.0</span><span class="op">]</span>) #=&gt; Q?</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="generics-overview-2"><div>
+<h1>Generics Overview</h1>
+<ul>
+<li><code>sum()</code> for each type in Rust</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb3-1"><a href="lec08.html#cb3-1"></a><span class="kw">fn</span> sum1(args: &amp;<span class="op">[</span><span class="dt">i32</span><span class="op">]</span>) -&gt; <span class="dt">i32</span> <span class="op">{</span></span>
+<span id="cb3-2"><a href="lec08.html#cb3-2"></a>  <span class="kw">let</span> <span class="kw">mut</span> v = <span class="dv">0</span>;</span>
+<span id="cb3-3"><a href="lec08.html#cb3-3"></a>  <span class="kw">for</span> &amp;a <span class="kw">in</span> args <span class="op">{</span></span>
+<span id="cb3-4"><a href="lec08.html#cb3-4"></a>    v += a;</span>
+<span id="cb3-5"><a href="lec08.html#cb3-5"></a>  <span class="op">}</span></span>
+<span id="cb3-6"><a href="lec08.html#cb3-6"></a>  <span class="kw">return</span> v;</span>
+<span id="cb3-7"><a href="lec08.html#cb3-7"></a><span class="op">}</span></span>
+<span id="cb3-8"><a href="lec08.html#cb3-8"></a></span>
+<span id="cb3-9"><a href="lec08.html#cb3-9"></a><span class="kw">fn</span> sum2(args: &amp;<span class="op">[</span><span class="dt">f32</span><span class="op">]</span>) -&gt; <span class="dt">f32</span> <span class="op">{</span></span>
+<span id="cb3-10"><a href="lec08.html#cb3-10"></a>  <span class="kw">let</span> <span class="kw">mut</span> v = <span class="dv">0.0</span>;</span>
+<span id="cb3-11"><a href="lec08.html#cb3-11"></a>  <span class="kw">for</span> &amp;a <span class="kw">in</span> args <span class="op">{</span></span>
+<span id="cb3-12"><a href="lec08.html#cb3-12"></a>    v += a;</span>
+<span id="cb3-13"><a href="lec08.html#cb3-13"></a>  <span class="op">}</span></span>
+<span id="cb3-14"><a href="lec08.html#cb3-14"></a>  <span class="kw">return</span> v;</span>
+<span id="cb3-15"><a href="lec08.html#cb3-15"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="generics-overview-3"><div>
+<h1>Generics Overview</h1>
+<ul>
+<li>Generic version of <code>sum()</code> in Rust (i.e., Parametric Polymorphism or Template)</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb4-1"><a href="lec08.html#cb4-1"></a><span class="kw">fn</span> sum&lt;T&gt;(args: &amp;<span class="op">[</span>T<span class="op">]</span>) -&gt; T <span class="op">{</span></span>
+<span id="cb4-2"><a href="lec08.html#cb4-2"></a>  <span class="kw">let</span> <span class="kw">mut</span> v =      <span class="co">/* Q. 0 or 0.0? */</span></span>
+<span id="cb4-3"><a href="lec08.html#cb4-3"></a>  <span class="kw">for</span> &amp;a <span class="kw">in</span> args <span class="op">{</span></span>
+<span id="cb4-4"><a href="lec08.html#cb4-4"></a>    v += a;</span>
+<span id="cb4-5"><a href="lec08.html#cb4-5"></a>  <span class="op">}</span></span>
+<span id="cb4-6"><a href="lec08.html#cb4-6"></a>  <span class="kw">return</span> v;</span>
+<span id="cb4-7"><a href="lec08.html#cb4-7"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="generics-overview-4"><div>
+<h1>Generics Overview</h1>
+<ul>
+<li>Generic version of <code>sum()</code> in Rust (i.e., Parametric Polymorphism or Template)</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb5-1"><a href="lec08.html#cb5-1"></a><span class="kw">fn</span> sum&lt;T&gt;(args: &amp;<span class="op">[</span>T<span class="op">]</span>) -&gt; T <span class="op">{</span></span>
+<span id="cb5-2"><a href="lec08.html#cb5-2"></a>  <span class="kw">let</span> <span class="kw">mut</span> v =      <span class="co">/* Q. 0 or 0.0? */</span></span>
+<span id="cb5-3"><a href="lec08.html#cb5-3"></a>  <span class="kw">for</span> &amp;a <span class="kw">in</span> args <span class="op">{</span> <span class="co">/* Q. which function should be invoked? */</span></span>
+<span id="cb5-4"><a href="lec08.html#cb5-4"></a>    v += a;        <span class="co">/* Q. which "+=" should be executed? */</span></span>
+<span id="cb5-5"><a href="lec08.html#cb5-5"></a>  <span class="op">}</span></span>
+<span id="cb5-6"><a href="lec08.html#cb5-6"></a>  <span class="kw">return</span> v;        <span class="co">/* Q. what size? */</span></span>
+<span id="cb5-7"><a href="lec08.html#cb5-7"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="trait-binding"><div>
+<h1>Trait Binding</h1>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb6-1"><a href="lec08.html#cb6-1"></a><span class="kw">fn</span> sum&lt;T&gt;(args: &amp;<span class="op">[</span>T<span class="op">]</span>) -&gt; T</span>
+<span id="cb6-2"><a href="lec08.html#cb6-2"></a><span class="kw">where</span></span>
+<span id="cb6-3"><a href="lec08.html#cb6-3"></a>    T: <span class="bu">Default</span> + AddAssign + <span class="bu">Copy</span>,</span>
+<span id="cb6-4"><a href="lec08.html#cb6-4"></a><span class="op">{</span></span>
+<span id="cb6-5"><a href="lec08.html#cb6-5"></a>    <span class="kw">let</span> <span class="kw">mut</span> v: T = <span class="bu">Default</span>::<span class="kw">default</span>();</span>
+<span id="cb6-6"><a href="lec08.html#cb6-6"></a>    <span class="kw">for</span> &amp;a <span class="kw">in</span> args <span class="op">{</span></span>
+<span id="cb6-7"><a href="lec08.html#cb6-7"></a>        v += a;</span>
+<span id="cb6-8"><a href="lec08.html#cb6-8"></a>    <span class="op">}</span></span>
+<span id="cb6-9"><a href="lec08.html#cb6-9"></a>    <span class="kw">return</span> v;</span>
+<span id="cb6-10"><a href="lec08.html#cb6-10"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="implementation-of-generics"><div>
+<h1>Implementation of Generics</h1>
+<ul>
+<li>e.g., materializing generics into two implementations:</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb7-1"><a href="lec08.html#cb7-1"></a><span class="pp">dbg!</span>(sum(&amp;<span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span><span class="op">]</span>));</span>
+<span id="cb7-2"><a href="lec08.html#cb7-2"></a><span class="pp">dbg!</span>(sum(&amp;<span class="op">[</span><span class="dv">1.0</span>, <span class="dv">2.0</span>, <span class="dv">3.0</span>, <span class="dv">4.0</span><span class="op">]</span>));</span>
+<span id="cb7-3"><a href="lec08.html#cb7-3"></a></span>
+<span id="cb7-4"><a href="lec08.html#cb7-4"></a># <span class="pp">test2::</span>sum()</span>
+<span id="cb7-5"><a href="lec08.html#cb7-5"></a><span class="dv">0000000000013e00</span> &lt;_ZN5test23sum17h76c0ce64971bc830E&gt;:</span>
+<span id="cb7-6"><a href="lec08.html#cb7-6"></a>...</span>
+<span id="cb7-7"><a href="lec08.html#cb7-7"></a># <span class="pp">test2::</span>sum()</span>
+<span id="cb7-8"><a href="lec08.html#cb7-8"></a>0000000000013ea0 &lt;_ZN5test23sum17h8f28e3dbc449aa4aE&gt;:</span>
+<span id="cb7-9"><a href="lec08.html#cb7-9"></a>...</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="traits-so-far"><div>
+<h1>Traits (so far)</h1>
+<ul>
+<li><code>Copy</code>: copy semantics, a marker trait (e.g., <code>#[derive(Copy)]</code>)</li>
+<li><code>Default</code>: providing a default value (e.g., <code>#[derive(Default)]</code>)</li>
+<li><code>AddAssign</code>: overriding the <code>+=</code> operation</li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb8-1"><a href="lec08.html#cb8-1"></a><span class="at">#[</span>doc<span class="at">(</span>alias <span class="at">=</span> <span class="st">"+="</span><span class="at">)]</span></span>
+<span id="cb8-2"><a href="lec08.html#cb8-2"></a><span class="kw">pub</span> <span class="kw">trait</span> AddAssign&lt;Rhs=<span class="kw">Self</span>&gt; <span class="op">{</span></span>
+<span id="cb8-3"><a href="lec08.html#cb8-3"></a>    <span class="co">/// Performs the `+=` operation.</span></span>
+<span id="cb8-4"><a href="lec08.html#cb8-4"></a>    <span class="kw">fn</span> add_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, rhs: Rhs);</span>
+<span id="cb8-5"><a href="lec08.html#cb8-5"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-implementing-point"><div>
+<h1>Example: Implementing <code>Point</code></h1>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb9-1"><a href="lec08.html#cb9-1"></a><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Default</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Debug</span><span class="at">)]</span></span>
+<span id="cb9-2"><a href="lec08.html#cb9-2"></a><span class="kw">struct</span> Point(<span class="dt">i64</span>, <span class="dt">i64</span>);</span>
+<span id="cb9-3"><a href="lec08.html#cb9-3"></a></span>
+<span id="cb9-4"><a href="lec08.html#cb9-4"></a><span class="kw">impl</span> AddAssign <span class="kw">for</span> Point <span class="op">{</span></span>
+<span id="cb9-5"><a href="lec08.html#cb9-5"></a>    <span class="kw">fn</span> add_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, rhs: <span class="kw">Self</span>) <span class="op">{</span></span>
+<span id="cb9-6"><a href="lec08.html#cb9-6"></a>        <span class="kw">self</span>.<span class="dv">0</span> += rhs.<span class="dv">0</span>;</span>
+<span id="cb9-7"><a href="lec08.html#cb9-7"></a>        <span class="kw">self</span>.<span class="dv">1</span> += rhs.<span class="dv">1</span>;</span>
+<span id="cb9-8"><a href="lec08.html#cb9-8"></a>    <span class="op">}</span></span>
+<span id="cb9-9"><a href="lec08.html#cb9-9"></a><span class="op">}</span></span>
+<span id="cb9-10"><a href="lec08.html#cb9-10"></a></span>
+<span id="cb9-11"><a href="lec08.html#cb9-11"></a><span class="pp">dbg!</span>(sum(&amp;<span class="op">[</span>Point(<span class="dv">0</span>, <span class="dv">0</span>), Point(<span class="dv">10</span>, <span class="dv">10</span>)<span class="op">]</span>));</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-generic-version-of-point"><div>
+<h1>Example: Generic version of <code>Point</code></h1>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb10-1"><a href="lec08.html#cb10-1"></a><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Default</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Debug</span><span class="at">)]</span></span>
+<span id="cb10-2"><a href="lec08.html#cb10-2"></a><span class="kw">struct</span> Point&lt;T&gt;(T, T);</span>
+<span id="cb10-3"><a href="lec08.html#cb10-3"></a></span>
+<span id="cb10-4"><a href="lec08.html#cb10-4"></a><span class="co">// Specializaion: implementing the AddAssign trait for types</span></span>
+<span id="cb10-5"><a href="lec08.html#cb10-5"></a><span class="co">// having the AddAssign trait</span></span>
+<span id="cb10-6"><a href="lec08.html#cb10-6"></a><span class="kw">impl</span>&lt;T: AddAssign&gt; AddAssign <span class="kw">for</span> Point&lt;T&gt; <span class="op">{</span></span>
+<span id="cb10-7"><a href="lec08.html#cb10-7"></a>    <span class="kw">fn</span> add_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, rhs: <span class="kw">Self</span>) <span class="op">{</span></span>
+<span id="cb10-8"><a href="lec08.html#cb10-8"></a>        <span class="kw">self</span>.<span class="dv">0</span> += rhs.<span class="dv">0</span>;</span>
+<span id="cb10-9"><a href="lec08.html#cb10-9"></a>        <span class="kw">self</span>.<span class="dv">1</span> += rhs.<span class="dv">1</span>;</span>
+<span id="cb10-10"><a href="lec08.html#cb10-10"></a>    <span class="op">}</span></span>
+<span id="cb10-11"><a href="lec08.html#cb10-11"></a><span class="op">}</span></span>
+<span id="cb10-12"><a href="lec08.html#cb10-12"></a></span>
+<span id="cb10-13"><a href="lec08.html#cb10-13"></a><span class="pp">dbg!</span>(sum(&amp;<span class="op">[</span>Point(<span class="dv">0.0</span>, <span class="dv">0.0</span>), Point(<span class="dv">10.0</span>, <span class="dv">10.0</span>)<span class="op">]</span>));</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-generic-version-of-point-1"><div>
+<h1>Example: Generic version of <code>Point</code></h1>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb11-1"><a href="lec08.html#cb11-1"></a><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Default</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Debug</span><span class="at">)]</span></span>
+<span id="cb11-2"><a href="lec08.html#cb11-2"></a><span class="kw">struct</span> Point&lt;T1, T2&gt;(T1, T2);</span>
+<span id="cb11-3"><a href="lec08.html#cb11-3"></a></span>
+<span id="cb11-4"><a href="lec08.html#cb11-4"></a><span class="kw">impl</span>&lt;T1: AddAssign, T2: AddAssign&gt; AddAssign <span class="kw">for</span> Point&lt;T1, T2&gt; <span class="op">{</span></span>
+<span id="cb11-5"><a href="lec08.html#cb11-5"></a>    <span class="kw">fn</span> add_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, rhs: <span class="kw">Self</span>) <span class="op">{</span></span>
+<span id="cb11-6"><a href="lec08.html#cb11-6"></a>        <span class="kw">self</span>.<span class="dv">0</span> += rhs.<span class="dv">0</span>;</span>
+<span id="cb11-7"><a href="lec08.html#cb11-7"></a>        <span class="kw">self</span>.<span class="dv">1</span> += rhs.<span class="dv">1</span>;</span>
+<span id="cb11-8"><a href="lec08.html#cb11-8"></a>    <span class="op">}</span></span>
+<span id="cb11-9"><a href="lec08.html#cb11-9"></a><span class="op">}</span></span>
+<span id="cb11-10"><a href="lec08.html#cb11-10"></a></span>
+<span id="cb11-11"><a href="lec08.html#cb11-11"></a><span class="pp">dbg!</span>(sum(&amp;<span class="op">[</span>Point(<span class="dv">0</span>, <span class="dv">0.0</span>), Point(<span class="dv">10</span>, <span class="dv">10.0</span>)<span class="op">]</span>));</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="trait-overview"><div>
+<h1>Trait Overview</h1>
+<ul>
+<li>Separating Data from Behavior (see, pre-question)
+<ul>
+<li>Modern paradigm: Go’s Interface, Haskell’s Type class,</li>
+</ul></li>
+<li>Rust provides both static/dynamic dispatching of a function
+<ul>
+<li>Opt-in virtual table (i.e., Trait object)</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="example-summary-trait"><div>
+<h1>Example: Summary trait</h1>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb12-1"><a href="lec08.html#cb12-1"></a><span class="kw">trait</span> Summary <span class="op">{</span></span>
+<span id="cb12-2"><a href="lec08.html#cb12-2"></a>    <span class="kw">fn</span> summary(&amp;<span class="kw">self</span>) -&gt; <span class="dt">String</span>;</span>
+<span id="cb12-3"><a href="lec08.html#cb12-3"></a><span class="op">}</span></span>
+<span id="cb12-4"><a href="lec08.html#cb12-4"></a></span>
+<span id="cb12-5"><a href="lec08.html#cb12-5"></a><span class="kw">impl</span>&lt;T1: <span class="bu">Debug</span>, T2: <span class="bu">Debug</span>&gt; Summary <span class="kw">for</span> Point&lt;T1, T2&gt; <span class="op">{</span></span>
+<span id="cb12-6"><a href="lec08.html#cb12-6"></a>    <span class="kw">fn</span> summary(&amp;<span class="kw">self</span>) -&gt; <span class="dt">String</span> <span class="op">{</span></span>
+<span id="cb12-7"><a href="lec08.html#cb12-7"></a>        <span class="pp">format!</span>(<span class="st">"Point({:?}, {:?})"</span>, <span class="kw">self</span>.<span class="dv">0</span>, <span class="kw">self</span>.<span class="dv">1</span>)</span>
+<span id="cb12-8"><a href="lec08.html#cb12-8"></a>    <span class="op">}</span></span>
+<span id="cb12-9"><a href="lec08.html#cb12-9"></a><span class="op">}</span></span>
+<span id="cb12-10"><a href="lec08.html#cb12-10"></a></span>
+<span id="cb12-11"><a href="lec08.html#cb12-11"></a><span class="kw">impl</span>&lt;T&gt; Summary <span class="kw">for</span> <span class="dt">Vec</span>&lt;T&gt; <span class="op">{</span></span>
+<span id="cb12-12"><a href="lec08.html#cb12-12"></a>    <span class="kw">fn</span> summary(&amp;<span class="kw">self</span>) -&gt; <span class="dt">String</span> <span class="op">{</span></span>
+<span id="cb12-13"><a href="lec08.html#cb12-13"></a>        <span class="pp">format!</span>(<span class="st">"Vec({}/{})"</span>, <span class="kw">self</span>.len(), <span class="kw">self</span>.capacity())</span>
+<span id="cb12-14"><a href="lec08.html#cb12-14"></a>    <span class="op">}</span></span>
+<span id="cb12-15"><a href="lec08.html#cb12-15"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="staticdynamic-dispatching"><div>
+<h1>Static/dynamic dispatching</h1>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb13-1"><a href="lec08.html#cb13-1"></a><span class="kw">fn</span> summarize0&lt;T: Summary&gt;(v: &amp;T) <span class="op">{</span></span>
+<span id="cb13-2"><a href="lec08.html#cb13-2"></a>    <span class="pp">dbg!</span>(v.summary());</span>
+<span id="cb13-3"><a href="lec08.html#cb13-3"></a><span class="op">}</span></span>
+<span id="cb13-4"><a href="lec08.html#cb13-4"></a></span>
+<span id="cb13-5"><a href="lec08.html#cb13-5"></a><span class="co">// Same as above! i.e., static dispatching</span></span>
+<span id="cb13-6"><a href="lec08.html#cb13-6"></a><span class="kw">fn</span> summarize1(v: &amp;<span class="kw">impl</span> Summary) <span class="op">{</span></span>
+<span id="cb13-7"><a href="lec08.html#cb13-7"></a>    <span class="pp">dbg!</span>(v.summary());</span>
+<span id="cb13-8"><a href="lec08.html#cb13-8"></a><span class="op">}</span></span>
+<span id="cb13-9"><a href="lec08.html#cb13-9"></a></span>
+<span id="cb13-10"><a href="lec08.html#cb13-10"></a><span class="co">// Dynamic dispatching using a virtual function table</span></span>
+<span id="cb13-11"><a href="lec08.html#cb13-11"></a><span class="kw">fn</span> summarize2(v: &amp;dyn Summary) <span class="op">{</span></span>
+<span id="cb13-12"><a href="lec08.html#cb13-12"></a>    <span class="pp">dbg!</span>(v.summary());</span>
+<span id="cb13-13"><a href="lec08.html#cb13-13"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="staticdynamic-dispatching-1"><div>
+<h1>Static/dynamic dispatching</h1>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource asm numberLines"><code class="sourceCode fasm"><span id="cb14-1"><a href="lec08.html#cb14-1"></a><span class="bu">lea</span>    <span class="kw">rax</span>,[rip+<span class="bn">0x234b4</span>]        # Point(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb14-2"><a href="lec08.html#cb14-2"></a><span class="bu">mov</span>    <span class="kw">rdi</span>,<span class="kw">rax</span></span>
+<span id="cb14-3"><a href="lec08.html#cb14-3"></a><span class="bu">call</span>   <span class="dv">4340</span> &lt;test2::summarize0&gt;</span>
+<span id="cb14-4"><a href="lec08.html#cb14-4"></a></span>
+<span id="cb14-5"><a href="lec08.html#cb14-5"></a><span class="bu">lea</span>    <span class="kw">rax</span>,[rip+<span class="bn">0x234a5</span>]        # Point(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb14-6"><a href="lec08.html#cb14-6"></a><span class="bu">mov</span>    <span class="kw">rdi</span>,<span class="kw">rax</span></span>
+<span id="cb14-7"><a href="lec08.html#cb14-7"></a><span class="bu">call</span>   45f0 &lt;test2::summarize1&gt;</span>
+<span id="cb14-8"><a href="lec08.html#cb14-8"></a></span>
+<span id="cb14-9"><a href="lec08.html#cb14-9"></a><span class="bu">lea</span>    <span class="kw">rax</span>,[rip+<span class="bn">0x23496</span>]        # Point(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb14-10"><a href="lec08.html#cb14-10"></a><span class="bu">lea</span>    <span class="kw">rcx</span>,[rip+<span class="bn">0x2f423</span>]        # a <span class="pp">virtual</span> function table</span>
+<span id="cb14-11"><a href="lec08.html#cb14-11"></a><span class="bu">mov</span>    <span class="kw">rdi</span>,<span class="kw">rax</span></span>
+<span id="cb14-12"><a href="lec08.html#cb14-12"></a><span class="bu">mov</span>    <span class="kw">rsi</span>,<span class="kw">rcx</span></span>
+<span id="cb14-13"><a href="lec08.html#cb14-13"></a><span class="bu">call</span>   48a0 &lt;test2::summarize2&gt;</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="trait-vtable-ref.-cheatsheet"><div>
+<h1>Trait vtable (ref. <a href="https://cs140e.sergio.bz/notes/lec3/cheat-sheet.pdf">Cheatsheet</a>)</h1>
+<pre><code>00:0000│ rsi 0x555555587fb0 —▸ core::ptr::real_drop_in_place::hab7cd61d073ba88d
+01:0008│     0x555555587fb8 ◂— 0x8
+02:0010│     0x555555587fc0 ◂— 0x4
+03:0018│     0x555555587fc8 —▸ _$LT$test2..Point$LT$T1$C$T2$GT$$u20$as$u20$test2..Summary$GT$::summary::h9d4aca369fc4e289)</code></pre>
+<p style="text-align:center;margin:0"><img src="img/vtable.png" style="width:50%"/></p>
+</div></section>
+<section class="slide level1" id="returning-a-trait-object"><div>
+<h1>Returning a Trait object</h1>
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb16-1"><a href="lec08.html#cb16-1"></a><span class="co">// Q1</span></span>
+<span id="cb16-2"><a href="lec08.html#cb16-2"></a><span class="kw">fn</span> new_summary(option: <span class="dt">u32</span>) -&gt; Summary <span class="op">{}</span></span>
+<span id="cb16-3"><a href="lec08.html#cb16-3"></a><span class="co">// Q2</span></span>
+<span id="cb16-4"><a href="lec08.html#cb16-4"></a><span class="kw">fn</span> new_summary&lt;T: Summary&gt;(option: <span class="dt">u32</span>) -&gt; T <span class="op">{}</span></span>
+<span id="cb16-5"><a href="lec08.html#cb16-5"></a><span class="co">// Q3</span></span>
+<span id="cb16-6"><a href="lec08.html#cb16-6"></a><span class="kw">fn</span> new_summary(option: <span class="dt">u32</span>) -&gt; &amp;Summary <span class="op">{}</span></span>
+<span id="cb16-7"><a href="lec08.html#cb16-7"></a><span class="co">// Q4</span></span>
+<span id="cb16-8"><a href="lec08.html#cb16-8"></a><span class="kw">fn</span> new_summary(option: <span class="dt">u32</span>) -&gt; &amp;dyn Summary <span class="op">{}</span></span>
+<span id="cb16-9"><a href="lec08.html#cb16-9"></a></span>
+<span id="cb16-10"><a href="lec08.html#cb16-10"></a><span class="kw">fn</span> new_summary(option: <span class="dt">u32</span>) -&gt; <span class="dt">Box</span>&lt;dyn Summary&gt; <span class="op">{}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="common-traits-1-lab2"><div>
+<h1>Common Traits 1 (Lab2)</h1>
+<ul>
+<li>Relevant to <a href="https://doc.rust-lang.org/std/fmt/index.html">formatting</a>:
+<ul>
+<li><a href="https://doc.rust-lang.org/core/fmt/trait.Debug.html">fmt::Debug</a> → <code>{:?}</code> (often via <code>#[derive(Debug)]</code>)</li>
+<li><a href="https://doc.rust-lang.org/core/fmt/trait.Display.html">fmt::Display</a> → <code>{}</code></li>
+<li><a href="https://doc.rust-lang.org/core/fmt/trait.Write.html">fmt::Write</a> → a low-level interface for formatting (e.g., <code>Console</code>)</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb17-1"><a href="lec08.html#cb17-1"></a><span class="kw">pub</span> <span class="kw">trait</span> <span class="bu">Debug</span> <span class="op">{</span></span>
+<span id="cb17-2"><a href="lec08.html#cb17-2"></a>  <span class="kw">fn</span> fmt(&amp;<span class="kw">self</span>, f: &amp;<span class="kw">mut</span> Formatter) -&gt; <span class="dt">Result</span>;</span>
+<span id="cb17-3"><a href="lec08.html#cb17-3"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="common-traits-2-lab2"><div>
+<h1>Common Traits 2 (Lab2)</h1>
+<ul>
+<li>IO reader/writer: <a href="https://doc.rust-lang.org/std/io/trait.Read.html">io::Read</a>, <a href="https://doc.rust-lang.org/std/io/trait.Write.html">io::Write</a></li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/read.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1 cover"><img height="100%" src="img/read-read.png" width="100%"/></section>
+<section class="slide level1" id="sorry-then-is-rust-helpful"><div>
+<h1>Sorry, then is Rust helpful?</h1>
+<ul>
+<li>Q. What does the type system buy you?</li>
+<li>Q. What happen a Trait implementer doesn’t follow these “rules”?</li>
+<li>Q. So, is it helpful or not?</li>
+</ul>
+</div></section>
+<section class="slide level1" id="benefit-of-implementing-read"><div>
+<h1>Benefit of implementing <code>Read</code></h1>
+<ul>
+<li>Compositing to other functions: e.g., <a href="https://doc.rust-lang.org/std/io/struct.BufReader.html">BufReader</a></li>
+</ul>
+<div class="sourceCode" id="cb18"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb18-1"><a href="lec08.html#cb18-1"></a><span class="kw">fn</span> main() -&gt; <span class="pp">std::io::</span><span class="dt">Result</span>&lt;()&gt; <span class="op">{</span></span>
+<span id="cb18-2"><a href="lec08.html#cb18-2"></a>    <span class="kw">let</span> f = <span class="pp">File::</span>open(<span class="st">"log.txt"</span>)?;</span>
+<span id="cb18-3"><a href="lec08.html#cb18-3"></a>    <span class="kw">let</span> <span class="kw">mut</span> reader = <span class="pp">BufReader::</span>new(f);</span>
+<span id="cb18-4"><a href="lec08.html#cb18-4"></a></span>
+<span id="cb18-5"><a href="lec08.html#cb18-5"></a>    <span class="kw">let</span> <span class="kw">mut</span> line = <span class="dt">String</span>::new();</span>
+<span id="cb18-6"><a href="lec08.html#cb18-6"></a>    <span class="kw">let</span> len = reader.read_line(&amp;<span class="kw">mut</span> line)?;</span>
+<span id="cb18-7"><a href="lec08.html#cb18-7"></a>    <span class="pp">println!</span>(<span class="st">"First line is {} bytes long"</span>, len);</span>
+<span id="cb18-8"><a href="lec08.html#cb18-8"></a>    <span class="cn">Ok</span>(())</span>
+<span id="cb18-9"><a href="lec08.html#cb18-9"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="traits-and-rust-language-are-tightly-coupled"><div>
+<h1>Traits and Rust language are tightly coupled</h1>
+<ul>
+<li><a href="https://doc.rust-lang.org/std/ops/trait.Add.html">Add</a>, <a href="https://doc.rust-lang.org/std/ops/trait.AddAssign.html">AddAssign</a>, etc: <code>+</code>, <code>+=</code>, etc</li>
+<li><a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html">Iterator</a> and <a href="https://doc.rust-lang.org/std/iter/trait.IntoIterator.html">IntoIterator</a>: <code>for</code> loop</li>
+<li><a href="https://doc.rust-lang.org/std/ops/trait.Deref.html">Deref</a> and <a href="https://doc.rust-lang.org/std/ops/trait.DerefMut.html">DerefMut</a> (next lecture): <code>.</code> (dot)</li>
+<li>(non trait) <a href="https://doc.rust-lang.org/std/result/">Result</a> and <a href="https://doc.rust-lang.org/std/option/">Option</a>: <code>?</code> operator</li>
+</ul>
+</div></section>
+<section class="slide level1" id="common-traits"><div>
+<h1>Common Traits</h1>
+<ul>
+<li>Idiomatic Rust patterns: <a href="https://doc.rust-lang.org/core/convert/trait.From.html">From</a> → <a href="https://doc.rust-lang.org/core/convert/trait.Into.html">Into</a></li>
+</ul>
+<div class="sourceCode" id="cb19"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb19-1"><a href="lec08.html#cb19-1"></a><span class="kw">pub</span> <span class="kw">trait</span> <span class="bu">Into</span>&lt;T&gt; <span class="op">{</span></span>
+<span id="cb19-2"><a href="lec08.html#cb19-2"></a>    <span class="kw">fn</span> into(<span class="kw">self</span>) -&gt; T;</span>
+<span id="cb19-3"><a href="lec08.html#cb19-3"></a><span class="op">}</span></span>
+<span id="cb19-4"><a href="lec08.html#cb19-4"></a></span>
+<span id="cb19-5"><a href="lec08.html#cb19-5"></a><span class="kw">impl</span>&lt;T, U&gt; <span class="bu">Into</span>&lt;U&gt; <span class="kw">for</span> T</span>
+<span id="cb19-6"><a href="lec08.html#cb19-6"></a><span class="kw">where</span></span>
+<span id="cb19-7"><a href="lec08.html#cb19-7"></a>    U: <span class="bu">From</span>&lt;T&gt;,</span>
+<span id="cb19-8"><a href="lec08.html#cb19-8"></a><span class="op">{</span></span>
+<span id="cb19-9"><a href="lec08.html#cb19-9"></a>    <span class="kw">fn</span> into(<span class="kw">self</span>) -&gt; U <span class="op">{</span></span>
+<span id="cb19-10"><a href="lec08.html#cb19-10"></a>        <span class="pp">U::</span>from(<span class="kw">self</span>)</span>
+<span id="cb19-11"><a href="lec08.html#cb19-11"></a>    <span class="op">}</span></span>
+<span id="cb19-12"><a href="lec08.html#cb19-12"></a><span class="op">}</span></span>
+<span id="cb19-13"><a href="lec08.html#cb19-13"></a></span>
+<span id="cb19-14"><a href="lec08.html#cb19-14"></a><span class="pp">assert_eq!</span>(<span class="st">"Hello"</span>.into(), <span class="dt">String</span>::from(<span class="st">"Hello"</span>));</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="iterator-and-intoiterator"><div>
+<h1>Iterator and IntoIterator</h1>
+<div class="sourceCode" id="cb20"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb20-1"><a href="lec08.html#cb20-1"></a><span class="kw">pub</span> <span class="kw">trait</span> <span class="bu">Iterator</span> <span class="op">{</span></span>
+<span id="cb20-2"><a href="lec08.html#cb20-2"></a>  <span class="co">// associated types</span></span>
+<span id="cb20-3"><a href="lec08.html#cb20-3"></a>  <span class="kw">type</span> Item;</span>
+<span id="cb20-4"><a href="lec08.html#cb20-4"></a>  <span class="kw">fn</span> next(&amp;<span class="kw">mut</span> <span class="kw">self</span>) -&gt; <span class="dt">Option</span>&lt;<span class="kw">Self</span>::Item&gt;;</span>
+<span id="cb20-5"><a href="lec08.html#cb20-5"></a><span class="op">}</span></span>
+<span id="cb20-6"><a href="lec08.html#cb20-6"></a></span>
+<span id="cb20-7"><a href="lec08.html#cb20-7"></a><span class="kw">pub</span> <span class="kw">trait</span> <span class="bu">IntoIterator</span> <span class="op">{</span></span>
+<span id="cb20-8"><a href="lec08.html#cb20-8"></a>  <span class="co">// associated types</span></span>
+<span id="cb20-9"><a href="lec08.html#cb20-9"></a>  <span class="kw">type</span> Item;</span>
+<span id="cb20-10"><a href="lec08.html#cb20-10"></a>  <span class="kw">type</span> IntoIter: Iterator&lt;Item=<span class="kw">Self</span>::Item&gt;;</span>
+<span id="cb20-11"><a href="lec08.html#cb20-11"></a></span>
+<span id="cb20-12"><a href="lec08.html#cb20-12"></a>  <span class="kw">fn</span> into_iter(<span class="kw">self</span>) -&gt; <span class="kw">Self</span>::IntoIter;</span>
+<span id="cb20-13"><a href="lec08.html#cb20-13"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-impl-iterator-for-point"><div>
+<h1>Example: impl Iterator for Point</h1>
+<div class="sourceCode" id="cb21"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb21-1"><a href="lec08.html#cb21-1"></a><span class="kw">struct</span> IterPoint&lt;T&gt;(Point&lt;T, T&gt;, T);</span>
+<span id="cb21-2"><a href="lec08.html#cb21-2"></a></span>
+<span id="cb21-3"><a href="lec08.html#cb21-3"></a><span class="co">// e.g., Specializing it to Point&lt;i32, i32&gt;</span></span>
+<span id="cb21-4"><a href="lec08.html#cb21-4"></a><span class="kw">impl</span> <span class="bu">Iterator</span> <span class="kw">for</span> IterPoint&lt;<span class="dt">i32</span>&gt; <span class="op">{</span></span>
+<span id="cb21-5"><a href="lec08.html#cb21-5"></a>    <span class="kw">type</span> Item = Point&lt;<span class="dt">i32</span>, <span class="dt">i32</span>&gt;;</span>
+<span id="cb21-6"><a href="lec08.html#cb21-6"></a></span>
+<span id="cb21-7"><a href="lec08.html#cb21-7"></a>    <span class="kw">fn</span> next(&amp;<span class="kw">mut</span> <span class="kw">self</span>) -&gt; <span class="dt">Option</span>&lt;<span class="kw">Self</span>::Item&gt; <span class="op">{</span></span>
+<span id="cb21-8"><a href="lec08.html#cb21-8"></a>        <span class="kw">let</span> rtn = <span class="cn">Some</span>(<span class="kw">self</span>.<span class="dv">0</span>);</span>
+<span id="cb21-9"><a href="lec08.html#cb21-9"></a></span>
+<span id="cb21-10"><a href="lec08.html#cb21-10"></a>        (<span class="kw">self</span>.<span class="dv">0</span>).<span class="dv">0</span> += <span class="kw">self</span>.<span class="dv">1</span>;</span>
+<span id="cb21-11"><a href="lec08.html#cb21-11"></a>        (<span class="kw">self</span>.<span class="dv">0</span>).<span class="dv">1</span> += <span class="kw">self</span>.<span class="dv">1</span>;</span>
+<span id="cb21-12"><a href="lec08.html#cb21-12"></a></span>
+<span id="cb21-13"><a href="lec08.html#cb21-13"></a>        rtn</span>
+<span id="cb21-14"><a href="lec08.html#cb21-14"></a>    <span class="op">}</span></span>
+<span id="cb21-15"><a href="lec08.html#cb21-15"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-impl-intoiterator-for-point"><div>
+<h1>Example: impl IntoIterator for Point</h1>
+<div class="sourceCode" id="cb22"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb22-1"><a href="lec08.html#cb22-1"></a><span class="kw">impl</span> <span class="bu">IntoIterator</span> <span class="kw">for</span> Point&lt;<span class="dt">i32</span>, <span class="dt">i32</span>&gt; <span class="op">{</span></span>
+<span id="cb22-2"><a href="lec08.html#cb22-2"></a>    <span class="kw">type</span> Item = Point&lt;<span class="dt">i32</span>, <span class="dt">i32</span>&gt;;</span>
+<span id="cb22-3"><a href="lec08.html#cb22-3"></a>    <span class="kw">type</span> IntoIter = IterPoint&lt;<span class="dt">i32</span>&gt;;</span>
+<span id="cb22-4"><a href="lec08.html#cb22-4"></a></span>
+<span id="cb22-5"><a href="lec08.html#cb22-5"></a>    <span class="kw">fn</span> into_iter(<span class="kw">self</span>) -&gt; <span class="kw">Self</span>::IntoIter <span class="op">{</span></span>
+<span id="cb22-6"><a href="lec08.html#cb22-6"></a>        IterPoint(<span class="kw">self</span>, <span class="dv">1</span>)</span>
+<span id="cb22-7"><a href="lec08.html#cb22-7"></a>    <span class="op">}</span></span>
+<span id="cb22-8"><a href="lec08.html#cb22-8"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-impl-intoiterator-for-point-1"><div>
+<h1>Example: impl IntoIterator for Point</h1>
+<ul>
+<li>IntoIterator makes it compatible to other high-level operators</li>
+</ul>
+<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb23-1"><a href="lec08.html#cb23-1"></a><span class="kw">let</span> line = Point(<span class="dv">0</span>, <span class="dv">0</span>).into_iter();</span>
+<span id="cb23-2"><a href="lec08.html#cb23-2"></a><span class="kw">let</span> even = line.step_by(<span class="dv">2</span>);</span>
+<span id="cb23-3"><a href="lec08.html#cb23-3"></a><span class="kw">let</span> quad = even.filter(|x| x.<span class="dv">0</span> % <span class="dv">4</span> == <span class="dv">0</span>)</span>
+<span id="cb23-4"><a href="lec08.html#cb23-4"></a>    </span>
+<span id="cb23-5"><a href="lec08.html#cb23-5"></a><span class="kw">for</span> i <span class="kw">in</span> quad.take(<span class="dv">10</span>) <span class="op">{</span></span>
+<span id="cb23-6"><a href="lec08.html#cb23-6"></a>  <span class="pp">dbg!</span>(i);</span>
+<span id="cb23-7"><a href="lec08.html#cb23-7"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="references"><div>
+<h1>References</h1>
+<ul>
+<li><a href="https://doc.rust-lang.org/book/ch10-00-generics.html">Book Ch10</a></li>
+<li><a href="https://doc.rust-lang.org/edition-guide/rust-2018/trait-system/index.html">Trait system</a></li>
+<li><a href="https://doc.rust-lang.org/edition-guide/rust-2018/trait-system/dyn-trait-for-trait-objects.html">dyn Trait for trait objects</a></li>
+<li><a href="https://cs140e.sergio.bz/notes/lec3/cheat-sheet.pdf">Cheat sheet</a></li>
+</ul>
+</div></section>
+<div class="progress"><div></div></div>
+<script src="../shower/js/shower.js"></script>
+</body>
+</html>

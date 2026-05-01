@@ -1,0 +1,368 @@
+---------------------
+Preparation Questions
+---------------------
+
+.. toctree::
+   :hidden:
+   :maxdepth: 0
+
+
+.. raw:: html
+
+   <p>
+   By 10pm the evening before lecture, submit
+   1) <strong>your answer</strong> to each lecture's question
+   and 2) <strong>own questions</strong> via this
+   <a href="https://gatech.co1.qualtrics.com/jfe/form/SV_3q6Y3jezjQgnk2h">survey link</a>.
+   </p>
+
+.. raw:: html
+   :file: q.html
+
+
+rustos
+------
+
+.. raw:: html
+
+    <div align="center">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/HgtRAbE1nBM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+
+(optional, but highly recommended!)
+Are you convinced that it's a right time to either rewrite
+or develop an operating system with Rust? If so, what do you think the
+most beneficial aspects of using Rust? If not, what are your concerns?
+
+rusty
+-----
+
+.. raw:: html
+
+   <div align="center">
+     <iframe width="560" height="315" src="https://www.youtube.com/embed/cDFSrVhnZKo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+   </div>
+
+Watch the talk, "A Case for Oxidation: The Rust Programming Language",
+given by `Sergio Benitez <https://sergio.bz/>`__,
+who originally designed
+the lab on `RustOS <https://cs140e.sergio.bz/>`__.
+
+In fact, various safety guarantees provided by Rust at compilation time
+are not limited to writing system software,
+but why Rust is particularly favorable
+in writing an operating system?
+
+rust-ko
+-------
+
+.. raw:: html
+
+   <div align="center">
+     <iframe width="560" height="315" src="https://www.youtube.com/embed/RyY01fRyGhM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+   </div>
+
+Although there have been several attempts to rewrite an OS with Rust,
+like `Redox <https://www.redox-os.org/>`__,
+it's not any close to real-world adoption.
+What about incrementally _adopting_ Rust,
+perhaps like for writing a device driver?
+What are the potential benefits and challenges
+of writing a Linux device driver in Rust?
+
+go-os
+-----
+
+.. raw:: html
+
+   <div align="center">
+     <iframe width="800" height="500" src="https://www.usenix.org/sites/default/files/conference/protected-files/osdi18_slides_cutler.pdf"></iframe>
+   </div>
+
+What are the pros and cons of
+using GC-backed, high-level programming language
+in writing an operating system?
+How would you compare this approach with one using Rust,
+like ours?
+
+You can listen the author's original presentation
+`here <https://2459d6dc103cb5933875-c0245c5c937c5dedcca3f1764ecc9b2f.ssl.cf2.rackcdn.com/osdi18/cutler.mp3>`__;
+a few questions from audience are particularly interesting!
+
+rust-ownership
+--------------
+
+Please carefully read these materials:
+`Book: Ch04 <https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html>`__,
+and Ch 3.1 to Ch 3.6 of `Nomicon Ch03 <https://doc.rust-lang.org/nomicon/ownership.html>`__.
+
+You also find `Primitive Type str <https://doc.rust-lang.org/std/primitive.str.html>`__,
+`Struct std::string::String <https://doc.rust-lang.org/std/string/struct.String.html>`__,
+and `Primitive Type slice <https://doc.rust-lang.org/std/primitive.slice.html>`__.
+very informative.
+
+- Q1. Explain move and copy semantics with examples
+- Q2. Compare &str with String
+- Q3. Compare &str with &String
+- Q4. Compare str with [u8; N]?
+- Q5. Compare str with [u8]?
+- Q6. Compare &str with &[u8]?
+
+Please leave any questions to the Google form for in-class discussion.
+
+rpi3
+----
+
+.. raw:: html
+
+   <div align="center">
+     <iframe width="560" height="315" src="https://www.youtube.com/embed/37_7arZZlUI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+   </div>
+
+Watch Eben Upton's introduction to Raspberry Pi 3. 
+
+- What would be the benefit of supporting 64-bit (AArch64)? in
+  particular, why it is important to support 64-bit by
+  an operating system?
+- Have you ever used Raspberry in any chance? What was for? 
+
+
+intro-os
+--------
+
+.. raw:: html
+
+   <div align="center">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/xs6cDaXbsUA" frameborder="0" allowfullscreen></iframe>
+   </div>
+
+Watch Peter Denning's talk, "Perspectives on OS Foundations",
+presented at the SOSP History Day Workshop (SOSP'15).
+
+- What are the *principles* that you can observe
+  from the modern operating systems
+  you are using daily basis?
+- What are the *principles* that you see
+  beyond operating systemes?
+
+nostd
+-----
+
+In rust, there are a few libraries that work without stdandard
+libaries, which mean we can import as part of our kernel code:
+
+  https://crates.io/categories/no-std
+
+As an exercise, we'd like to make your blinky *randomly* fleshing the
+LED (1-blinky/phase4) by using
+a random number generator of Raspberry 3.
+In doing so, we'd like to use two libaries, namely,
+rand_core and rand.
+
+You can modfy Cargo.toml to import two libraries in your code.
+
+.. code-block:: xml
+
+    [dependencies]
+    rand_core = {version = "0.5.1" }
+    rand = {version = "0.7.3", default-features = false }
+
+Then, your task is to implement the rest of functions in RngCore:
+
+.. code-block:: rs
+
+    // Ref. https://rust-random.github.io/rand/rand_core/trait.RngCore.html#example
+    #[derive(Default)]
+    struct RdRand;
+    
+    impl RngCore for RdRand {
+        fn next_u32(&mut self) -> u32 {
+            // implement!
+        }
+    
+        fn next_u64(&mut self) -> u64 {
+            // implement!
+        }
+    
+        fn fill_bytes(&mut self, dest: &mut [u8]) {
+            impls::fill_bytes_via_next(self, dest)
+        }
+    
+        fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), Error> {
+            Ok(self.fill_bytes(dest))
+        }
+    }
+
+Then, in your kmain(), you can provide a randomly generated time to
+spin_sleep_ms().
+
+.. code-block:: rs
+
+    let mut rng: RdRand = Default::default();
+    ...
+    spin_sleep_ms(rng.gen_range(0, 1000));
+
+You should first initialize the timer before using RdRand, so please 
+refer
+`rand.c <https://github.com/bztsrc/raspi3-tutorial/blob/master/06_random/rand.c>`__
+and 
+`bcm2835-rng.c <https://github.com/torvalds/linux/blob/master/drivers/char/hw_random/bcm2835-rng.c#L85>`__.
+
+Please submit your src/main.rs!
+
+traits
+------
+.. raw:: html
+
+    <div align="center">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/grU-4u0Okto" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+
+1. How would you compare Traits to the object-oriented programming (OOP) paradigm?
+2. Pick `two Traits in Vec <https://doc.rust-lang.org/std/vec/struct.Vec.html#implementations>`__ and explain their implementation to us!
+
+
+deref
+-----
+
+.. code-block:: rs
+
+    struct S(i32);
+    impl S {
+        fn func(&self) { println!("S:func({})", self.0); }
+    }
+
+    fn main() {
+        let v = Box::new(S(1));
+        v.func(); // Q. what's the type of v? whose func() is that?
+    }
+
+Please first read
+`Deref <https://doc.rust-lang.org/std/ops/trait.Deref.html>`__ and
+`Box::Deref <https://doc.rust-lang.org/src/alloc/boxed.rs.html#934-940>`__.
+
+Could you explain what's going on? Why do we need this in Rust?
+
+If you feel adventurous, check this Q&A in `StackOverflow <https://stackoverflow.com/questions/28519997/what-are-rusts-exact-auto-dereferencing-rules/28552082>`__!
+
+cell
+----
+
+.. code-block:: rs
+
+  let x = Rc::new(4);
+  let y = Rc::clone(&x);
+
+When `clone()` is invoked, `Rc` internally increases `the reference
+counter <https://doc.rust-lang.org/src/alloc/rc.rs.html#1145-1165>`__
+to prevent the object from being reclaimed.
+
+Have you noticed that there is no `mut` keyword used in `clone()`?
+
+If you see the definition of `Rc and RcBox <https://doc.rust-lang.org/src/alloc/rc.rs.html#262>`__,
+the type of reference counters (both `strong` and `weak`)
+is `Cell <https://doc.rust-lang.org/std/cell/struct.Cell.html>`__.
+
+.. code-block:: rs
+
+    let c = Cell::new(5);
+    c.set(5);
+    println!("{}", c.get());
+    c.set(10);
+    println!("{}", c.get());
+
+Note the variable `c` is not **mutable**. Is it really safe? What's
+your reasoning behind this?
+You might find `this document <https://doc.rust-lang.org/std/cell/>`__
+interesting.
+
+pagealloc
+---------
+
+.. code-block:: rs
+
+    Trait GlobalAlloc {
+        unsafe fn alloc(&self, layout: Layout) -> *mut u8 {}
+        unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {}
+    }
+    
+How would you compare them with `malloc() <http://man7.org/linux/man-pages/man3/malloc.3.html>`__
+and `free() <https://linux.die.net/man/3/free>`__?
+
+Wait, we are buliding an OS kernel. What does it mean to have an
+allocator? How does it different from the allocator in the uesrspace?
+
+Please read `Heap Allocation <https://os.phil-opp.com/heap-allocation/>`__.
+
+aarch64
+-------
+
+Please read `Fundamentals of ARMv8-A [Ch1. page 4-9]
+<https://static.docs.arm.com/100878/0100/fundamentals_of_armv8_a_100878_0100_en.pdf>`__
+and answer following questions.
+
+1. Explain the concept of "Exception Level" (EL). Where is your RustOS
+   currently running?
+2. Compare AArch32 vs. AArch64 vs. ARMv8-A?
+
+
+interrupt
+---------
+
+Please read `AArch64 Exception and Interrupt Handling [Ch1. page 4-8]
+<https://static.docs.arm.com/100933/0100/aarch64_exception_and_interrupt_handling_100933_0100_en.pdf?_ga=2.53419304.1898977826.1583857121-1374653565.1582651530>`__
+and answer following questions.
+
+1. How do "exception" and "interrupt"" differ? and how does it related
+   to the "exception level"?
+2. What do you mean by synchronous or asynchronous exceptions?
+
+process
+-------
+
+Please read `Scheduling: Introduction <http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched.pdf>`__,
+and answer following questions.
+
+Assume you have 5 processes P1 to P5. Compare these scheduling
+scenarios: 1) executing P1, P2, P3, P4 and P5 in *sequence*, v.s.,
+2) executing P1-5 based on their time quota/slice.
+
+1. If all processes are computation intensive tasks. Which scenario is
+   faster in terms of the termination of all processes?
+2. In what situation, 2) would be faster in terms of the termination
+   of all processes?
+3. Is "the termination of all processes" good way to compare scheduling polices?
+   If not, can you think of any situation where this metrics doesn't work?
+4. Any good suggestion to compare scheduling policies?
+
+virtual-address
+---------------
+
+Please read `The Abstraction: Address Spaces <http://pages.cs.wisc.edu/~remzi/OSTEP/vm-intro.pdf>`__,
+and answer following questions:
+
+1. Can we use EL3 for userspace, EL0 for kernel (yes/no)? why not?
+2. Kernel can not read userspace memory (yes/no)?
+3. Userspace can not read kernel's memory (yes/no)?
+4. Pointers in kernel are using physical address (yes/no)?
+5. Processes requiring 3GB memory cannot run on a machine with 2GB RAM (yes/no)?
+
+etc
+---
+
+.. raw:: html
+
+    <div align="center">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/IznEq2Uf2xk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+
+When designing a heap allocator,
+there were three critical performance optimization
+that the speaker emphasized:
+1) TLB pollution by a heap allocator,
+2) cache bouncing among objects,
+and 3) lock contention
+(e.g., increasing Magazines size when failed to hold a lock).
+
+1. Could you explain what are these problems, concisely?
+2. How does Rust help us (or not) to address these problems?

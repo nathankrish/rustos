@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Memory Management and Heap Allocator</title>
+<meta charset="utf-8"/>
+<meta content="ie=edge" http-equiv="x-ua-compatible"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="../shower/styles/ribbon.css" rel="stylesheet"/>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+  position: relative; left: -1em; text-align: right; vertical-align: baseline;
+  border: none; display: inline-block;
+  -webkit-touch-callout: none; -webkit-user-select: none;
+  -khtml-user-select: none; -moz-user-select: none;
+  -ms-user-select: none; user-select: none;
+  padding: 0 4px; width: 4em;
+  color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+{   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style>
+section pre code {
+  line-height: 1.4 !important;
+  font-size: 20px !important;
+}
+.compact code {
+  line-height: 1.4 !important;
+  font-size: 16px !important;
+}
+ul.compact {
+  line-height: 1.5 !important;
+  font-size: 20px !important;
+}
+.writeup {
+    font-size: 20px !important;
+}
+a.sourceLine { background: none !important; }
+section.region { display: none !important; }
+pre.numberSource { margin-left: 2em; }
+div.sourceCode { overflow: hidden; }
+a.sourceLine::before { text-decoration: none; }
+
+pre > code.sourceCode > span > a:first-child::before { text-decoration: none !important; }
+</style>
+<script src="../shower/js/jquery-2.2.0.min.js"></script>
+</head>
+<body class="shower list">
+<header class="caption">
+<h1>CS3210 Design Operating Systems</h1>
+<p>Taesoo Kim</p>
+</header>
+<header class="caption">
+</header>
+<section class="slide" id="cover">
+<br/><br/><br/><br/>
+<h2>Memory Management and Heap Allocator</h2>
+<p> Taesoo Kim</p>
+<style>
+ #cover h2 {
+   /* margin:180px 0 0; */
+   color: #666;
+   text-align:center;
+   font-size: 60px;
+   font-weight: bold;
+   margin-bottom: 0em;
+ }
+ #cover p {
+   margin:30px 0 0;
+   text-align:center;
+   font-style:italic;
+   font-size:40px;
+ }
+ </style>
+</section>
+
+<section class="slide level1" id="administrivia"><div>
+<h1>Administrivia</h1>
+<ul>
+<li>“Lab 3: FAT32 Filesystem” is due on <mark>Mar 2</mark>!</li>
+<li>Proposal day:
+<ul>
+<li><strong>Two days</strong> to accommodate the larger number of teams/students</li>
+<li><strong>Slides</strong> <mark>DUE on Feb 24</mark>! (2-day earlier than the original plan)</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="qa"><div>
+<h1>Q&amp;A</h1>
+<blockquote>
+<p>Is there any other file systems as easy as FAT series?</p>
+</blockquote>
+<blockquote>
+<p>Since Box uses allocate in its implementation and is considered “safe” by Rust, would it be possible to introduce/create an infinite number of Boxes which will take up all of a system’s memory and cause a memory error?</p>
+</blockquote>
+</div></section>
+<section class="slide level1" id="agenda"><div>
+<h1>Agenda</h1>
+<ul>
+<li>malloc()/free()</li>
+<li>Page frames (physical memory)</li>
+<li>Two heap/page allocators</li>
+</ul>
+</div></section>
+<section class="slide level1" id="simple-high-level-interfaces"><div>
+<h1>Simple High-level Interfaces</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="lec13.html#cb1-1"></a>  <span class="co">// allocate a memory region (an object)</span></span>
+<span id="cb1-2"><a href="lec13.html#cb1-2"></a>  <span class="dt">void</span> *malloc(<span class="dt">size_t</span> size);</span>
+<span id="cb1-3"><a href="lec13.html#cb1-3"></a>  <span class="co">// free a memory region</span></span>
+<span id="cb1-4"><a href="lec13.html#cb1-4"></a>  <span class="dt">void</span> free(<span class="dt">void</span> *ptr);</span>
+<span id="cb1-5"><a href="lec13.html#cb1-5"></a></span>
+<span id="cb1-6"><a href="lec13.html#cb1-6"></a>  <span class="co">// allocate a memory region for an array</span></span>
+<span id="cb1-7"><a href="lec13.html#cb1-7"></a>  <span class="dt">void</span> *calloc(<span class="dt">size_t</span> nmemb, <span class="dt">size_t</span> size);</span>
+<span id="cb1-8"><a href="lec13.html#cb1-8"></a>  <span class="co">// resize/reallocate a memory region</span></span>
+<span id="cb1-9"><a href="lec13.html#cb1-9"></a>  <span class="dt">void</span> *realloc(<span class="dt">void</span> *ptr, <span class="dt">size_t</span> size);</span>
+<span id="cb1-10"><a href="lec13.html#cb1-10"></a></span>
+<span id="cb1-11"><a href="lec13.html#cb1-11"></a>  <span class="co">// new Type == malloc(sizeof(Type))</span></span>
+<span id="cb1-12"><a href="lec13.html#cb1-12"></a>  <span class="co">// new Type[size] == malloc(sizeof(Type)*size)</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="cs101-heap-allocators"><div>
+<h1>CS101: Heap Allocators</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="lec13.html#cb2-1"></a>Q0. ptr = malloc(size); *ptr?</span>
+<span id="cb2-2"><a href="lec13.html#cb2-2"></a>Q1. ptr = malloc(<span class="dv">0</span>); ptr == NULL?</span>
+<span id="cb2-3"><a href="lec13.html#cb2-3"></a>Q2. ptr = malloc(-<span class="dv">1</span>); ptr == NULL?</span>
+<span id="cb2-4"><a href="lec13.html#cb2-4"></a>Q3. ptr = malloc(size); ptr == NULL but valid? <span class="co">/* vaddr = 0 */</span></span>
+<span id="cb2-5"><a href="lec13.html#cb2-5"></a></span>
+<span id="cb2-6"><a href="lec13.html#cb2-6"></a>Q4. free(ptr); ptr == NULL?</span>
+<span id="cb2-7"><a href="lec13.html#cb2-7"></a>Q5. free(ptr); *ptr?</span>
+<span id="cb2-8"><a href="lec13.html#cb2-8"></a>Q6. free(NULL)?</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="cs101-common-goals-of-heap-allocators"><div>
+<h1>CS101: Common Goals of Heap Allocators</h1>
+<ol type="1">
+<li>Performance → worse case/common path of alloc/free</li>
+<li>Memory fragmentation → internal / external fragmentation</li>
+<li>Security (out-of-scope, but check cs6265!)</li>
+</ol>
+</div></section>
+<section class="slide level1" id="ptmalloc-in-linux-memory-allocation"><div>
+<h1>ptmalloc in Linux: Memory Allocation</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="lec13.html#cb3-1"></a>ptr = malloc(size);</span></code></pre></div>
+<p style="text-align:center;margin:0"><img src="img/heap0.svg" style="width:45%"/></p>
+</div></section>
+<section class="slide level1" id="ptmalloc-in-linux-data-structure"><div>
+<h1>ptmalloc in Linux: Data Structure</h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="lec13.html#cb4-1"></a><span class="kw">struct</span> malloc_chunk {</span>
+<span id="cb4-2"><a href="lec13.html#cb4-2"></a>  [...]</span>
+<span id="cb4-3"><a href="lec13.html#cb4-3"></a>  <span class="co">// double links for free chunks in small/large bins</span></span>
+<span id="cb4-4"><a href="lec13.html#cb4-4"></a>  <span class="co">//  (only valid when this chunk is freed)</span></span>
+<span id="cb4-5"><a href="lec13.html#cb4-5"></a>  <span class="kw">struct</span> malloc_chunk* fd;</span>
+<span id="cb4-6"><a href="lec13.html#cb4-6"></a>  <span class="kw">struct</span> malloc_chunk* bk;</span>
+<span id="cb4-7"><a href="lec13.html#cb4-7"></a>  </span>
+<span id="cb4-8"><a href="lec13.html#cb4-8"></a>  <span class="co">// double links for next larger/smaller size in largebins</span></span>
+<span id="cb4-9"><a href="lec13.html#cb4-9"></a>  <span class="co">//  (only valid when this chunk is freed)</span></span>
+<span id="cb4-10"><a href="lec13.html#cb4-10"></a>  <span class="kw">struct</span> malloc_chunk* fd_nextsize;</span>
+<span id="cb4-11"><a href="lec13.html#cb4-11"></a>  <span class="kw">struct</span> malloc_chunk* bk_nextsize;</span>
+<span id="cb4-12"><a href="lec13.html#cb4-12"></a>};</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="ptmalloc-in-linux-memory-free"><div>
+<h1>ptmalloc in Linux: Memory Free</h1>
+<p style="text-align:center;margin:0"><img src="img/heap2.svg" style="width:50%"/></p>
+</div></section>
+<section class="slide level1" id="common-design-choices"><div>
+<h1>Common Design Choices</h1>
+<ol type="1">
+<li><strong>Binning</strong>: size-base groups/operations
+<ul>
+<li>e.g., caching the same size objects together</li>
+</ul></li>
+<li><strong>In-place metadata</strong>: metadata before/after or even inside
+<ul>
+<li>e.g., putting metadata inside the freed region</li>
+</ul></li>
+<li><strong>Cardinal metadata</strong>: no encoding, direct pointers and sizes
+<ul>
+<li>e.g., using raw pointers for linked lists</li>
+</ul></li>
+</ol>
+</div></section>
+<section class="slide level1" id="understanding-modern-heap-allocators"><div>
+<h1>Understanding Modern Heap Allocators</h1>
+<ul>
+<li><strong>Maximize memory usage</strong>: using free memory regions!</li>
+<li>Data structure to <strong>minimize fragmentation</strong> (i.e., fd/bk consolidation)</li>
+<li>Data structure to <strong>maximize performance</strong> (i.e., O(1) in free/malloc)</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/heap.svg" style="width:70%"/></p>
+</div></section>
+<section class="slide level1" id="wait-we-are-the-os-kernel"><div>
+<h1>Wait, we are the OS kernel?</h1>
+<ul>
+<li>Yes, we meant to provide allocation APIs for <strong>physical</strong> pages/frames</li>
+</ul>
+</div></section>
+<section class="slide level1 cover"><img height="100%" src="img/bcm2836-peripherals.png" width="100%"/></section>
+<section class="slide level1" id="wait-we-are-the-os-kernel-1"><div>
+<h1>Wait, we are the OS kernel?</h1>
+<ul>
+<li>Yes, we meant to provide allocation APIs for <strong>physical</strong> pages/frames</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/frames.svg" style="width:45%"/></p>
+</div></section>
+<section class="slide level1" id="globalallocator-in-rust"><div>
+<h1>GlobalAllocator in Rust</h1>
+<ul>
+<li>Q. How is it different from <code>malloc()</code>/<code>free()</code>?</li>
+<li>Q. How would you do if you need one physical frame (i.e., one page)?</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb5-1"><a href="lec13.html#cb5-1"></a><span class="co">// in std::alloc::GlobalAlloc</span></span>
+<span id="cb5-2"><a href="lec13.html#cb5-2"></a><span class="kw">unsafe</span> <span class="kw">impl</span> <span class="bu">GlobalAlloc</span> <span class="op">{</span></span>
+<span id="cb5-3"><a href="lec13.html#cb5-3"></a>  <span class="kw">unsafe</span> <span class="kw">fn</span> alloc(<span class="op">&amp;</span><span class="kw">self</span><span class="op">,</span> layout<span class="op">:</span> Layout) <span class="op">-&gt;</span> <span class="op">*</span><span class="kw">mut</span> <span class="dt">u8</span> <span class="op">{}</span></span>
+<span id="cb5-4"><a href="lec13.html#cb5-4"></a>  <span class="kw">unsafe</span> <span class="kw">fn</span> dealloc(<span class="op">&amp;</span><span class="kw">self</span><span class="op">,</span> ptr<span class="op">:</span> <span class="op">*</span><span class="kw">mut</span> <span class="dt">u8</span><span class="op">,</span> layout<span class="op">:</span> Layout) <span class="op">{}</span></span>
+<span id="cb5-5"><a href="lec13.html#cb5-5"></a><span class="op">}</span></span>
+<span id="cb5-6"><a href="lec13.html#cb5-6"></a></span>
+<span id="cb5-7"><a href="lec13.html#cb5-7"></a><span class="kw">pub</span> <span class="kw">struct</span> Layout <span class="op">{</span></span>
+<span id="cb5-8"><a href="lec13.html#cb5-8"></a>    size_<span class="op">:</span> <span class="dt">usize</span><span class="op">,</span></span>
+<span id="cb5-9"><a href="lec13.html#cb5-9"></a>    align_<span class="op">:</span> NonZeroUsize<span class="op">,</span></span>
+<span id="cb5-10"><a href="lec13.html#cb5-10"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="comparing-with-native-heap-allocator"><div>
+<h1>Comparing with native heap allocator</h1>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb6-1"><a href="lec13.html#cb6-1"></a><span class="kw">unsafe</span> <span class="kw">fn</span> alloc(<span class="op">&amp;</span><span class="kw">self</span><span class="op">,</span> layout<span class="op">:</span> Layout) <span class="op">-&gt;</span> <span class="op">*</span><span class="kw">mut</span> <span class="dt">u8</span> <span class="op">{}</span></span>
+<span id="cb6-2"><a href="lec13.html#cb6-2"></a><span class="kw">unsafe</span> <span class="kw">fn</span> dealloc(<span class="op">&amp;</span><span class="kw">self</span><span class="op">,</span> ptr<span class="op">:</span> <span class="op">*</span><span class="kw">mut</span> <span class="dt">u8</span><span class="op">,</span> layout<span class="op">:</span> Layout) <span class="op">{}</span></span></code></pre></div>
+<p>vs.,</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="lec13.html#cb7-1"></a>Q0. ptr = malloc(size); *ptr?</span>
+<span id="cb7-2"><a href="lec13.html#cb7-2"></a>Q1. ptr = malloc(<span class="dv">0</span>); ptr == NULL?</span>
+<span id="cb7-3"><a href="lec13.html#cb7-3"></a>Q2. ptr = malloc(-<span class="dv">1</span>); ptr == NULL?</span>
+<span id="cb7-4"><a href="lec13.html#cb7-4"></a>Q3. ptr = malloc(size); ptr == NULL but valid? <span class="co">/* vaddr = 0 */</span></span>
+<span id="cb7-5"><a href="lec13.html#cb7-5"></a></span>
+<span id="cb7-6"><a href="lec13.html#cb7-6"></a>Q4. free(ptr); ptr == NULL?</span>
+<span id="cb7-7"><a href="lec13.html#cb7-7"></a>Q5. free(ptr); *ptr?</span>
+<span id="cb7-8"><a href="lec13.html#cb7-8"></a>Q6. free(NULL)?</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="two-naive-implementations"><div>
+<h1>Two naive implementations</h1>
+<ul>
+<li><strong>Bump allocator</strong>: simplest form, no reuse/free</li>
+<li><strong>Bin allocator</strong>: attempting to minimize fragmentation</li>
+</ul>
+<p>Ref. <a href="https://os.phil-opp.com/allocator-designs/">Allocator Designs</a></p>
+</div></section>
+<section class="slide level1" id="bump-allocator"><div>
+<h1>Bump allocator</h1>
+<ul>
+<li>Q. How to do <code>alloc()</code>?</li>
+<li>Q. How to do <code>free()</code>?</li>
+<li>Q. How to handle layout (i.e., alignment)?</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/bump.svg" style="width:70%"/></p>
+</div></section>
+<section class="slide level1" id="maintaining-free-chunks-for-reuse"><div>
+<h1>Maintaining free chunks for reuse</h1>
+<ul>
+<li>Q. How to do <code>free()</code>?</li>
+<li>Q. How to do <code>alloc()</code>?</li>
+<li>Q. Where to store “link” then?</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/linked-list-allocation.svg" style="width: 80%"/></p>
+</div></section>
+<section class="slide level1" id="bin-allocator"><div>
+<h1>Bin allocator</h1>
+<ul>
+<li>Introducing <strong>size-based caching</strong> on freed chunks</li>
+<li>Maintaining a linked list per a group of free chunks with similar sizes (i.e., bin)</li>
+<li>Q. How to do <code>alloc()</code>?</li>
+<li>Q. How to do <code>free()</code>?</li>
+</ul>
+<pre><code>      Bins
+sz=16 [ -]---&gt;[fd]---&gt;[fd]--&gt;NULL
+sz=24 [ -]---&gt;[fd]---&gt;NULL
+sz=32 [ -]---&gt;NULL
+       ...</code></pre>
+</div></section>
+<section class="slide level1" id="problems-of-bin-allocator"><div>
+<h1>Problems of bin allocator</h1>
+<ul>
+<li>Q. Is the <em>external</em> fragmentation issue resolved?</li>
+<li>Q. How would you respect proper <code>layout</code> in an efficient manner?</li>
+<li>Q. What if there is no proper size/layout in my bin? searching larger-size bin?</li>
+</ul>
+</div></section>
+<section class="slide level1" id="references"><div>
+<h1>References</h1>
+<ul>
+<li><a href="https://os.phil-opp.com/paging-implementation/">Page implementation</a></li>
+<li><a href="https://os.phil-opp.com/heap-allocation/">Heap allocation</a></li>
+<li><a href="https://os.phil-opp.com/allocator-designs/">Allocator Designs</a></li>
+</ul>
+</div></section>
+<div class="progress"><div></div></div>
+<script src="../shower/js/shower.js"></script>
+</body>
+</html>

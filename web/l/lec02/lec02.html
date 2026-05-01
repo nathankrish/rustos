@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Rust 1: Thinking of Rust</title>
+<meta charset="utf-8"/>
+<meta content="ie=edge" http-equiv="x-ua-compatible"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="../shower/styles/ribbon.css" rel="stylesheet"/>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+  position: relative; left: -1em; text-align: right; vertical-align: baseline;
+  border: none; display: inline-block;
+  -webkit-touch-callout: none; -webkit-user-select: none;
+  -khtml-user-select: none; -moz-user-select: none;
+  -ms-user-select: none; user-select: none;
+  padding: 0 4px; width: 4em;
+  color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+{   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style>
+section pre code {
+  line-height: 1.4 !important;
+  font-size: 20px !important;
+}
+.compact code {
+  line-height: 1.4 !important;
+  font-size: 16px !important;
+}
+ul.compact {
+  line-height: 1.5 !important;
+  font-size: 20px !important;
+}
+.writeup {
+    font-size: 20px !important;
+}
+a.sourceLine { background: none !important; }
+section.region { display: none !important; }
+pre.numberSource { margin-left: 2em; }
+div.sourceCode { overflow: hidden; }
+a.sourceLine::before { text-decoration: none; }
+
+pre > code.sourceCode > span > a:first-child::before { text-decoration: none !important; }
+</style>
+<script src="../shower/js/jquery-2.2.0.min.js"></script>
+</head>
+<body class="shower list">
+<header class="caption">
+<h1>CS3210 Design Operating Systems</h1>
+<p>Taesoo Kim</p>
+</header>
+<header class="caption">
+</header>
+<section class="slide" id="cover">
+<br/><br/><br/><br/>
+<h2>Rust 1: Thinking of Rust</h2>
+<p> Taesoo Kim</p>
+<style>
+ #cover h2 {
+   /* margin:180px 0 0; */
+   color: #666;
+   text-align:center;
+   font-size: 60px;
+   font-weight: bold;
+   margin-bottom: 0em;
+ }
+ #cover p {
+   margin:30px 0 0;
+   text-align:center;
+   font-style:italic;
+   font-size:40px;
+ }
+ </style>
+</section>
+
+<section class="slide level1" id="administrivia"><div>
+<h1>Administrivia</h1>
+<ul>
+<li><em>Lab 0: Rustlings</em> is due (<mark>DUE: Jan 20</mark> in 1.5 weeks!)</li>
+<li><strong>Perpetration</strong>: Rpi 3 + sdcard + reader (for Lab 1)</li>
+<li>TA office hours:
+<ul>
+<li><strong>Fri</strong> at <strong>Coda C0915</strong> Atlantic, <strong>10-11 AM</strong>, Yechan Bae</li>
+<li><strong>Tue</strong> at <strong>Coda C0906</strong> Underwood, <strong>5-6 PM</strong>, Sujin Park</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="qa"><div>
+<h1>Q&amp;A</h1>
+<ol type="1">
+<li>Is Rust suitable beyond OS development?</li>
+</ol>
+<blockquote>
+<p>Will Rust be adopted by the biggest producers of systems software (Microsoft, Apple, Green Hills Software) and/or open-sourced systems software (Linux, FreeBSD)? What are some hurdles?</p>
+</blockquote>
+</div></section>
+<section class="slide level1" id="qa-continue"><div>
+<h1>Q&amp;A (continue)</h1>
+<ol start="2" type="1">
+<li>For linear types, why the function x.m() can’t be called twice?? → <strong>Lec 3</strong></li>
+<li>Why is it so desirable to not have garbage collection? Does garbage collection impact OS/system development? → <strong>Lec3 (see, prep question!)</strong></li>
+<li>MANY questions about unsafe → <strong>Lec 4</strong></li>
+</ol>
+</div></section>
+<section class="slide level1" id="summary-about-operating-system"><div>
+<h1>Summary: about <em>operating system</em></h1>
+<ul>
+<li>Views: <strong>interface</strong> and <strong>abstraction</strong></li>
+<li>Typical operating systems are designed to:
+<ul>
+<li><strong>Abstract</strong> the hardware for convenience and portability</li>
+<li><strong>Multiplex</strong> the hardware among multiple applications (or virtualization)</li>
+<li><strong>Isolate</strong> applications to contain bugs</li>
+<li>Allow <strong>sharing</strong> among applications</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="agenda"><div>
+<h1>Agenda</h1>
+<ul>
+<li>RAII: Resource Acquisition Is Initialization</li>
+<li>Substructure Type System</li>
+<li>Immutability and Mutability</li>
+<li>Ownership and Borrowing</li>
+<li>Safety rule: {shared}+ xor mutable references</li>
+</ul>
+</div></section>
+<section class="slide level1" id="motivating-problem-file-descriptor"><div>
+<h1>Motivating problem: file descriptor</h1>
+<ul>
+<li>How to manage systems resources, like file/socket?</li>
+</ul>
+</div></section>
+<section class="slide level1" id="motivating-problem-file-descriptor-1"><div>
+<h1>Motivating problem: file descriptor</h1>
+<ul>
+<li>How to manage systems resources, like file/socket?</li>
+<li>What if we don’t <code>close(fd)</code>?</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource c numberLines"><code class="sourceCode c"><span id="cb1-1"><a href="lec02.html#cb1-1"></a>fd = open(<span class="st">"/etc/passwd"</span>, O_RDONLY);</span>
+<span id="cb1-2"><a href="lec02.html#cb1-2"></a>read(fd, buf, <span class="kw">sizeof</span>(buf));</span>
+<span id="cb1-3"><a href="lec02.html#cb1-3"></a></span>
+<span id="cb1-4"><a href="lec02.html#cb1-4"></a><span class="co">// what if we forgot to close?</span></span>
+<span id="cb1-5"><a href="lec02.html#cb1-5"></a>close(fd);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="what-about-in-python"><div>
+<h1>What about in Python?</h1>
+<ul>
+<li>How to correctly implement this in Python?</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource py numberLines"><code class="sourceCode python"><span id="cb2-1"><a href="lec02.html#cb2-1"></a>fd <span class="op">=</span> <span class="bu">open</span>(<span class="st">"/etc/passwd"</span>)</span>
+<span id="cb2-2"><a href="lec02.html#cb2-2"></a>fd.read()</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource py numberLines"><code class="sourceCode python"><span id="cb3-1"><a href="lec02.html#cb3-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"/etc/passwd"</span>) <span class="im">as</span> fd:</span>
+<span id="cb3-2"><a href="lec02.html#cb3-2"></a>  fd.read()</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="implicit-reclamation-of-file-resources"><div>
+<h1>Implicit reclamation of file resources</h1>
+<ul>
+<li>What’s the magic behind the scene?</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource py numberLines"><code class="sourceCode python"><span id="cb4-1"><a href="lec02.html#cb4-1"></a>fd <span class="op">=</span> <span class="bu">open</span>(<span class="st">"/etc/passwd"</span>)</span>
+<span id="cb4-2"><a href="lec02.html#cb4-2"></a>fd.read()</span>
+<span id="cb4-3"><a href="lec02.html#cb4-3"></a><span class="co"># del fd -&gt; fd.__del__() -&gt; fd.close()</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource py numberLines"><code class="sourceCode python"><span id="cb5-1"><a href="lec02.html#cb5-1"></a><span class="co"># fd.__enter__()</span></span>
+<span id="cb5-2"><a href="lec02.html#cb5-2"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"/etc/passwd"</span>) <span class="im">as</span> fd:</span>
+<span id="cb5-3"><a href="lec02.html#cb5-3"></a>  fd.read()</span>
+<span id="cb5-4"><a href="lec02.html#cb5-4"></a><span class="co"># fd.__exit__()</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="idea-using-a-scoping-rule-for-returning-resource"><div>
+<h1>Idea: using a scoping rule for returning resource</h1>
+<ul>
+<li>File is available only for the <em>local scope</em> (e.g., function)</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource py numberLines"><code class="sourceCode python"><span id="cb6-1"><a href="lec02.html#cb6-1"></a><span class="kw">def</span> func():</span>
+<span id="cb6-2"><a href="lec02.html#cb6-2"></a>  fd <span class="op">=</span> <span class="bu">open</span>(<span class="st">"/etc/passwd"</span>) <span class="co"># &lt;- open</span></span>
+<span id="cb6-3"><a href="lec02.html#cb6-3"></a>  fd.read()</span>
+<span id="cb6-4"><a href="lec02.html#cb6-4"></a>  <span class="co"># &lt;- free</span></span></code></pre></div>
+<ul>
+<li>Explicitly indicate the scope, called <em>context</em> (i.e., <code>with</code>)</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource py numberLines"><code class="sourceCode python"><span id="cb7-1"><a href="lec02.html#cb7-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"/etc/passwd"</span>) <span class="im">as</span> fd: <span class="co"># &lt;- open</span></span>
+<span id="cb7-2"><a href="lec02.html#cb7-2"></a>  fd.read()</span>
+<span id="cb7-3"><a href="lec02.html#cb7-3"></a><span class="co"># &lt;- free</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="raii-resource-acquisition-is-initialization"><div>
+<h1>RAII: Resource Acquisition Is Initialization</h1>
+<ul>
+<li>A popular design pattern in C++ (e.g., <code>ofstream</code>, <code>lock_guard</code>)</li>
+<li>Compilers handle hindsight cases like exception by placing destructors</li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource cpp numberLines"><code class="sourceCode cpp"><span id="cb8-1"><a href="lec02.html#cb8-1"></a><span class="dt">void</span> WriteToFile(<span class="at">const</span> <span class="bu">std::</span>string&amp; message) {</span>
+<span id="cb8-2"><a href="lec02.html#cb8-2"></a>  <span class="at">static</span> <span class="bu">std::</span>mutex mutex;</span>
+<span id="cb8-3"><a href="lec02.html#cb8-3"></a>  <span class="bu">std::</span>lock_guard&lt;<span class="bu">std::</span>mutex&gt; lock(mutex);</span>
+<span id="cb8-4"><a href="lec02.html#cb8-4"></a></span>
+<span id="cb8-5"><a href="lec02.html#cb8-5"></a>  <span class="bu">std::</span>ofstream file(<span class="st">"/etc/passwd"</span>);</span>
+<span id="cb8-6"><a href="lec02.html#cb8-6"></a>  <span class="cf">if</span> (!file.is_open())</span>
+<span id="cb8-7"><a href="lec02.html#cb8-7"></a>    <span class="cf">throw</span> <span class="bu">std::</span>runtime_error(<span class="st">"unable to open file"</span>);</span>
+<span id="cb8-8"><a href="lec02.html#cb8-8"></a>  file &lt;&lt; message &lt;&lt; <span class="bu">std::</span>endl;</span>
+<span id="cb8-9"><a href="lec02.html#cb8-9"></a>}</span></code></pre></div>
+<p>Ref. <a href="https://en.wikipedia.org/wiki/Resource_acquisition_is_initialization">Wikipedia: Resource acquisition is initialization</a></p>
+</div></section>
+<section class="slide level1" id="raii-scoping-rules-and-ownership"><div>
+<h1>RAII: scoping rules and ownership</h1>
+<ul>
+<li><code>fd</code> <em>owns</em> the file resource during its lifetime (a local, function scope)</li>
+<li>When <code>fd</code> is reclaimed, it reclaims the owned resource together</li>
+</ul>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource py numberLines"><code class="sourceCode python"><span id="cb9-1"><a href="lec02.html#cb9-1"></a><span class="kw">def</span> func():</span>
+<span id="cb9-2"><a href="lec02.html#cb9-2"></a>  fd <span class="op">=</span> <span class="bu">open</span>(<span class="st">"/etc/passwd"</span>) <span class="co"># &lt;- open: fd owns the file</span></span>
+<span id="cb9-3"><a href="lec02.html#cb9-3"></a>  fd.read()</span>
+<span id="cb9-4"><a href="lec02.html#cb9-4"></a>  <span class="co"># &lt;- free: reclaims the file</span></span></code></pre></div>
+<p>Ref. <a href="https://doc.rust-lang.org/stable/nomicon/obrm.html?highlight=RAII#the-perils-of-ownership-based-resource-management-obrm">Ownership Based Resource Management (OBRM)</a></p>
+</div></section>
+<section class="slide level1" id="raii-scoping-rules-and-lifetime"><div>
+<h1>RAII: scoping rules and lifetime</h1>
+<ul>
+<li>In fact, “scoping” doesn’t have to be just a <em>local</em> scope, so called <em>lifetime</em></li>
+<li>When the allocated <code>ofstream</code> is freed, it reclaims the file back to OS</li>
+</ul>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource cpp numberLines"><code class="sourceCode cpp"><span id="cb10-1"><a href="lec02.html#cb10-1"></a>  <span class="bu">std::</span>ofstream *file = <span class="kw">new</span> <span class="bu">std::</span>ofstream(<span class="st">"/etc/passwd"</span>);</span>
+<span id="cb10-2"><a href="lec02.html#cb10-2"></a>  ...</span>
+<span id="cb10-3"><a href="lec02.html#cb10-3"></a>  <span class="co">// @different</span></span>
+<span id="cb10-4"><a href="lec02.html#cb10-4"></a>  <span class="co">//    function</span></span>
+<span id="cb10-5"><a href="lec02.html#cb10-5"></a>  <span class="co">//    thread</span></span>
+<span id="cb10-6"><a href="lec02.html#cb10-6"></a>  <span class="co">//    long long time later</span></span>
+<span id="cb10-7"><a href="lec02.html#cb10-7"></a>  <span class="co">//    or even when the process dies</span></span>
+<span id="cb10-8"><a href="lec02.html#cb10-8"></a>  <span class="co">//    ...</span></span>
+<span id="cb10-9"><a href="lec02.html#cb10-9"></a>  <span class="kw">delete</span> file;</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="hello-rust"><div>
+<h1>Hello, Rust!</h1>
+<p style="text-align:center;margin:0"><img src="img/rust.svg" style="width: 80%"/></p>
+</div></section>
+<section class="slide level1" id="rust-practical-substructure-type-system"><div>
+<h1>Rust: <em>Practical</em> Substructure Type System</h1>
+<ul>
+<li><strong>Memory ~= Resource</strong>: managing memory based on ownership rules</li>
+<li>Augmenting <em>type systems</em> to constrain <code>malloc()</code>/<code>free()</code> interfaces
+<ul>
+<li>e.g., variable initialization → ownership assignment</li>
+<li>e.g., going out of scope → freeing associated memory</li>
+</ul></li>
+</ul>
+<p>→ Memory management can be done <em>statically</em> at compilation time!</p>
+<p>Ref. <a href="https://mitpress-request.mit.edu/sites/default/files/titles/content/9780262162289_sch_0001.pdf">Substructural Type Systems</a> (aka, Linear, Affine type systems)</p>
+</div></section>
+<section class="slide level1" id="agenda-for-this-semester-tentative"><div>
+<h1>Agenda for this semester (tentative)!</h1>
+<ul>
+<li>Rust 1: Thinking of Rust ← <em>started today!</em></li>
+<li>Rust 2: Ownership and Lifetime</li>
+<li>Rust 3: Unsafety</li>
+<li>Rust 4: Freestanding/Baremetal Rust</li>
+<li>Rust 5: Generics and Traits</li>
+<li>Rust 7: Interior Mutability</li>
+<li>Rust 8: Zero-cost Abstraction</li>
+<li>Rust 9: Concurrency</li>
+</ul>
+</div></section>
+<section class="slide level1" id="immutability-and-mutability"><div>
+<h1>Immutability and mutability</h1>
+<ul>
+<li>Immutable variables by default</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb11-1"><a href="lec02.html#cb11-1"></a><span class="kw">let</span> x = <span class="dv">1</span>;</span>
+<span id="cb11-2"><a href="lec02.html#cb11-2"></a>x = <span class="dv">2</span>;</span></code></pre></div>
+<iframe height="100%" src="code/err-mut.html" width="100%">
+</iframe>
+</div></section>
+<section class="slide level1" id="notes-on-error-e0384"><div>
+<h1>Notes on error (E0384)</h1>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb12-1"><a href="lec02.html#cb12-1"></a>This error occurs when an attempt is made to reassign an </span>
+<span id="cb12-2"><a href="lec02.html#cb12-2"></a>immutable variable. For example:</span>
+<span id="cb12-3"><a href="lec02.html#cb12-3"></a></span>
+<span id="cb12-4"><a href="lec02.html#cb12-4"></a>  <span class="kw">fn</span> main() <span class="op">{</span></span>
+<span id="cb12-5"><a href="lec02.html#cb12-5"></a>      <span class="kw">let</span> x = <span class="dv">3</span>;</span>
+<span id="cb12-6"><a href="lec02.html#cb12-6"></a>      x = <span class="dv">5</span>; <span class="co">// error, reassignment of immutable variable</span></span>
+<span id="cb12-7"><a href="lec02.html#cb12-7"></a>  <span class="op">}</span></span>
+<span id="cb12-8"><a href="lec02.html#cb12-8"></a></span>
+<span id="cb12-9"><a href="lec02.html#cb12-9"></a>By <span class="kw">default</span>, variables <span class="kw">in</span> Rust are immutable. To fix this error, </span>
+<span id="cb12-10"><a href="lec02.html#cb12-10"></a>add the keyword `mut` after the keyword `let` when declaring the </span>
+<span id="cb12-11"><a href="lec02.html#cb12-11"></a>variable. For example:</span>
+<span id="cb12-12"><a href="lec02.html#cb12-12"></a></span>
+<span id="cb12-13"><a href="lec02.html#cb12-13"></a>  <span class="kw">fn</span> main() <span class="op">{</span></span>
+<span id="cb12-14"><a href="lec02.html#cb12-14"></a>      <span class="kw">let</span> <span class="kw">mut</span> x = <span class="dv">3</span>;</span>
+<span id="cb12-15"><a href="lec02.html#cb12-15"></a>      x = <span class="dv">5</span>;</span>
+<span id="cb12-16"><a href="lec02.html#cb12-16"></a>  <span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="immutability-and-mutability-1"><div>
+<h1>Immutability and mutability</h1>
+<ul>
+<li>Opt-in mutability (see, the <code>mut</code> keyword following <code>let</code>)</li>
+</ul>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb13-1"><a href="lec02.html#cb13-1"></a><span class="kw">let</span> <span class="kw">mut</span> x = <span class="dv">1</span>;</span>
+<span id="cb13-2"><a href="lec02.html#cb13-2"></a></span>
+<span id="cb13-3"><a href="lec02.html#cb13-3"></a><span class="pp">dbg!</span>(x); <span class="co">//=&gt; x = 1</span></span>
+<span id="cb13-4"><a href="lec02.html#cb13-4"></a></span>
+<span id="cb13-5"><a href="lec02.html#cb13-5"></a>x = <span class="dv">2</span>;</span>
+<span id="cb13-6"><a href="lec02.html#cb13-6"></a></span>
+<span id="cb13-7"><a href="lec02.html#cb13-7"></a><span class="pp">dbg!</span>(x); <span class="co">//=&gt; x = 2</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="desugaring-a-bit"><div>
+<h1>Desugaring a bit</h1>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb14-1"><a href="lec02.html#cb14-1"></a><span class="co">//</span></span>
+<span id="cb14-2"><a href="lec02.html#cb14-2"></a><span class="co">//      +--&gt; variable name (or identifier)</span></span>
+<span id="cb14-3"><a href="lec02.html#cb14-3"></a><span class="co">//      |</span></span>
+<span id="cb14-4"><a href="lec02.html#cb14-4"></a><span class="kw">let</span> <span class="kw">mut</span> x: <span class="dt">i32</span> = <span class="dv">1</span>;</span>
+<span id="cb14-5"><a href="lec02.html#cb14-5"></a><span class="co">//  +--    ---   +-&gt; value</span></span>
+<span id="cb14-6"><a href="lec02.html#cb14-6"></a><span class="co">//  |      |</span></span>
+<span id="cb14-7"><a href="lec02.html#cb14-7"></a><span class="co">//  |      +--&gt; type (32-bit signed integer)</span></span>
+<span id="cb14-8"><a href="lec02.html#cb14-8"></a><span class="co">//  +--&gt; noting mutability</span></span>
+<span id="cb14-9"><a href="lec02.html#cb14-9"></a><span class="co">//</span></span>
+<span id="cb14-10"><a href="lec02.html#cb14-10"></a>x = <span class="dv">2</span>;</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="variable-and-type"><div>
+<h1>Variable and type</h1>
+<p style="text-align:center;margin:0"><img src="img/var.svg" style="width:60%"/></p>
+</div></section>
+<section class="slide level1" id="value-and-type"><div>
+<h1>Value and type</h1>
+<p style="text-align:center;margin:0"><img src="img/val.svg" style="width:60%"/></p>
+</div></section>
+<section class="slide level1" id="strongly-typed-programming-language"><div>
+<h1>Strongly typed programming language</h1>
+<ul>
+<li><code>x: i32</code> is <em>initialized</em> with <code>1: i32</code> (not valid syntax)</li>
+<li><code>x: i32</code> is <em>assigned</em> with <code>2: i32</code> (not valid syntax)</li>
+<li>Strongly typed → <code>i32</code> of a variable and <code>i32</code> of the value should be matched!</li>
+</ul>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb15-1"><a href="lec02.html#cb15-1"></a><span class="co">// x stores the value 1 (i32)</span></span>
+<span id="cb15-2"><a href="lec02.html#cb15-2"></a><span class="kw">let</span> <span class="kw">mut</span> x: <span class="dt">i32</span> = <span class="dv">1</span>;</span>
+<span id="cb15-3"><a href="lec02.html#cb15-3"></a></span>
+<span id="cb15-4"><a href="lec02.html#cb15-4"></a><span class="co">// x is assigned with the value 2 (i32)</span></span>
+<span id="cb15-5"><a href="lec02.html#cb15-5"></a>x = <span class="dv">2</span>;</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="assigning-a-value-to-a-variable"><div>
+<h1>Assigning a value to a variable</h1>
+<p style="text-align:center;margin:0"><img src="img/assignment.svg" style="width:60%"/></p>
+</div></section>
+<section class="slide level1" id="ownership"><div>
+<h1>Ownership</h1>
+<ul>
+<li>A variable <strong>owns</strong> a value: the owner is in charge of reclaiming the memory
+<ul>
+<li>e.g., <code>x</code> (a variable) owns <code>1</code> (a value)</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb16-1"><a href="lec02.html#cb16-1"></a><span class="co">// x owns 1</span></span>
+<span id="cb16-2"><a href="lec02.html#cb16-2"></a><span class="kw">let</span> <span class="kw">mut</span> x: <span class="dt">i32</span> = <span class="dv">1</span>;</span>
+<span id="cb16-3"><a href="lec02.html#cb16-3"></a></span>
+<span id="cb16-4"><a href="lec02.html#cb16-4"></a><span class="co">// x now owns 2</span></span>
+<span id="cb16-5"><a href="lec02.html#cb16-5"></a>x = <span class="dv">2</span>;</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="more-interesting-example"><div>
+<h1>More interesting example</h1>
+<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb17-1"><a href="lec02.html#cb17-1"></a><span class="kw">let</span> <span class="kw">mut</span> x = <span class="dt">String</span>::from(<span class="st">"Hello!"</span>);</span>
+<span id="cb17-2"><a href="lec02.html#cb17-2"></a><span class="kw">let</span> y = <span class="dt">String</span>::from(<span class="st">"World!"</span>);</span>
+<span id="cb17-3"><a href="lec02.html#cb17-3"></a></span>
+<span id="cb17-4"><a href="lec02.html#cb17-4"></a>x = y; <span class="co">// typically say, assigning a value of y to x</span></span>
+<span id="cb17-5"><a href="lec02.html#cb17-5"></a></span>
+<span id="cb17-6"><a href="lec02.html#cb17-6"></a><span class="pp">dbg!</span>(y);</span></code></pre></div>
+<iframe height="100%" src="code/err-mut-string.html" width="100%">
+</iframe>
+</div></section>
+<section class="slide level1" id="move-semantics"><div>
+<h1>Move semantics</h1>
+<ul>
+<li>A value of a variable <em>moves</em> to another variable by an assignment operator (<code>=</code>)</li>
+</ul>
+<div class="sourceCode" id="cb18"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb18-1"><a href="lec02.html#cb18-1"></a><span class="kw">let</span> <span class="kw">mut</span> x = <span class="dt">String</span>::from(<span class="st">"Hello!"</span>);</span>
+<span id="cb18-2"><a href="lec02.html#cb18-2"></a><span class="kw">let</span> y = <span class="dt">String</span>::from(<span class="st">"World!"</span>);</span>
+<span id="cb18-3"><a href="lec02.html#cb18-3"></a></span>
+<span id="cb18-4"><a href="lec02.html#cb18-4"></a><span class="co">// y's value is moved to x and x now owns "World!"</span></span>
+<span id="cb18-5"><a href="lec02.html#cb18-5"></a>x = y;</span>
+<span id="cb18-6"><a href="lec02.html#cb18-6"></a></span>
+<span id="cb18-7"><a href="lec02.html#cb18-7"></a><span class="co">// error: y doesn't own any value!</span></span>
+<span id="cb18-8"><a href="lec02.html#cb18-8"></a><span class="pp">dbg!</span>(y);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="move-semantics-and-allocfree"><div>
+<h1>Move semantics and alloc()/free()</h1>
+<div class="sourceCode" id="cb19"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb19-1"><a href="lec02.html#cb19-1"></a><span class="op">{</span></span>
+<span id="cb19-2"><a href="lec02.html#cb19-2"></a>    <span class="co">// x &lt;- alloc("Hello!")</span></span>
+<span id="cb19-3"><a href="lec02.html#cb19-3"></a>    <span class="kw">let</span> <span class="kw">mut</span> x = <span class="dt">String</span>::from(<span class="st">"Hello!"</span>);</span>
+<span id="cb19-4"><a href="lec02.html#cb19-4"></a></span>
+<span id="cb19-5"><a href="lec02.html#cb19-5"></a>    <span class="co">// y &lt;- alloc("World!")</span></span>
+<span id="cb19-6"><a href="lec02.html#cb19-6"></a>    <span class="kw">let</span> y = <span class="dt">String</span>::from(<span class="st">"World!"</span>);</span>
+<span id="cb19-7"><a href="lec02.html#cb19-7"></a></span>
+<span id="cb19-8"><a href="lec02.html#cb19-8"></a>    <span class="co">// drop(x): free("Hello!")</span></span>
+<span id="cb19-9"><a href="lec02.html#cb19-9"></a>    x = y;</span>
+<span id="cb19-10"><a href="lec02.html#cb19-10"></a></span>
+<span id="cb19-11"><a href="lec02.html#cb19-11"></a>    ...</span>
+<span id="cb19-12"><a href="lec02.html#cb19-12"></a><span class="op">}</span> </span>
+<span id="cb19-13"><a href="lec02.html#cb19-13"></a><span class="co">// drop(x): free("World!")</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="behind-the-move-operation"><div>
+<h1>Behind the move operation</h1>
+<ul>
+<li>x/y owns a string, which uniquely owns an array of chars</li>
+<li>OBRM: <code>drop()</code> frees the memory that the variable is in charge of</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/mov-string.svg" style="width:100%"/></p>
+</div></section>
+<section class="slide level1" id="borrowing-via-references"><div>
+<h1>Borrowing via references</h1>
+<ul>
+<li>A variable borrows a value (i.e., shared reference) from an owner</li>
+</ul>
+<div class="sourceCode" id="cb20"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb20-1"><a href="lec02.html#cb20-1"></a><span class="kw">let</span> x = <span class="dt">String</span>::from(<span class="st">"Hello!"</span>);</span>
+<span id="cb20-2"><a href="lec02.html#cb20-2"></a><span class="kw">let</span> y = x; <span class="co">// move a value</span></span>
+<span id="cb20-3"><a href="lec02.html#cb20-3"></a></span>
+<span id="cb20-4"><a href="lec02.html#cb20-4"></a><span class="pp">dbg!</span>(x); <span class="co">// </span><span class="al">WARNING</span><span class="co">. not allowed!</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb21-1"><a href="lec02.html#cb21-1"></a><span class="kw">let</span> x = <span class="dt">String</span>::from(<span class="st">"Hello!"</span>);</span>
+<span id="cb21-2"><a href="lec02.html#cb21-2"></a><span class="kw">let</span> y = &amp;x; <span class="co">// borrow a value (i.e., move a shared reference) </span></span>
+<span id="cb21-3"><a href="lec02.html#cb21-3"></a></span>
+<span id="cb21-4"><a href="lec02.html#cb21-4"></a><span class="pp">dbg!</span>(x);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="borrowing-via-references-1"><div>
+<h1>Borrowing via references</h1>
+<ol type="1">
+<li>Rule 1. there can be many outstanding shared references</li>
+</ol>
+<div class="sourceCode" id="cb22"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb22-1"><a href="lec02.html#cb22-1"></a><span class="kw">let</span> x = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb22-2"><a href="lec02.html#cb22-2"></a><span class="kw">let</span> y = &amp;x; <span class="co">// borrow a value for reading</span></span>
+<span id="cb22-3"><a href="lec02.html#cb22-3"></a><span class="kw">let</span> z = &amp;x; <span class="co">// borrow a value for reading</span></span>
+<span id="cb22-4"><a href="lec02.html#cb22-4"></a></span>
+<span id="cb22-5"><a href="lec02.html#cb22-5"></a><span class="pp">dbg!</span>(y); <span class="co">//=&gt; "Hello"</span></span>
+<span id="cb22-6"><a href="lec02.html#cb22-6"></a><span class="pp">dbg!</span>(z); <span class="co">//=&gt; "Hello"</span></span>
+<span id="cb22-7"><a href="lec02.html#cb22-7"></a><span class="pp">dbg!</span>(x); <span class="co">//=&gt; "Hello"</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="borrowing-via-references-2"><div>
+<h1>Borrowing via references</h1>
+<ol start="2" type="1">
+<li>Rule 2. there should be only one outstanding <em>mutable</em> reference</li>
+</ol>
+<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb23-1"><a href="lec02.html#cb23-1"></a><span class="kw">let</span> <span class="kw">mut</span> x = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb23-2"><a href="lec02.html#cb23-2"></a><span class="kw">let</span> y = &amp;<span class="kw">mut</span> x; <span class="co">// borrow a value for writing</span></span>
+<span id="cb23-3"><a href="lec02.html#cb23-3"></a><span class="kw">let</span> z = &amp;<span class="kw">mut</span> x; <span class="co">// borrow a value for writing</span></span>
+<span id="cb23-4"><a href="lec02.html#cb23-4"></a>...</span></code></pre></div>
+<iframe height="100%" src="code/mut-ref.html" width="100%">
+</iframe>
+</div></section>
+<section class="slide level1" id="borrowing-via-references-3"><div>
+<h1>Borrowing via references</h1>
+<ol start="3" type="1">
+<li>Rule 3. there should be no shared and mutable reference at the same time</li>
+</ol>
+<div class="sourceCode" id="cb24"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb24-1"><a href="lec02.html#cb24-1"></a><span class="kw">let</span> <span class="kw">mut</span> x = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb24-2"><a href="lec02.html#cb24-2"></a><span class="kw">let</span> y = &amp;x;     <span class="co">// borrow a value for reading</span></span>
+<span id="cb24-3"><a href="lec02.html#cb24-3"></a><span class="kw">let</span> z = &amp;<span class="kw">mut</span> x; <span class="co">// borrow a value for writing</span></span>
+<span id="cb24-4"><a href="lec02.html#cb24-4"></a>...</span></code></pre></div>
+<iframe height="100%" src="code/err-mut-imm.html" width="100%">
+</iframe>
+</div></section>
+<section class="slide level1" id="safety-rule-shared-xor-mutable-references"><div>
+<h1>Safety rule: {shared}+ xor mutable references</h1>
+<ol type="1">
+<li>Rule 1. there can be many outstanding shared references</li>
+<li>Rule 2. There should be only one <em>mutable</em> reference</li>
+<li><strong>Safety rule</strong>: Rule 1 <strong>xor</strong> Rule 2</li>
+</ol>
+</div></section>
+<section class="slide level1" id="implication-1.-aliasing-analysis"><div>
+<h1>Implication 1. aliasing analysis</h1>
+<ul>
+<li>Reasoning aliases of a pointer becomes easier → better optimization!</li>
+</ul>
+<div class="sourceCode" id="cb25"><pre class="sourceCode numberSource c numberLines"><code class="sourceCode c"><span id="cb25-1"><a href="lec02.html#cb25-1"></a><span class="co">// $ man 3 memcpy</span></span>
+<span id="cb25-2"><a href="lec02.html#cb25-2"></a><span class="co">//</span></span>
+<span id="cb25-3"><a href="lec02.html#cb25-3"></a><span class="co">// NOTES</span></span>
+<span id="cb25-4"><a href="lec02.html#cb25-4"></a><span class="co">//   Failure to observe the requirement that the memory </span></span>
+<span id="cb25-5"><a href="lec02.html#cb25-5"></a><span class="co">//   areas do not overlap has  been  the  source of</span></span>
+<span id="cb25-6"><a href="lec02.html#cb25-6"></a><span class="co">//   significant bugs.</span></span>
+<span id="cb25-7"><a href="lec02.html#cb25-7"></a><span class="co">//</span></span>
+<span id="cb25-8"><a href="lec02.html#cb25-8"></a><span class="dt">void</span> *memcpy(<span class="dt">void</span> *dst, <span class="dt">const</span> <span class="dt">void</span> *src, <span class="dt">size_t</span> n);</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb26-1"><a href="lec02.html#cb26-1"></a><span class="co">// dst and src can not point to the same value!</span></span>
+<span id="cb26-2"><a href="lec02.html#cb26-2"></a><span class="kw">fn</span> memcpy&lt;T&gt;(dst: &amp;<span class="kw">mut</span> T, src: &amp;T);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="implication-2.-data-race-freedom"><div>
+<h1>Implication 2. data race freedom</h1>
+<ul>
+<li>Safety rule helps us avoid potentially problematic situations</li>
+<li>In practice, this rule is too strict → including more idioms that we know safe!</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/datarace.svg" style="width:100%"/></p>
+</div></section>
+<section class="slide level1" id="big-ideas-in-rust"><div>
+<h1>Big ideas in Rust</h1>
+<ul>
+<li>OBRM <strong><em>plus</em></strong> {shared}+ ^ mutable references
+<ul>
+<li><a href="https://hacks.mozilla.org/2019/01/fearless-security-memory-safety/">Memory safety</a></li>
+<li><a href="https://hacks.mozilla.org/2019/02/fearless-security-thread-safety/">Thread safety</a></li>
+</ul></li>
+</ul>
+<p>→ With modern type system, abstractions, build system, package managers, etc.</p>
+</div></section>
+<section class="slide level1" id="how-other-hll-tackle-memory-safety"><div>
+<h1>How other HLL tackle memory safety?</h1>
+<ul>
+<li><strong>No</strong> memory abstraction is exposed in languages (pure)</li>
+<li><strong>Automatic</strong> memory management at runtime:
+<ul>
+<li>Using Reference Counting (RC): python, etc</li>
+<li>Using Garbage Collection (GC): Go, Java, JavaScript, etc</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="important-features-for-system-languages"><div>
+<h1>Important features for system languages</h1>
+<ul>
+<li>Explicit memory management (i.e., no GC/RC by default)</li>
+<li>Zero-cost abstraction (i.e., no RTTI, pay what you use)</li>
+<li>Supporting FFI without cognitive burden</li>
+</ul>
+</div></section>
+<section class="slide level1" id="notes-on-safety-for-os-development"><div>
+<h1>Notes on safety for OS development</h1>
+<ul>
+<li>Memory safety
+<ul>
+<li>Alas, you have to write lots of <code>unsafe</code> code in early labs</li>
+</ul></li>
+<li>Thread safety
+<ul>
+<li>Luckily, don’t have to worry about until we have mutlicore!</li>
+</ul></li>
+</ul>
+<p>→ We will try hard to distinguish what’s safe and unsafe in each labs</p>
+</div></section>
+<section class="slide level1" id="agenda-for-this-semester-tentative-1"><div>
+<h1>Agenda for this semester (tentative)!</h1>
+<ul>
+<li>Rust 1: Thinking of Rust</li>
+<li>Rust 2: Ownership and Lifetime</li>
+<li>Rust 3: Unsafety</li>
+<li>Rust 4: Freestanding/Baremetal Rust</li>
+<li>Rust 5: Generics and Traits</li>
+<li>Rust 7: Interior Mutability</li>
+<li>Rust 8: Zero-cost Abstraction</li>
+<li>Rust 9: Concurrency</li>
+</ul>
+</div></section>
+<section class="slide level1" id="next-lecture"><div>
+<h1>Next lecture</h1>
+<ul>
+<li>Next: Rust 2: Ownership and Lifetime</li>
+<li>Sign-up for <a href="https://piazza.com/class/k4iwq4owaka7pc">Piazza</a></li>
+<li>Don’t forget to submit “preparation question” (<mark>DUE: 10pm</mark>)</li>
+<li>“Lab 0: Rustlings” is due in 1.5 weeks (<mark>DUE: Jan 20</mark>)</li>
+<li>Perpetration: Rpi 3 + sdcard + reader (for Lab 1-5)</li>
+</ul>
+</div></section>
+<div class="progress"><div></div></div>
+<script src="../shower/js/shower.js"></script>
+</body>
+</html>

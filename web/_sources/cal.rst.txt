@@ -1,0 +1,22 @@
+========
+Schedule
+========
+
+.. toctree::
+   :hidden:
+
+   q
+
+- The schedule will change as the course progresses, in part based on student
+  interests. If you are particularly interested in some topic not covered here,
+  send mail to the course staff.
+- Submit your answers (and questions) via `survey link <https://gatech.co1.qualtrics.com/jfe/form/SV_3q6Y3jezjQgnk2h>`__,
+  and post your questions to colleagues (and staffs) on
+  `Piazza <https://piazza.com/class/k4iwq4owaka7pc>`_.
+- Answers for lecture preparation questions can be found in this Piazza post
+  `@55 <https://piazza.com/class/k4iwq4owaka7pc?cid=55>`_.
+- Join our BlueJeans meeting `Here <https://bluejeans.com/932730963/webrtc>`_.
+
+.. raw:: html
+   :file: cal.html
+          

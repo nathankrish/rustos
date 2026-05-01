@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Rust 2: Ownership and Lifetime</title>
+<meta charset="utf-8"/>
+<meta content="ie=edge" http-equiv="x-ua-compatible"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="../shower/styles/ribbon.css" rel="stylesheet"/>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+  position: relative; left: -1em; text-align: right; vertical-align: baseline;
+  border: none; display: inline-block;
+  -webkit-touch-callout: none; -webkit-user-select: none;
+  -khtml-user-select: none; -moz-user-select: none;
+  -ms-user-select: none; user-select: none;
+  padding: 0 4px; width: 4em;
+  color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+{   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style>
+section pre code {
+  line-height: 1.4 !important;
+  font-size: 20px !important;
+}
+.compact code {
+  line-height: 1.4 !important;
+  font-size: 16px !important;
+}
+ul.compact {
+  line-height: 1.5 !important;
+  font-size: 20px !important;
+}
+.writeup {
+    font-size: 20px !important;
+}
+a.sourceLine { background: none !important; }
+section.region { display: none !important; }
+pre.numberSource { margin-left: 2em; }
+div.sourceCode { overflow: hidden; }
+a.sourceLine::before { text-decoration: none; }
+
+pre > code.sourceCode > span > a:first-child::before { text-decoration: none !important; }
+</style>
+<script src="../shower/js/jquery-2.2.0.min.js"></script>
+</head>
+<body class="shower list">
+<header class="caption">
+<h1>CS3210 Design Operating Systems</h1>
+<p>Taesoo Kim</p>
+</header>
+<header class="caption">
+</header>
+<section class="slide" id="cover">
+<br/><br/><br/><br/>
+<h2>Rust 2: Ownership and Lifetime</h2>
+<p> Taesoo Kim</p>
+<style>
+ #cover h2 {
+   /* margin:180px 0 0; */
+   color: #666;
+   text-align:center;
+   font-size: 60px;
+   font-weight: bold;
+   margin-bottom: 0em;
+ }
+ #cover p {
+   margin:30px 0 0;
+   text-align:center;
+   font-style:italic;
+   font-size:40px;
+ }
+ </style>
+</section>
+
+<section class="slide level1" id="administrivia"><div>
+<h1>Administrivia</h1>
+<ul>
+<li>“Lab 0: Rustlings” is due (<mark>DUE: Jan 20</mark> in one week!)</li>
+<li><strong>Perpetration</strong>: Rpi 3 + sdcard + reader (from Lab 1)</li>
+<li>TA office hours
+<ul>
+<li><strong>Fri</strong> at Coda C0915, <strong>10-11 AM</strong>, Yechan Bae</li>
+<li><strong>Tue</strong> at Coda C0906, <strong>05-06 PM</strong>, Sujin Park</li>
+<li><strong>Wed</strong> at Coda C1008, <strong>11-12 PM</strong>, Mansour Alharthi</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="qa"><div>
+<h1>Q&amp;A</h1>
+<ol type="1">
+<li>About Rust’s safety and trade-offs:</li>
+</ol>
+<blockquote>
+<p>Is an OS made in Rust still susceptible to as many CVEs as an OS made in C or C++? If not, what is the tradeoff (lines of code, performance e.g. HLL tax, etc.) to make it safer?</p>
+</blockquote>
+<ol type="1">
+<li>What’s POSIX (see, <a href="https://en.wikipedia.org/wiki/POSIX">POSIX</a>)?</li>
+<li>About Rust vs. GC-based HLL or C in performance? (→ Lec 3)</li>
+<li>About Rust vs. other approaches in memory safety? (→ Lec 2)</li>
+<li>How do macros work? (→ Lec 4 or Lec 8)</li>
+</ol>
+</div></section>
+<section class="slide level1" id="summary-thinking-of-rust"><div>
+<h1>Summary: Thinking of Rust</h1>
+<ul>
+<li>RAII/OBRM</li>
+<li>Substructure Type System</li>
+<li>Ownership and Borrowing ← <em>discussing in depth today!</em>
+<ol type="1">
+<li><strong>Rule 1</strong>. there can be many outstanding shared references</li>
+<li><strong>Rule 2</strong>. There should be only one <em>mutable</em> reference</li>
+<li><strong>Safety rule</strong>: Rule 1 <strong>xor</strong> Rule 2</li>
+</ol></li>
+</ul>
+</div></section>
+<section class="slide level1" id="agenda"><div>
+<h1>Agenda</h1>
+<ul>
+<li>Variable, value and type</li>
+<li>Ownership and borrowing</li>
+<li>Move and copy semantics</li>
+<li>Lifetime</li>
+</ul>
+</div></section>
+<section class="slide level1" id="type-variable-and-value"><div>
+<h1>Type, Variable and Value</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb1-1"><a href="lec03.html#cb1-1"></a><span class="co">//</span></span>
+<span id="cb1-2"><a href="lec03.html#cb1-2"></a><span class="co">//      +--&gt; variable name (or identifier)</span></span>
+<span id="cb1-3"><a href="lec03.html#cb1-3"></a><span class="co">//      |</span></span>
+<span id="cb1-4"><a href="lec03.html#cb1-4"></a><span class="kw">let</span> <span class="kw">mut</span> x: <span class="dt">i32</span> = <span class="dv">1</span>;</span>
+<span id="cb1-5"><a href="lec03.html#cb1-5"></a><span class="co">//  +--    ---   +-&gt; value</span></span>
+<span id="cb1-6"><a href="lec03.html#cb1-6"></a><span class="co">//  |      |</span></span>
+<span id="cb1-7"><a href="lec03.html#cb1-7"></a><span class="co">//  |      +--&gt; type (32-bit signed integer)</span></span>
+<span id="cb1-8"><a href="lec03.html#cb1-8"></a><span class="co">//  +--&gt; noting mutability</span></span>
+<span id="cb1-9"><a href="lec03.html#cb1-9"></a><span class="co">//</span></span>
+<span id="cb1-10"><a href="lec03.html#cb1-10"></a>x = <span class="dv">2</span>;</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="trick-to-ask-rustc-about-a-type-of-variable"><div>
+<h1>Trick to ask Rustc about a type of variable</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb2-1"><a href="lec03.html#cb2-1"></a><span class="kw">let</span> <span class="kw">mut</span> x: <span class="dt">i32</span> = <span class="dv">1</span>;</span>
+<span id="cb2-2"><a href="lec03.html#cb2-2"></a></span>
+<span id="cb2-3"><a href="lec03.html#cb2-3"></a><span class="kw">let</span> _: () = <span class="dv">1</span>; <span class="co">// what's _ and ()?</span></span>
+<span id="cb2-4"><a href="lec03.html#cb2-4"></a><span class="kw">let</span> _: () = x;</span></code></pre></div>
+<iframe height="80%" src="code/type.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="variable-and-type"><div>
+<h1>Variable and type</h1>
+<p style="text-align:center;margin:0"><img src="img/var.svg" style="width:60%"/></p>
+</div></section>
+<section class="slide level1" id="value-and-type"><div>
+<h1>Value and type</h1>
+<p style="text-align:center;margin:0"><img src="img/val.svg" style="width:60%"/></p>
+</div></section>
+<section class="slide level1" id="getting-the-size-of-variable-and-type"><div>
+<h1>Getting the size of variable and type</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb3-1"><a href="lec03.html#cb3-1"></a><span class="kw">let</span> x: <span class="dt">i32</span> = <span class="dv">1</span>;</span>
+<span id="cb3-2"><a href="lec03.html#cb3-2"></a><span class="kw">let</span> y: <span class="dt">String</span> = <span class="dt">String</span>::from(<span class="st">"hello"</span>);</span>
+<span id="cb3-3"><a href="lec03.html#cb3-3"></a></span>
+<span id="cb3-4"><a href="lec03.html#cb3-4"></a><span class="pp">dbg!</span>(<span class="pp">std::mem::</span>size_of_val(&amp;x));     <span class="co">//=&gt;  4</span></span>
+<span id="cb3-5"><a href="lec03.html#cb3-5"></a><span class="pp">dbg!</span>(<span class="pp">std::mem::</span>size_of_val(&amp;y));     <span class="co">//=&gt; 24</span></span>
+<span id="cb3-6"><a href="lec03.html#cb3-6"></a></span>
+<span id="cb3-7"><a href="lec03.html#cb3-7"></a><span class="pp">dbg!</span>(<span class="pp">std::mem::size_of::</span>&lt;<span class="dt">i32</span>&gt;());    <span class="co">//=&gt;  4</span></span>
+<span id="cb3-8"><a href="lec03.html#cb3-8"></a><span class="pp">dbg!</span>(<span class="pp">std::mem::size_of::</span>&lt;<span class="dt">String</span>&gt;()); <span class="co">//=&gt; 24</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="strongly-typed-programming-language"><div>
+<h1>Strongly typed programming language</h1>
+<ul>
+<li><code>x: i32</code> is <em>initialized</em> with <code>1: i32</code> (not valid syntax)</li>
+<li><code>x: i32</code> is <em>assigned</em> with <code>2: i32</code> (not valid syntax)</li>
+<li><code>i32</code> of a variable and <code>i32</code> of a value should be matched!</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb4-1"><a href="lec03.html#cb4-1"></a><span class="co">// x stores a value (1 :i32)</span></span>
+<span id="cb4-2"><a href="lec03.html#cb4-2"></a><span class="kw">let</span> <span class="kw">mut</span> x: <span class="dt">i32</span> = <span class="dv">1</span>;</span>
+<span id="cb4-3"><a href="lec03.html#cb4-3"></a></span>
+<span id="cb4-4"><a href="lec03.html#cb4-4"></a><span class="co">// x is assigned with a value (2 :i32)</span></span>
+<span id="cb4-5"><a href="lec03.html#cb4-5"></a>x = <span class="dv">2</span>;</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="assigning-a-value-to-a-variable"><div>
+<h1>Assigning a value to a variable</h1>
+<p style="text-align:center;margin:0"><img src="img/assignment.svg" style="width:60%"/></p>
+</div></section>
+<section class="slide level1" id="ownership-and-move-semantics"><div>
+<h1>Ownership and move semantics</h1>
+<ul>
+<li>A variable <strong>owns</strong> a value: the owner is in charge of reclaiming the memory</li>
+<li>Ownership changes upon a move (e.g., <code>y</code> → <code>x</code>)</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb5-1"><a href="lec03.html#cb5-1"></a><span class="kw">let</span> <span class="kw">mut</span> x = <span class="dt">String</span>::from(<span class="st">"Hello!"</span>);</span>
+<span id="cb5-2"><a href="lec03.html#cb5-2"></a><span class="kw">let</span> y = <span class="dt">String</span>::from(<span class="st">"World!"</span>);</span>
+<span id="cb5-3"><a href="lec03.html#cb5-3"></a></span>
+<span id="cb5-4"><a href="lec03.html#cb5-4"></a><span class="co">// y's value is moved to, now x owns "World!"</span></span>
+<span id="cb5-5"><a href="lec03.html#cb5-5"></a>x = y;</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="behind-the-move-operation"><div>
+<h1>Behind the move operation</h1>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb6-1"><a href="lec03.html#cb6-1"></a><span class="op">{</span></span>
+<span id="cb6-2"><a href="lec03.html#cb6-2"></a>    <span class="co">// x &lt;- alloc("Hello!")</span></span>
+<span id="cb6-3"><a href="lec03.html#cb6-3"></a>    <span class="kw">let</span> <span class="kw">mut</span> x = <span class="dt">String</span>::from(<span class="st">"Hello!"</span>);</span>
+<span id="cb6-4"><a href="lec03.html#cb6-4"></a></span>
+<span id="cb6-5"><a href="lec03.html#cb6-5"></a>    <span class="co">// y &lt;- alloc("World!")</span></span>
+<span id="cb6-6"><a href="lec03.html#cb6-6"></a>    <span class="kw">let</span> y = <span class="dt">String</span>::from(<span class="st">"World!"</span>);</span>
+<span id="cb6-7"><a href="lec03.html#cb6-7"></a></span>
+<span id="cb6-8"><a href="lec03.html#cb6-8"></a>    <span class="co">// drop(x): free("Hello!")</span></span>
+<span id="cb6-9"><a href="lec03.html#cb6-9"></a>    x = y;</span>
+<span id="cb6-10"><a href="lec03.html#cb6-10"></a></span>
+<span id="cb6-11"><a href="lec03.html#cb6-11"></a>    ...</span>
+<span id="cb6-12"><a href="lec03.html#cb6-12"></a><span class="op">}</span> </span>
+<span id="cb6-13"><a href="lec03.html#cb6-13"></a><span class="co">// drop(x): free("World!")</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="behind-the-move-allocation"><div>
+<h1>1) Behind the move: allocation</h1>
+<ul>
+<li>Allocating two local variables (e.g., <code>cargo asm --rust</code>)</li>
+<li>Note: <code>x</code> <span class="citation" data-cites="rsp">@rsp</span>, <code>y</code> <span class="citation" data-cites="rsp+40">@rsp+40</span></li>
+</ul>
+<iframe height="80%" src="code/move-asm0.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="behind-the-move-drop-and-copy"><div>
+<h1>2) Behind the move: drop and copy</h1>
+<ul>
+<li>Dropping before an assignment (<code>x</code> <span class="citation" data-cites="rsp">@rsp</span>)</li>
+<li>Copying a variable bit-by-bit (<span class="citation" data-cites="rsp+40">@rsp+40</span> → <span class="citation" data-cites="rsp">@rsp</span>)</li>
+</ul>
+<iframe height="80%" src="code/move-asm1.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="out-of-scope-drop"><div>
+<h1>3) Out-of-scope: drop</h1>
+<ul>
+<li>Dropping when it goes out of scope (<code>x</code> at <span class="citation" data-cites="rsp">@rsp</span>)</li>
+<li>Reclaiming storage for variables (i.e., stack unwinding)</li>
+</ul>
+<iframe height="80%" src="code/move-asm2.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="orbm-ownership-based-resource-mgmt"><div>
+<h1>ORBM: Ownership Based Resource Mgmt</h1>
+<ul>
+<li>x/y owns a string, which uniquely owns an array of chars</li>
+<li>OBRM: <code>drop()</code> frees the memory that the variable is in charge of</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/mov-string.svg" style="width:100%"/></p>
+</div></section>
+<section class="slide level1" id="re-using-uninitialized-variables"><div>
+<h1>Re-using uninitialized variables</h1>
+<ul>
+<li>Reintroducing <code>y</code> with <code>let</code>:</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb7-1"><a href="lec03.html#cb7-1"></a><span class="kw">let</span> y = <span class="dt">String</span>::from(<span class="st">"World!"</span>);</span>
+<span id="cb7-2"><a href="lec03.html#cb7-2"></a></span>
+<span id="cb7-3"><a href="lec03.html#cb7-3"></a>x = y;</span>
+<span id="cb7-4"><a href="lec03.html#cb7-4"></a></span>
+<span id="cb7-5"><a href="lec03.html#cb7-5"></a><span class="kw">let</span> y = <span class="dt">String</span>::from(<span class="st">"New World!"</span>);</span></code></pre></div>
+<ul>
+<li>If <code>y</code> is mutable, you can initialize it again:</li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb8-1"><a href="lec03.html#cb8-1"></a><span class="kw">let</span> <span class="kw">mut</span> y = <span class="dt">String</span>::from(<span class="st">"World!"</span>);</span>
+<span id="cb8-2"><a href="lec03.html#cb8-2"></a></span>
+<span id="cb8-3"><a href="lec03.html#cb8-3"></a>x = y;</span>
+<span id="cb8-4"><a href="lec03.html#cb8-4"></a></span>
+<span id="cb8-5"><a href="lec03.html#cb8-5"></a>y = <span class="dt">String</span>::from(<span class="st">"New World!"</span>);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-transferring-ownership"><div>
+<h1>Example: transferring ownership</h1>
+<ul>
+<li>Ownership can be transferred <em>to a function</em> (i.e., bind to a func param)</li>
+<li>Ownership can be transferred <em>from a function</em> (i.e., returned value)</li>
+</ul>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb9-1"><a href="lec03.html#cb9-1"></a><span class="co">// move a value from the caller to the callee</span></span>
+<span id="cb9-2"><a href="lec03.html#cb9-2"></a><span class="kw">fn</span> take(s: <span class="dt">String</span>) -&gt; <span class="op">{}</span></span>
+<span id="cb9-3"><a href="lec03.html#cb9-3"></a></span>
+<span id="cb9-4"><a href="lec03.html#cb9-4"></a><span class="co">// move a value from the callee to the caller</span></span>
+<span id="cb9-5"><a href="lec03.html#cb9-5"></a><span class="kw">fn</span> new() -&gt; <span class="dt">String</span> <span class="op">{</span> <span class="dt">String</span>::from(<span class="st">"Hello"</span>) <span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-transferring-ownership-1"><div>
+<h1>Example: transferring ownership</h1>
+<ul>
+<li>Note, this is how <code>drop&lt;T&gt;()</code> is implemented!</li>
+</ul>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb10-1"><a href="lec03.html#cb10-1"></a><span class="kw">fn</span> take(s: <span class="dt">String</span>) -&gt; <span class="op">{}</span></span></code></pre></div>
+<iframe height="80%" src="code/take.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="example-transferring-ownership-2"><div>
+<h1>Example: transferring ownership</h1>
+<ul>
+<li>Note, this is a typical constructor idiom</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb11-1"><a href="lec03.html#cb11-1"></a><span class="kw">fn</span> new() -&gt; <span class="dt">String</span> <span class="op">{</span> <span class="dt">String</span>::from(<span class="st">"Hello"</span>) <span class="op">}</span></span></code></pre></div>
+<iframe height="80%" src="code/new.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="ownership-and-copy-semantics"><div>
+<h1>Ownership and copy semantics</h1>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb12-1"><a href="lec03.html#cb12-1"></a><span class="kw">let</span> x = <span class="dt">String</span>::from(<span class="st">"Hello!"</span>);</span>
+<span id="cb12-2"><a href="lec03.html#cb12-2"></a><span class="kw">let</span> y = x.clone();</span></code></pre></div>
+<p style="text-align:center;margin:0"><img src="img/clone-string.svg" style="width:100%"/></p>
+</div></section>
+<section class="slide level1" id="ownership-and-copy-semantics-1"><div>
+<h1>Ownership and copy semantics</h1>
+<ul>
+<li>It internally clones a vector containing “Hello!”</li>
+<li>And returns (i.e., moves) a new <code>String</code> to the caller</li>
+</ul>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb13-1"><a href="lec03.html#cb13-1"></a><span class="kw">let</span> x = <span class="dt">String</span>::from(<span class="st">"Hello!"</span>);</span>
+<span id="cb13-2"><a href="lec03.html#cb13-2"></a><span class="kw">let</span> y = x.clone();</span>
+<span id="cb13-3"><a href="lec03.html#cb13-3"></a></span>
+<span id="cb13-4"><a href="lec03.html#cb13-4"></a><span class="co">// @liballoc/string.rs</span></span>
+<span id="cb13-5"><a href="lec03.html#cb13-5"></a><span class="kw">impl</span> <span class="bu">Clone</span> <span class="kw">for</span> <span class="dt">String</span> <span class="op">{</span></span>
+<span id="cb13-6"><a href="lec03.html#cb13-6"></a>  <span class="kw">fn</span> clone(&amp;<span class="kw">self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span></span>
+<span id="cb13-7"><a href="lec03.html#cb13-7"></a>    <span class="dt">String</span> <span class="op">{</span> vec: <span class="kw">self</span>.vec.clone() <span class="op">}</span></span>
+<span id="cb13-8"><a href="lec03.html#cb13-8"></a>  <span class="op">}</span></span>
+<span id="cb13-9"><a href="lec03.html#cb13-9"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="ownership-and-copy-semantics-2"><div>
+<h1>Ownership and copy semantics</h1>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb14-1"><a href="lec03.html#cb14-1"></a><span class="kw">let</span> x = <span class="dt">String</span>::from(<span class="st">"Hello!"</span>);</span>
+<span id="cb14-2"><a href="lec03.html#cb14-2"></a><span class="kw">let</span> y = x.clone();</span></code></pre></div>
+<iframe height="80%" src="code/clone-string.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="copy-semantics"><div>
+<h1>Copy semantics</h1>
+<ul>
+<li>Primitive types (e.g., i32, i64) derive the <code>Copy</code> trait (see later in depth)</li>
+</ul>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb15-1"><a href="lec03.html#cb15-1"></a><span class="kw">let</span> x: <span class="dt">i32</span> = <span class="dv">10</span>;</span>
+<span id="cb15-2"><a href="lec03.html#cb15-2"></a><span class="kw">let</span> y = x; <span class="co">// copied! (not moved)</span></span>
+<span id="cb15-3"><a href="lec03.html#cb15-3"></a></span>
+<span id="cb15-4"><a href="lec03.html#cb15-4"></a><span class="pp">dbg!</span>(x); <span class="co">// still readable!</span></span>
+<span id="cb15-5"><a href="lec03.html#cb15-5"></a><span class="pp">dbg!</span>(y);</span></code></pre></div>
+<iframe height="80%" src="code/i32-copy.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="copy-marker-trait"><div>
+<h1>Copy marker trait</h1>
+<ul>
+<li>By default, variable bindings have move semantics</li>
+<li>Unless, its type implements <code>std::marker::Copy</code> (copy semantics)</li>
+</ul>
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb16-1"><a href="lec03.html#cb16-1"></a><span class="co">// for custom types</span></span>
+<span id="cb16-2"><a href="lec03.html#cb16-2"></a><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Copy</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">)]</span></span>
+<span id="cb16-3"><a href="lec03.html#cb16-3"></a><span class="kw">struct</span> Foo;</span>
+<span id="cb16-4"><a href="lec03.html#cb16-4"></a></span>
+<span id="cb16-5"><a href="lec03.html#cb16-5"></a><span class="co">// @core/marker.rs</span></span>
+<span id="cb16-6"><a href="lec03.html#cb16-6"></a><span class="kw">impl</span> <span class="bu">Copy</span> <span class="kw">for</span> <span class="dt">u64</span> <span class="op">{}</span></span>
+<span id="cb16-7"><a href="lec03.html#cb16-7"></a></span>
+<span id="cb16-8"><a href="lec03.html#cb16-8"></a><span class="pp">impl_copy!</span> <span class="op">{</span></span>
+<span id="cb16-9"><a href="lec03.html#cb16-9"></a>  <span class="dt">usize</span> <span class="dt">u8</span> <span class="dt">u16</span> <span class="dt">u32</span> <span class="dt">u64</span> <span class="dt">u128</span></span>
+<span id="cb16-10"><a href="lec03.html#cb16-10"></a>  <span class="dt">isize</span> <span class="dt">i8</span> <span class="dt">i16</span> <span class="dt">i32</span> <span class="dt">i64</span> <span class="dt">i128</span></span>
+<span id="cb16-11"><a href="lec03.html#cb16-11"></a>  <span class="dt">f32</span> <span class="dt">f64</span></span>
+<span id="cb16-12"><a href="lec03.html#cb16-12"></a>  <span class="dt">bool</span> <span class="dt">char</span></span>
+<span id="cb16-13"><a href="lec03.html#cb16-13"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="how-to-program-with-this-language"><div>
+<h1>How to program with this language?</h1>
+<ul>
+<li>In practice, very tedious and inefficient (why no one using linear type before!)</li>
+</ul>
+<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb17-1"><a href="lec03.html#cb17-1"></a><span class="kw">fn</span> len(s: <span class="dt">String</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span> ... <span class="op">}</span></span>
+<span id="cb17-2"><a href="lec03.html#cb17-2"></a></span>
+<span id="cb17-3"><a href="lec03.html#cb17-3"></a><span class="kw">let</span> x = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb17-4"><a href="lec03.html#cb17-4"></a></span>
+<span id="cb17-5"><a href="lec03.html#cb17-5"></a><span class="co">// move, so unable to access x after</span></span>
+<span id="cb17-6"><a href="lec03.html#cb17-6"></a><span class="kw">let</span> y = len(x);</span>
+<span id="cb17-7"><a href="lec03.html#cb17-7"></a></span>
+<span id="cb17-8"><a href="lec03.html#cb17-8"></a><span class="co">// copy, so need to keep copying!</span></span>
+<span id="cb17-9"><a href="lec03.html#cb17-9"></a><span class="kw">let</span> y = len(x.clone())</span>
+<span id="cb17-10"><a href="lec03.html#cb17-10"></a><span class="pp">dbg!</span>(y);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="how-to-program-with-this-language-1"><div>
+<h1>How to program with this language?</h1>
+<ul>
+<li>One way to avoid copying is transferring ownership back to the caller</li>
+</ul>
+<div class="sourceCode" id="cb18"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb18-1"><a href="lec03.html#cb18-1"></a><span class="kw">fn</span> len(s: <span class="dt">String</span>) -&gt; (<span class="dt">usize</span>, <span class="dt">String</span>) <span class="op">{</span> ... <span class="op">}</span></span>
+<span id="cb18-2"><a href="lec03.html#cb18-2"></a></span>
+<span id="cb18-3"><a href="lec03.html#cb18-3"></a><span class="kw">let</span> x = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb18-4"><a href="lec03.html#cb18-4"></a></span>
+<span id="cb18-5"><a href="lec03.html#cb18-5"></a><span class="co">// transferring the ownership back-and-force</span></span>
+<span id="cb18-6"><a href="lec03.html#cb18-6"></a><span class="kw">let</span> (y, x) = len(x);</span>
+<span id="cb18-7"><a href="lec03.html#cb18-7"></a></span>
+<span id="cb18-8"><a href="lec03.html#cb18-8"></a><span class="pp">dbg!</span>(x);</span>
+<span id="cb18-9"><a href="lec03.html#cb18-9"></a><span class="pp">dbg!</span>(y);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="how-stringlen-is-implemented-then"><div>
+<h1>How String::len() is implemented then?</h1>
+<ul>
+<li>It <em>borrows</em> a value (i.e., shared reference) from the caller</li>
+</ul>
+<div class="sourceCode" id="cb19"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb19-1"><a href="lec03.html#cb19-1"></a><span class="co">// @liballoc/string.rs</span></span>
+<span id="cb19-2"><a href="lec03.html#cb19-2"></a><span class="kw">impl</span> <span class="dt">String</span> <span class="op">{</span></span>
+<span id="cb19-3"><a href="lec03.html#cb19-3"></a>    ...</span>
+<span id="cb19-4"><a href="lec03.html#cb19-4"></a>    <span class="kw">pub</span> <span class="kw">fn</span> len(&amp;<span class="kw">self</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span></span>
+<span id="cb19-5"><a href="lec03.html#cb19-5"></a>        <span class="kw">self</span>.vec.len()</span>
+<span id="cb19-6"><a href="lec03.html#cb19-6"></a>    <span class="op">}</span></span>
+<span id="cb19-7"><a href="lec03.html#cb19-7"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="borrowing-via-references"><div>
+<h1>Borrowing via references</h1>
+<ul>
+<li>A variable borrows a value (i.e., shared reference) from an owner</li>
+</ul>
+<div class="sourceCode" id="cb20"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb20-1"><a href="lec03.html#cb20-1"></a><span class="kw">let</span> x = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb20-2"><a href="lec03.html#cb20-2"></a></span>
+<span id="cb20-3"><a href="lec03.html#cb20-3"></a><span class="co">// =&gt; String::len(&amp;x) -&gt; usize</span></span>
+<span id="cb20-4"><a href="lec03.html#cb20-4"></a><span class="kw">let</span> y = x.len();</span>
+<span id="cb20-5"><a href="lec03.html#cb20-5"></a></span>
+<span id="cb20-6"><a href="lec03.html#cb20-6"></a><span class="co">// x is still accessible!</span></span>
+<span id="cb20-7"><a href="lec03.html#cb20-7"></a><span class="pp">dbg!</span>(x);</span></code></pre></div>
+<p>Note. <code>.</code> has lots of magic behind the scene (see, <a href="https://doc.rust-lang.org/nomicon/dot-operator.html">Nomicon 4.3 The Dot Operator</a>)</p>
+</div></section>
+<section class="slide level1" id="thinking-of-sharedmutable-references"><div>
+<h1>Thinking of shared/mutable references</h1>
+<ul>
+<li>Shared references → copy semantics</li>
+<li>Mutable references → move semantics (why?)</li>
+</ul>
+<div class="sourceCode" id="cb21"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb21-1"><a href="lec03.html#cb21-1"></a><span class="co">// =&gt; String::len(&amp;x) -&gt; usize</span></span>
+<span id="cb21-2"><a href="lec03.html#cb21-2"></a>x.len();</span>
+<span id="cb21-3"><a href="lec03.html#cb21-3"></a></span>
+<span id="cb21-4"><a href="lec03.html#cb21-4"></a><span class="co">// =&gt; String::push_str(&amp;mut x, ...)</span></span>
+<span id="cb21-5"><a href="lec03.html#cb21-5"></a>x.push_str(<span class="st">"World!"</span>);</span>
+<span id="cb21-6"><a href="lec03.html#cb21-6"></a></span>
+<span id="cb21-7"><a href="lec03.html#cb21-7"></a><span class="co">// @libcore/marker.rs</span></span>
+<span id="cb21-8"><a href="lec03.html#cb21-8"></a><span class="co">// &amp;T follows copy semantics</span></span>
+<span id="cb21-9"><a href="lec03.html#cb21-9"></a><span class="kw">impl</span> <span class="bu">Copy</span> <span class="kw">for</span> &amp;T <span class="op">{}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="rule-0.-borrowing-via-references"><div>
+<h1>Rule 0. Borrowing via references</h1>
+<ol type="1">
+<li>The owner should outlive all borrowers</li>
+</ol>
+<div class="sourceCode" id="cb22"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb22-1"><a href="lec03.html#cb22-1"></a><span class="kw">let</span> x = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb22-2"><a href="lec03.html#cb22-2"></a><span class="kw">let</span> y = &amp;x; <span class="co">// borrow a value for reading</span></span>
+<span id="cb22-3"><a href="lec03.html#cb22-3"></a><span class="kw">let</span> z = &amp;x; <span class="co">// borrow a value for reading</span></span>
+<span id="cb22-4"><a href="lec03.html#cb22-4"></a></span>
+<span id="cb22-5"><a href="lec03.html#cb22-5"></a>drop(x);</span>
+<span id="cb22-6"><a href="lec03.html#cb22-6"></a></span>
+<span id="cb22-7"><a href="lec03.html#cb22-7"></a><span class="pp">dbg!</span>(y);</span>
+<span id="cb22-8"><a href="lec03.html#cb22-8"></a><span class="pp">dbg!</span>(z);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="rule-0.-borrowing-via-references-1"><div>
+<h1>Rule 0. Borrowing via references</h1>
+<ol type="1">
+<li><strong>Rule 0</strong>. The owner should outlive all borrowers</li>
+</ol>
+<iframe height="80%" src="code/err-outlive.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="rule-1.-borrowing-via-references"><div>
+<h1>Rule 1. Borrowing via references</h1>
+<ol type="1">
+<li><strong>Rule 1</strong>. there can be many outstanding shared references</li>
+</ol>
+<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb23-1"><a href="lec03.html#cb23-1"></a><span class="kw">let</span> x = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb23-2"><a href="lec03.html#cb23-2"></a><span class="kw">let</span> y = &amp;x; <span class="co">// borrow a value for reading</span></span>
+<span id="cb23-3"><a href="lec03.html#cb23-3"></a><span class="kw">let</span> z = &amp;x; <span class="co">// borrow a value for reading</span></span>
+<span id="cb23-4"><a href="lec03.html#cb23-4"></a></span>
+<span id="cb23-5"><a href="lec03.html#cb23-5"></a><span class="pp">dbg!</span>(z); <span class="co">//=&gt; "Hello"</span></span>
+<span id="cb23-6"><a href="lec03.html#cb23-6"></a><span class="pp">dbg!</span>(y); <span class="co">//=&gt; "Hello"</span></span>
+<span id="cb23-7"><a href="lec03.html#cb23-7"></a><span class="pp">dbg!</span>(x); <span class="co">//=&gt; "Hello"</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="rule-2.-borrowing-via-references"><div>
+<h1>Rule 2. Borrowing via references</h1>
+<ol start="2" type="1">
+<li><strong>Rule 2</strong>. There should be only one <em>mutable</em> reference</li>
+</ol>
+<div class="sourceCode" id="cb24"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb24-1"><a href="lec03.html#cb24-1"></a><span class="kw">let</span> <span class="kw">mut</span> x = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb24-2"><a href="lec03.html#cb24-2"></a><span class="kw">let</span> y = &amp;<span class="kw">mut</span> x; <span class="co">// borrow a value for writing</span></span>
+<span id="cb24-3"><a href="lec03.html#cb24-3"></a><span class="kw">let</span> z = &amp;<span class="kw">mut</span> x; <span class="co">// borrow a value for writing</span></span>
+<span id="cb24-4"><a href="lec03.html#cb24-4"></a>...</span></code></pre></div>
+<iframe height="80%" src="code/mut-ref.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="rule-3.-borrowing-via-references"><div>
+<h1>Rule 3. Borrowing via references</h1>
+<ol start="3" type="1">
+<li><strong>Rule 3</strong>. Safety rule: {shared}+ xor mutable references</li>
+</ol>
+<div class="sourceCode" id="cb25"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb25-1"><a href="lec03.html#cb25-1"></a><span class="kw">let</span> <span class="kw">mut</span> x = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb25-2"><a href="lec03.html#cb25-2"></a><span class="kw">let</span> y = &amp;x;     <span class="co">// borrow a value for reading</span></span>
+<span id="cb25-3"><a href="lec03.html#cb25-3"></a><span class="kw">let</span> z = &amp;<span class="kw">mut</span> x; <span class="co">// borrow a value for writing</span></span>
+<span id="cb25-4"><a href="lec03.html#cb25-4"></a>...</span></code></pre></div>
+<iframe height="80%" src="code/err-mut-imm.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="owned-type-str-vs.-string"><div>
+<h1>Owned type: &amp;str vs. String</h1>
+<div class="sourceCode" id="cb26"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb26-1"><a href="lec03.html#cb26-1"></a><span class="kw">let</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>); <span class="co">// what's thye type of s?</span></span>
+<span id="cb26-2"><a href="lec03.html#cb26-2"></a></span>
+<span id="cb26-3"><a href="lec03.html#cb26-3"></a><span class="kw">let</span> x = <span class="st">"Hello"</span>; <span class="co">// what's the type of x?</span></span>
+<span id="cb26-4"><a href="lec03.html#cb26-4"></a><span class="kw">let</span> _: () = x;</span></code></pre></div>
+<iframe height="80%" src="code/str-type.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="owned-type-str-vs.-string-1"><div>
+<h1>Owned type: &amp;str vs. String</h1>
+<ul>
+<li><code>&amp;str</code>: a shared reference of a type <code>str</code> (i.e., <code>[u8]</code> ← Q. what’s this?)</li>
+<li>Guess what are the values in <span class="citation" data-cites="rsp">@rsp</span> and <span class="citation" data-cites="rsp+8">@rsp+8</span>?</li>
+</ul>
+<div class="sourceCode" id="cb27"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb27-1"><a href="lec03.html#cb27-1"></a><span class="kw">let</span> x = <span class="st">"Hello"</span>;</span></code></pre></div>
+<iframe height="80%" src="code/str.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="owned-type-str-vs.-string-2"><div>
+<h1>Owned type: &amp;str vs. String</h1>
+<ul>
+<li>Type doesn’t necessarily mean to have a concrete size (noted <code>?Sized</code> or DST)
+<ul>
+<li>No way to store (copy/move) them into memory</li>
+<li>Its value (<code>T</code>) is only referred via a reference (<code>&amp;T</code>)</li>
+<li>There exist a corresponding owner type (i.e., <code>String</code> for <code>str</code>)</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb28"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb28-1"><a href="lec03.html#cb28-1"></a><span class="pp">dbg!</span>(<span class="pp">std::mem::size_of::</span>&lt;<span class="dt">str</span>&gt;());</span>
+<span id="cb28-2"><a href="lec03.html#cb28-2"></a><span class="co">//=&gt; error: `str` doesn't have a size known at compile-time</span></span>
+<span id="cb28-3"><a href="lec03.html#cb28-3"></a><span class="pp">dbg!</span>(<span class="pp">std::mem::size_of::</span>&lt;&amp;<span class="dt">str</span>&gt;());   <span class="co">//=&gt; 16</span></span>
+<span id="cb28-4"><a href="lec03.html#cb28-4"></a></span>
+<span id="cb28-5"><a href="lec03.html#cb28-5"></a><span class="pp">dbg!</span>(<span class="pp">std::mem::size_of::</span>&lt;<span class="dt">String</span>&gt;()); <span class="co">//=&gt; 24</span></span>
+<span id="cb28-6"><a href="lec03.html#cb28-6"></a><span class="pp">dbg!</span>(<span class="pp">std::mem::size_of::</span>&lt;&amp;<span class="dt">String</span>&gt;());<span class="co">//=&gt;  8</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-benefit-of-owned-type"><div>
+<h1>Example: benefit of owned type</h1>
+<ul>
+<li><code>String</code> abstracts a string it contains (so called, a <strong>container type</strong>)</li>
+<li>Again, there is no way we can store <code>?Sized</code> like <code>str</code> into stack</li>
+</ul>
+<div class="sourceCode" id="cb29"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb29-1"><a href="lec03.html#cb29-1"></a><span class="kw">let</span> <span class="kw">mut</span> x = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb29-2"><a href="lec03.html#cb29-2"></a>x.push_str(<span class="st">" World!"</span>); <span class="co">// Isn't the size of String changed?</span></span>
+<span id="cb29-3"><a href="lec03.html#cb29-3"></a></span>
+<span id="cb29-4"><a href="lec03.html#cb29-4"></a><span class="pp">dbg!</span>(x);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-benefit-of-owned-type-1"><div>
+<h1>Example: benefit of owned type</h1>
+<div class="sourceCode" id="cb30"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb30-1"><a href="lec03.html#cb30-1"></a><span class="kw">impl</span> <span class="dt">String</span> <span class="op">{</span></span>
+<span id="cb30-2"><a href="lec03.html#cb30-2"></a>    <span class="kw">pub</span> <span class="kw">fn</span> push_str(&amp;<span class="kw">mut</span> <span class="kw">self</span>, string: &amp;<span class="dt">str</span>) <span class="op">{</span> .. <span class="op">}</span></span>
+<span id="cb30-3"><a href="lec03.html#cb30-3"></a>    <span class="co">//              |</span></span>
+<span id="cb30-4"><a href="lec03.html#cb30-4"></a>    <span class="co">//              +--&gt; a mutable reference</span></span>
+<span id="cb30-5"><a href="lec03.html#cb30-5"></a><span class="op">}</span></span>
+<span id="cb30-6"><a href="lec03.html#cb30-6"></a></span>
+<span id="cb30-7"><a href="lec03.html#cb30-7"></a><span class="kw">let</span> <span class="kw">mut</span> x = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb30-8"><a href="lec03.html#cb30-8"></a></span>
+<span id="cb30-9"><a href="lec03.html#cb30-9"></a><span class="op">{</span></span>
+<span id="cb30-10"><a href="lec03.html#cb30-10"></a>  <span class="co">//=&gt; String::push_str(&amp;x, " World!")</span></span>
+<span id="cb30-11"><a href="lec03.html#cb30-11"></a>  x.push_str(<span class="st">" World!"</span>);</span>
+<span id="cb30-12"><a href="lec03.html#cb30-12"></a><span class="op">}</span></span>
+<span id="cb30-13"><a href="lec03.html#cb30-13"></a></span>
+<span id="cb30-14"><a href="lec03.html#cb30-14"></a><span class="pp">dbg!</span>(x);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="introducing-a-slice-type-e.g.-str"><div>
+<h1>Introducing a slice type (e.g., &amp;str)</h1>
+<ul>
+<li><strong>Slice type</strong>, &amp;[T] → <em>borrows</em> a contiguous list of elements</li>
+<li>Simply, (ptr, len): <code>ptr</code> points to the beginning element of the list</li>
+</ul>
+<div class="sourceCode" id="cb31"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb31-1"><a href="lec03.html#cb31-1"></a><span class="kw">let</span> x: &amp;<span class="dt">str</span> = <span class="st">"Hello"</span>;</span></code></pre></div>
+<iframe height="80%" src="code/str.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="example-of-a-slice-type"><div>
+<h1>Example of a slice type</h1>
+<div class="sourceCode" id="cb32"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb32-1"><a href="lec03.html#cb32-1"></a><span class="kw">let</span> x = <span class="dt">String</span>::from(<span class="st">"Hello World"</span>);</span>
+<span id="cb32-2"><a href="lec03.html#cb32-2"></a><span class="kw">let</span> y = &amp;x<span class="op">[</span><span class="dv">0</span>..<span class="dv">5</span><span class="op">]</span>;</span></code></pre></div>
+<p style="text-align:center;margin:0"><img src="img/slice.svg" style="width:60%"/></p>
+</div></section>
+<section class="slide level1" id="thinking-of-memory-safety"><div>
+<h1>Thinking of memory safety</h1>
+<div class="sourceCode" id="cb33"><pre class="sourceCode numberSource cc numberLines"><code class="sourceCode cpp"><span id="cb33-1"><a href="lec03.html#cb33-1"></a><span class="co">// in C++</span></span>
+<span id="cb33-2"><a href="lec03.html#cb33-2"></a><span class="bu">std::</span>string s = <span class="st">"Hello"</span>;</span>
+<span id="cb33-3"><a href="lec03.html#cb33-3"></a><span class="at">const</span> <span class="dt">char</span> *c = s.c_str();</span>
+<span id="cb33-4"><a href="lec03.html#cb33-4"></a></span>
+<span id="cb33-5"><a href="lec03.html#cb33-5"></a>s.append(<span class="st">" World!"</span>);</span>
+<span id="cb33-6"><a href="lec03.html#cb33-6"></a></span>
+<span id="cb33-7"><a href="lec03.html#cb33-7"></a><span class="bu">std::</span>cout &lt;&lt; c;</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb34-1"><a href="lec03.html#cb34-1"></a><span class="co">// in Rust</span></span>
+<span id="cb34-2"><a href="lec03.html#cb34-2"></a><span class="kw">let</span> <span class="kw">mut</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb34-3"><a href="lec03.html#cb34-3"></a><span class="kw">let</span> c = s.as_str();</span>
+<span id="cb34-4"><a href="lec03.html#cb34-4"></a>    </span>
+<span id="cb34-5"><a href="lec03.html#cb34-5"></a>s.push_str(<span class="st">" World!"</span>);</span>
+<span id="cb34-6"><a href="lec03.html#cb34-6"></a></span>
+<span id="cb34-7"><a href="lec03.html#cb34-7"></a><span class="pp">dbg!</span>(c);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="memory-safety-by-restricted-aliasing"><div>
+<h1>Memory safety by restricted aliasing</h1>
+<div class="sourceCode" id="cb35"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb35-1"><a href="lec03.html#cb35-1"></a><span class="kw">let</span> <span class="kw">mut</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb35-2"><a href="lec03.html#cb35-2"></a><span class="kw">let</span> c = s.as_str();</span>
+<span id="cb35-3"><a href="lec03.html#cb35-3"></a>    </span>
+<span id="cb35-4"><a href="lec03.html#cb35-4"></a>s.push_str(<span class="st">" World!"</span>);</span>
+<span id="cb35-5"><a href="lec03.html#cb35-5"></a></span>
+<span id="cb35-6"><a href="lec03.html#cb35-6"></a><span class="pp">dbg!</span>(c);</span></code></pre></div>
+<iframe height="80%" src="code/err-str.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="next-lecture"><div>
+<h1>Next lecture</h1>
+<ul>
+<li>Next: Rust 3: Unsafety (and Safety)</li>
+<li>Don’t forget to submit answers to prep-questions (<mark>DUE: 10pm</mark>)</li>
+<li>“Lab 1: Rustlings” is due on <mark>Jan 27</mark></li>
+<li>Perpetration: Rpi 3 + sdcard + reader (from Lab 1)</li>
+</ul>
+</div></section>
+<section class="slide level1" id="references"><div>
+<h1>References</h1>
+<ul>
+<li><a href="https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html">Understanding Ownership</a></li>
+<li><a href="https://doc.rust-lang.org/nomicon/ownership.html">Ownership and Lifetimes</a></li>
+<li><a href="https://doc.rust-lang.org/nomicon/lifetime-elision.html">Lifetime Elision</a></li>
+<li><a href="https://doc.rust-lang.org/nomicon/dot-operator.html">The Dot Operator</a></li>
+</ul>
+</div></section>
+<div class="progress"><div></div></div>
+<script src="../shower/js/shower.js"></script>
+</body>
+</html>

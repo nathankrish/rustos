@@ -1,0 +1,1808 @@
+
+
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Lab 2: Shell and Bootloader &mdash; CS-3210, Spring 2020 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lab 3: FAT32 Filesystem" href="lab3.html" />
+    <link rel="prev" title="Lab 1: Bootstrapping Raspberry Pi" href="lab1.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> CS-3210, Spring 2020
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../info.html">General Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cal.html">Schedule</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../lab.html">Lab</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tools.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab0.html">Lab 0: Rustlings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab1.html">Lab 1: Bootstrapping Raspberry Pi</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="lab2.html#">Lab 2: Shell and Bootloader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="lab2.html#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lab2.html#phase-1-oxidation">Phase 1: Oxidation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lab2.html#phase-2-not-a-seashell">Phase 2: <em>Not</em> a Seashell</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lab2.html#phase-3-boot-em-up">Phase 3: Boot ‘em Up</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lab2.html#submission">Submission</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="lab3.html">Lab 3: FAT32 Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab4.html">Lab 4: Preemptive Multitasking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab5.html">Lab 5: Multicore and Networking</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proj.html">Final Project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refs.html">Reference Materials</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CS-3210, Spring 2020</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../lab.html">Lab</a> &raquo;</li>
+        
+      <li>Lab 2: Shell and Bootloader</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/lab/lab2.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="lab-2-shell-and-bootloader">
+<h1>Lab 2: Shell and Bootloader<a class="headerlink" href="lab2.html#lab-2-shell-and-bootloader" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><strong>Handed out:</strong> Tuesday, January 28, 2020</p></li>
+<li><p><strong>Due:</strong> Monday, February 10, 2020</p></li>
+</ul>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="lab2.html#introduction" title="Permalink to this headline">¶</a></h2>
+<p>In this assignment, you will write useful utilities, libraries, and a
+simple shell for your Raspberry Pi. You’ll also write generic drivers for GPIO,
+<a class="reference external" href="https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter">UART</a>,
+and the built-in timer. Finally, you’ll write a “bootloader” using
+your new drivers that loads program binaries over UART using the
+XMODEM protocol and executes them.</p>
+<div class="section" id="getting-the-skeleton-code">
+<h3>Getting the Skeleton Code<a class="headerlink" href="lab2.html#getting-the-skeleton-code" title="Permalink to this headline">¶</a></h3>
+<p>To get the skeleton code for lab2, fetch the updates from our git repository
+to your development machine.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ git fetch skeleton
+$ git merge skeleton/lab2
+</pre></div>
+</div>
+<p>This is the directory structure of our repository.
+The directories you will be working on this assignment are
+marked with <cite>*</cite>.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>.
+├── bin : common binaries/utilities
+├── doc : reference documents
+├── ext : external files (e.g., resources for testing)
+├── tut : tutorial/practices
+│    ├── 0-rustlings
+│    ├── 1-blinky
+│    └── 2-shell : questions for lab2 *
+├── boot : bootloader *
+├── kern : the main os kernel *
+└── lib  : required libraries
+     ├── pi *
+     ├── shim
+     ├── stack-vec *
+     ├── ttywrite *
+     ├── volatile *
+     └── xmodem *
+</pre></div>
+</div>
+<p>Please resolve conflict if you have and proceed to the next phase.</p>
+<p>We recommend the following directory structure for your assignments.
+Confirm that your directories are properly laid out by running <code class="docutils literal notranslate"><span class="pre">make</span></code>
+inside the <code class="docutils literal notranslate"><span class="pre">kern</span></code> directory now. If all is well, the command will
+return successfully.
+If everything is good, feel free to explore the contents of the repository.</p>
+<p>This and future assignments include <em>writing questions</em> that you must respond to.
+Here’s an example of such question:</p>
+<div class="question admonition">
+<p class="admonition-title">How do you set other GPIO pins? (1-blinky)</p>
+<p>In assignment 1-blinky, you enabled GPIO pin 16 as an output and then repeatedly set
+and cleared it by writing to registers <code class="docutils literal notranslate"><span class="pre">GPFSEL1</span></code>, <code class="docutils literal notranslate"><span class="pre">GPSET0</span></code>, and <code class="docutils literal notranslate"><span class="pre">GPCLR0</span></code>.
+Which three registers would you write to to do the same for GPIO pin 27?
+Which physical pin on the Raspberry Pi maps to GPIO pin 27?</p>
+</div>
+<p>The word in a parenthesis of the question indicates the name of a file located inside
+<code class="docutils literal notranslate"><span class="pre">questions/</span></code> directory relative to the lab name in which the question is being
+asked. For instance, every questions in this <code class="docutils literal notranslate"><span class="pre">Lab2:</span> <span class="pre">Shell</span> <span class="pre">and</span> <span class="pre">Bootloader</span></code> should be
+answered in <code class="docutils literal notranslate"><span class="pre">tut/2-shell/questions/</span></code> subdirectory. Note that we have pre-generated
+empty files for every question.</p>
+<p>Practice responding to questions now by answering the <code class="docutils literal notranslate"><span class="pre">1-blinky</span></code> question above.</p>
+</div>
+</div>
+<div class="section" id="phase-1-oxidation">
+<h2>Phase 1: Oxidation<a class="headerlink" href="lab2.html#phase-1-oxidation" title="Permalink to this headline">¶</a></h2>
+<p>In this phase, you will write two libraries, one command-line
+utility, and review one library. You will be working in the
+<code class="docutils literal notranslate"><span class="pre">stack-vec</span></code>, <code class="docutils literal notranslate"><span class="pre">volatile</span></code>, <code class="docutils literal notranslate"><span class="pre">ttywrite</span></code>, and <code class="docutils literal notranslate"><span class="pre">xmodem</span></code> skeleton
+subdirectories located in <code class="docutils literal notranslate"><span class="pre">lib</span></code> directory.</p>
+<p>All projects are being managed with Cargo. You will find the
+following <code class="docutils literal notranslate"><span class="pre">cargo</span></code> commands useful:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">build</span></code> - build an application or library</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">test</span></code> - test an application or library</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">run</span></code> - run an application</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">run</span> <span class="pre">--</span> <span class="pre">$flags</span></code> - run an application and pass arbitrary flags to it</p></li>
+</ul>
+<p>For more information on using Cargo and how Cargo works, see the
+<a class="reference external" href="https://doc.rust-lang.org/cargo/index.html">Cargo Book</a>.</p>
+<div class="section" id="subphase-a-stackvec">
+<h3>Subphase A: <code class="docutils literal notranslate"><span class="pre">StackVec</span></code><a class="headerlink" href="lab2.html#subphase-a-stackvec" title="Permalink to this headline">¶</a></h3>
+<p>One important facility that operating systems provide is memory
+allocation. When a C, Rust, Java, Python, or just about <em>any</em>
+application calls <code class="docutils literal notranslate"><span class="pre">malloc()</span></code> and <code class="docutils literal notranslate"><span class="pre">malloc()</span></code> has run out of
+memory from the operating system, a system call is eventually made
+to request additional memory. The operating system determines if
+there is memory available, and if so, fulfills the request for
+memory.</p>
+<div class="note admonition">
+<p class="admonition-title">Memory allocation is a complicated story.</p>
+<p>In practice, modern operating systems like Linux have a
+complicated relationship with memory allocation. For instance,
+as an optimization, most requests for memory allocation are
+only “virtually” handled: no physical memory is actually
+allocated until the application tries to use the newly
+allocated memory. Nonetheless, most operating systems aim to
+provide the <em>illusion</em> that they are allocating memory in the
+simplistic manner we’ve described. Operating systems are master
+liars (🍰).</p>
+</div>
+<p>Heap-allocated structures like <code class="docutils literal notranslate"><span class="pre">Vec</span></code>, <code class="docutils literal notranslate"><span class="pre">String</span></code>, and <code class="docutils literal notranslate"><span class="pre">Box</span></code>
+internally call <code class="docutils literal notranslate"><span class="pre">malloc()</span></code> to allocate memory as necessary. This
+means that these structures require operating system support to
+function. In particular, they require the operating system to
+support memory allocation. We haven’t yet started writing our
+operating system, so clearly there’s no memory allocation support
+for our tiny bare-metal programs to make use of. As such, we can’t
+use heap-allocated structures like <code class="docutils literal notranslate"><span class="pre">Vec</span></code> until our operating
+system is further along.</p>
+<p>This is a real shame because <code class="docutils literal notranslate"><span class="pre">Vec</span></code> is a nice abstraction! It
+allows us to think about <code class="docutils literal notranslate"><span class="pre">push</span></code>ing and <code class="docutils literal notranslate"><span class="pre">pop</span></code>ing elements
+without having to keep track of memory ourselves. <em>How we can get
+the benefits of the</em> <code class="docutils literal notranslate"><span class="pre">Vec</span></code> <em>abstraction without supporting memory
+allocation?</em></p>
+<p>One common technique is to <em>pre-allocate</em> memory and then hand
+that memory to a structure to abstract away. Some ways to
+pre-allocate memory include using <code class="docutils literal notranslate"><span class="pre">static</span></code> declarations to set
+apart memory in the static section of a binary or through stack
+allocations from local variable declarations. In any case, the
+allocations is of a fixed, predetermined size.</p>
+<p>In this subphase, you will implement the <code class="docutils literal notranslate"><span class="pre">StackVec</span></code> structure, a
+structure that exposes a <code class="docutils literal notranslate"><span class="pre">Vec</span></code>-like API when given pre-allocated
+memory. You will use the <code class="docutils literal notranslate"><span class="pre">StackVec</span></code> type later in phase 2 when
+implementing a shell for your Raspberry Pi. You will work in the
+<code class="docutils literal notranslate"><span class="pre">lib/stack-vec</span></code> skeleton subdirectory. The subdirectory contains the
+following files:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Cargo.toml</span></code> - configuration file for Cargo</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src/lib.rs</span></code> - where you will write your code</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src/tests.rs</span></code> - tests that will run when <code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">test</span></code> is
+called</p></li>
+</ul>
+<div class="section" id="the-stackvec-interface">
+<h4>The <code class="docutils literal notranslate"><span class="pre">StackVec</span></code> Interface<a class="headerlink" href="lab2.html#the-stackvec-interface" title="Permalink to this headline">¶</a></h4>
+<p>A <code class="docutils literal notranslate"><span class="pre">StackVec&lt;T&gt;</span></code> is created by calling <code class="docutils literal notranslate"><span class="pre">StackVec::new()</span></code>,
+passing in a mutable slice to values of any type <code class="docutils literal notranslate"><span class="pre">T</span></code>. The
+<code class="docutils literal notranslate"><span class="pre">StackVec&lt;T&gt;</span></code> type implements many of the methods that
+<a class="reference external" href="https://doc.rust-lang.org/nightly/std/vec/struct.Vec.html">Vec</a>
+implements and is used in much the same way. Here’s an example of
+a <code class="docutils literal notranslate"><span class="pre">StackVec&lt;u8&gt;</span></code> being used:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">storage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="k">u8</span><span class="p">;</span><span class="w"> </span><span class="mi">10</span><span class="p">];</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">vec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StackVec</span>::<span class="n">new</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">storage</span><span class="p">);</span><span class="w"></span>
+
+<span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">0</span><span class="p">..</span><span class="mi">10</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">vec</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">i</span><span class="p">).</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;can push 10 times&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">vec</span><span class="p">.</span><span class="n">iter</span><span class="p">().</span><span class="n">enumerate</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">assert_eq</span><span class="o">!</span><span class="p">(</span><span class="o">*</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">u8</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kd">let</span><span class="w"> </span><span class="n">last_element</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vec</span><span class="p">.</span><span class="n">pop</span><span class="p">().</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;has elements&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="n">assert_eq</span><span class="o">!</span><span class="p">(</span><span class="n">last_element</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">9</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>We’ve declared the <code class="docutils literal notranslate"><span class="pre">StackVec</span></code> structure for you already:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">StackVec</span><span class="o">&lt;</span><span class="na">&#39;a</span><span class="p">,</span><span class="w"> </span><span class="n">T</span>: <span class="na">&#39;a</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">storage</span>: <span class="kp">&amp;</span><span class="na">&#39;a</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="p">[</span><span class="n">T</span><span class="p">],</span><span class="w"></span>
+<span class="w">    </span><span class="n">len</span>: <span class="kt">usize</span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="understanding-stackvec">
+<h4>Understanding <code class="docutils literal notranslate"><span class="pre">StackVec</span></code><a class="headerlink" href="lab2.html#understanding-stackvec" title="Permalink to this headline">¶</a></h4>
+<p>The following questions test your understanding about the
+<code class="docutils literal notranslate"><span class="pre">StackVec</span></code> interface:</p>
+<div class="question admonition">
+<p class="admonition-title">Why does <code class="docutils literal notranslate"><span class="pre">push</span></code> return a <code class="docutils literal notranslate"><span class="pre">Result</span></code>? (push-fails)</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">push</span></code> method from <code class="docutils literal notranslate"><span class="pre">Vec</span></code> in the standard library has
+no return value, but the <code class="docutils literal notranslate"><span class="pre">push</span></code> method from our
+<code class="docutils literal notranslate"><span class="pre">StackVec</span></code> does: it returns a <code class="docutils literal notranslate"><span class="pre">Result</span></code> indicating that
+it can fail. Why can <code class="docutils literal notranslate"><span class="pre">StackVec::push()</span></code> fail where
+<code class="docutils literal notranslate"><span class="pre">Vec::push()</span></code> does not?</p>
+</div>
+<div class="question admonition">
+<p class="admonition-title">Why is the <code class="docutils literal notranslate"><span class="pre">'a</span></code> bound on <code class="docutils literal notranslate"><span class="pre">T</span></code> required? (lifetime)</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">StackVec</span><span class="o">&lt;</span><span class="na">&#39;a</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">buffer</span>: <span class="kp">&amp;</span><span class="na">&#39;a</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="p">[</span><span class="n">T</span><span class="p">],</span><span class="w"> </span><span class="n">len</span>: <span class="kt">usize</span> <span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Rust automatically enforces the bound <code class="docutils literal notranslate"><span class="pre">T:</span> <span class="pre">'a</span></code> and will complain
+if type <code class="docutils literal notranslate"><span class="pre">T</span></code> lives shorter than the lifetime <code class="docutils literal notranslate"><span class="pre">'a</span></code>. For instance,
+if <code class="docutils literal notranslate"><span class="pre">T</span></code> is <code class="docutils literal notranslate"><span class="pre">&amp;'b</span> <span class="pre">str</span></code> and <code class="docutils literal notranslate"><span class="pre">'b</span></code> is strictly shorter than <code class="docutils literal notranslate"><span class="pre">'a</span></code>,
+Rust won’t allow you to create the instance of <code class="docutils literal notranslate"><span class="pre">StackVec&lt;'a,</span> <span class="pre">&amp;'b</span> <span class="pre">str&gt;</span></code>.</p>
+<p>Why is the bound required? What could go wrong if the bound
+wasn’t enforced by Rust?</p>
+</div>
+<div class="question admonition">
+<p class="admonition-title">Why does <code class="docutils literal notranslate"><span class="pre">StackVec</span></code> require <code class="docutils literal notranslate"><span class="pre">T:</span> <span class="pre">Clone</span></code> to <code class="docutils literal notranslate"><span class="pre">pop()</span></code>? (clone-for-pop)</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">pop</span></code> method from <code class="docutils literal notranslate"><span class="pre">Vec&lt;T&gt;</span></code> in the standard library is
+implemented for all <code class="docutils literal notranslate"><span class="pre">T</span></code>, but the <code class="docutils literal notranslate"><span class="pre">pop</span></code> method from our
+<code class="docutils literal notranslate"><span class="pre">StackVec</span></code> is only implemented when <code class="docutils literal notranslate"><span class="pre">T</span></code> implements the
+<code class="docutils literal notranslate"><span class="pre">Clone</span></code> trait. Why might that be? What goes wrong when the
+bound is removed?</p>
+</div>
+</div>
+<div class="section" id="implementing-stackvec">
+<h4>Implementing <code class="docutils literal notranslate"><span class="pre">StackVec</span></code><a class="headerlink" href="lab2.html#implementing-stackvec" title="Permalink to this headline">¶</a></h4>
+<p>Implement all of the <code class="docutils literal notranslate"><span class="pre">unimplemented!()</span></code> <code class="docutils literal notranslate"><span class="pre">StackVec</span></code> methods in
+<code class="docutils literal notranslate"><span class="pre">stack-vec/src/lib.rs</span></code>. Each method is documented in the source
+code. We have also provided tests in <code class="docutils literal notranslate"><span class="pre">src/tests.rs</span></code> that help
+ensure that your implementations are correct. You can run these
+tests with <code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">test</span></code>. You’ll also need to implement the
+<code class="docutils literal notranslate"><span class="pre">Deref</span></code>, <code class="docutils literal notranslate"><span class="pre">DerefMut</span></code>, and <code class="docutils literal notranslate"><span class="pre">IntoIterator</span></code> traits for
+<code class="docutils literal notranslate"><span class="pre">StackVec</span></code> as well as the <code class="docutils literal notranslate"><span class="pre">IntoIterator</span></code> trait for
+<code class="docutils literal notranslate"><span class="pre">&amp;StackVec</span></code> for all of the <code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">test</span></code> tests to pass. Once
+you feel confident that you implementation is correct and have
+answered this subphase’s questions, proceed to the next subphase.</p>
+<div class="question admonition">
+<p class="admonition-title">Which tests make use of the <code class="docutils literal notranslate"><span class="pre">Deref</span></code> implementations? (deref-in-tests)</p>
+<p>Read through the tests we have provided in <code class="docutils literal notranslate"><span class="pre">src/tests.rs</span></code>.
+Which tests would fail to compile if the <code class="docutils literal notranslate"><span class="pre">Deref</span></code>
+implementation did not exist? What about the <code class="docutils literal notranslate"><span class="pre">DerefMut</span></code>
+implementation? Why?</p>
+</div>
+<div class="warning admonition">
+<p class="admonition-title">Our unit tests are incomplete!</p>
+<p>Our unit tests provide a <em>baseline</em> truth, but they are not
+complete! We will run additional tests when we grade your
+assignment. You may wish to find the gaps in our tests and add
+additional tests of your own to fill them.</p>
+</div>
+</div>
+</div>
+<div class="section" id="subphase-b-volatile">
+<h3>Subphase B: <code class="docutils literal notranslate"><span class="pre">volatile</span></code><a class="headerlink" href="lab2.html#subphase-b-volatile" title="Permalink to this headline">¶</a></h3>
+<p>In this subphase, you will learn about volatile memory accesses,
+read the source code in the <code class="docutils literal notranslate"><span class="pre">volatile</span></code> skeleton subdirectory,
+and answer questions related to the source code. You won’t be
+writing any code in this subphase.</p>
+<p>Like operating systems, compilers are masters at making things
+<em>appear</em> as if they’re doing what you think they’re doing when in
+reality, they’re really doing something entirely different for the
+sake of optimization. One such optimization is dead-access
+elimination: compilers remove memory accesses (reads and writes)
+when they can prove doing so has no observable effect on the
+program’s execution. For instance, consider the following program:</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="n">fn</span> <span class="nf">f</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">let</span> <span class="n">mut</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">let</span> <span class="n">y</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">mut</span> <span class="n">x</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">y</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The compiler can completely eliminate the write to <code class="docutils literal notranslate"><span class="pre">*y</span></code> by
+reasoning that <code class="docutils literal notranslate"><span class="pre">*y</span></code> is never read after it’s written. The
+compiler concludes that as a result, the write cannot possibly
+effect the program, and eliminates it in the compiled binary. For
+the same reason, it can then proceed to eliminate the declaration
+for <code class="docutils literal notranslate"><span class="pre">y</span></code>, the declaration for <code class="docutils literal notranslate"><span class="pre">x</span></code>, and calls to <code class="docutils literal notranslate"><span class="pre">f()</span></code>
+entirely.</p>
+<p>These kinds of optimizations are almost exclusively beneficial:
+they speed up our programs without affecting their outcome. But
+sometimes these optimizations can have unintended consequences.
+Say, for example, that <code class="docutils literal notranslate"><span class="pre">y</span></code> was pointing to a write-only
+memory-mapped register. Then, writes to <code class="docutils literal notranslate"><span class="pre">*y</span></code> <em>will</em> have
+observable effects <em>without</em> having to read <code class="docutils literal notranslate"><span class="pre">*y</span></code> thereafter. If
+the compiler is not aware of this, it will optimize away these
+writes, and our program will not function correctly.</p>
+<p>How can we force the compiler to keep around reads and writes that
+appear to have no effects at the source code level? This is where
+<code class="docutils literal notranslate"><span class="pre">volatile</span></code> memory accesses come in: the compiler promises <em>not</em>
+to optimize away volatile memory accesses. So if we want to ensure
+a read or write occurs at runtime, we must perform a volatile
+memory access.</p>
+<div class="section" id="rusty-volatile">
+<h4>Rusty <code class="docutils literal notranslate"><span class="pre">volatile</span></code><a class="headerlink" href="lab2.html#rusty-volatile" title="Permalink to this headline">¶</a></h4>
+<p>In Rust, we use the
+<a class="reference external" href="https://doc.rust-lang.org/nightly/core/ptr/fn.read_volatile.html">read_volatile</a>
+and
+<a class="reference external" href="https://doc.rust-lang.org/nightly/core/ptr/fn.write_volatile.html">write_volatile</a>
+methods to perform volatile reads and writes to a raw pointer.</p>
+<div class="note admonition">
+<p class="admonition-title">What’s a <em>raw</em> pointer?</p>
+<p>By now you’re familiar with references (<code class="docutils literal notranslate"><span class="pre">&amp;T</span></code> and <code class="docutils literal notranslate"><span class="pre">&amp;mut</span> <span class="pre">T</span></code>).
+A raw pointer in Rust (<code class="docutils literal notranslate"><span class="pre">*const</span> <span class="pre">T</span></code> and <code class="docutils literal notranslate"><span class="pre">*mut</span> <span class="pre">T</span></code>) is a
+“reference” that isn’t tracked with lifetimes by Rust’s borrow
+checker. Because of this, read or writes to these pointers may
+be invalid, just as in C. Rust considers them <code class="docutils literal notranslate"><span class="pre">unsafe</span></code>, and
+code that reads or writes them must be annotated with
+<code class="docutils literal notranslate"><span class="pre">unsafe</span></code> to indicate this. You can read more about <a class="reference external" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">raw
+pointers in the
+rustdocs</a>.</p>
+</div>
+<p>Calling
+<a class="reference external" href="https://doc.rust-lang.org/nightly/core/ptr/fn.read_volatile.html">read_volatile</a>
+and
+<a class="reference external" href="https://doc.rust-lang.org/nightly/core/ptr/fn.write_volatile.html">write_volatile</a>
+every time we want to perform a volatile read or write is error
+prone and frustrating. Thankfully Rust provides us the tools to
+make this easier and safer. Ideally we can simply declare a
+pointer as volatile (as in C) and ensure that every read or write
+thereafter is volatile. Even better, we should be able declare a
+pointer as read-only, write-only (unlike in C), or read/write and
+ensure only the appropriate memory accesses can be made.</p>
+</div>
+<div class="section" id="introducing-volatile-readvolatile-writevolatile-and-uniquevolatile">
+<h4>Introducing <code class="docutils literal notranslate"><span class="pre">Volatile</span></code>, <code class="docutils literal notranslate"><span class="pre">ReadVolatile</span></code>, <code class="docutils literal notranslate"><span class="pre">WriteVolatile</span></code>, and <code class="docutils literal notranslate"><span class="pre">UniqueVolatile</span></code><a class="headerlink" href="lab2.html#introducing-volatile-readvolatile-writevolatile-and-uniquevolatile" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">volatile</span></code> crate in the <code class="docutils literal notranslate"><span class="pre">volatile/</span></code> skeleton subdirectory
+implements these four types that allow us to do just this. Read
+the documentation for these types now by running
+<code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">doc</span> <span class="pre">--open</span></code> inside of the <code class="docutils literal notranslate"><span class="pre">volatile/</span></code> directory.</p>
+<div class="question admonition">
+<p class="admonition-title">Why does <code class="docutils literal notranslate"><span class="pre">Unique&lt;Volatile&gt;</span></code> exist? (unique-volatile)</p>
+<p>Both <code class="docutils literal notranslate"><span class="pre">Volatile</span></code> and <code class="docutils literal notranslate"><span class="pre">Unique&lt;Volatile&gt;</span></code> allow read/write
+volatile accesses to an underlying pointer. According to the
+documentation, what is the difference between these two
+types?</p>
+</div>
+<p>Now open the source code in <code class="docutils literal notranslate"><span class="pre">src/lib.rs</span></code>, <code class="docutils literal notranslate"><span class="pre">src/traits.rs</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">src/macros.rs</span></code>. Read through the source code to the
+best of your abilities. When you’re ready, answer the following
+questions. Once you have answered these questions, you’re ready
+to move on to the next subphase.</p>
+<div class="note admonition">
+<p class="admonition-title">What’s with <code class="docutils literal notranslate"><span class="pre">#[repr(C)]</span></code>?</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">#[repr(C)]</span></code> annotation forces Rust to lay out the
+structure’s fields in the same way that C would. In general,
+Rust optimizes the order and padding between fields of
+structures in an unspecified way. When we cast a raw address to
+a pointer to a structure, we typically have a very specific
+memory layout in mind. The <code class="docutils literal notranslate"><span class="pre">#[repr(C)]</span></code> annotation lets us
+confide that Rust will arrange the structure as we intend it
+to, not as it wishes.</p>
+</div>
+<div class="question admonition">
+<p class="admonition-title">How are read-only and write-only accesses enforced? (enforcing)</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">ReadVolatile</span></code> and <code class="docutils literal notranslate"><span class="pre">WriteVolatile</span></code> types make it
+impossible to write and read, respectively, the underlying
+pointer. How do they accomplish this?</p>
+</div>
+<div class="question admonition">
+<p class="admonition-title">What do the macros do? (macros)</p>
+<p>What do the <code class="docutils literal notranslate"><span class="pre">readable!</span></code>, <code class="docutils literal notranslate"><span class="pre">writeable!</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">readable_writeable!</span></code> macros do?</p>
+</div>
+</div>
+</div>
+<div class="section" id="subphase-c-xmodem">
+<h3>Subphase C: <code class="docutils literal notranslate"><span class="pre">xmodem</span></code><a class="headerlink" href="lab2.html#subphase-c-xmodem" title="Permalink to this headline">¶</a></h3>
+<p>In this subphase, you will implement the XMODEM file transfer
+protocol in the <code class="docutils literal notranslate"><span class="pre">xmodem</span></code> library in the <code class="docutils literal notranslate"><span class="pre">xmodem/</span></code> skeleton
+subdirectory. You will primarily be working in
+<code class="docutils literal notranslate"><span class="pre">xmodem/src/lib.rs</span></code>.</p>
+<p>XMODEM is a simple file transfer protocol originally developed in
+1977. It features packet checksums, cancellation, and automatic
+retries. It is widely implemented and used for transfers through
+serial interfaces. Its best feature, however, is its simplicity.
+For more about its history, see the <a class="reference external" href="https://en.wikipedia.org/wiki/XMODEM">XMODEM Wikipedia
+article</a>.</p>
+<p>We will use the XMODEM protocol to transfer files to the Raspberry
+Pi. While we could use existing implementations of the XMODEM
+protocol to <em>send</em> data to the Pi, we will still need to write our
+own receiver. So, while we’re at it, we’ll be implementing XMODEM
+transmission as well.</p>
+<div class="section" id="the-protocol">
+<h4>The Protocol<a class="headerlink" href="lab2.html#the-protocol" title="Permalink to this headline">¶</a></h4>
+<p>The XMODEM protocol is described in detail in the <a class="reference external" href="https://cs140e.sergio.bz/assignments/1-shell/data/XMODEM.txt">Understanding
+The X-Modem File Transfer
+Protocol</a>
+txt file. We describe it again here, for posterity.</p>
+<div class="warning admonition">
+<p class="admonition-title">Do not base your implementation off of Wikipedia’s explanation!</p>
+<p>While Wikipedia’s explanation is helpful at a high level, many
+of the details presented there are different from the protocol
+we’ll be implementing here. As such, do not use the article as
+a reference for this subphase.</p>
+</div>
+<p>XMODEM is a binary protocol: bytes are sent and received in the
+raw. It is also “half duplex”: at any point in time, either the
+sender or receiver is sending data, but never both. Finally it is
+packet-based: data is separated into 128 byte chunks known as
+packets. The protocol dictates which bytes are sent when, what
+they mean, and how they’re interpreted.</p>
+<p>First, we define a few constants:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">const</span><span class="w"> </span><span class="n">SOH</span>: <span class="kt">u8</span> <span class="o">=</span><span class="w"> </span><span class="mh">0x01</span><span class="p">;</span><span class="w"></span>
+<span class="k">const</span><span class="w"> </span><span class="n">EOT</span>: <span class="kt">u8</span> <span class="o">=</span><span class="w"> </span><span class="mh">0x04</span><span class="p">;</span><span class="w"></span>
+<span class="k">const</span><span class="w"> </span><span class="n">ACK</span>: <span class="kt">u8</span> <span class="o">=</span><span class="w"> </span><span class="mh">0x06</span><span class="p">;</span><span class="w"></span>
+<span class="k">const</span><span class="w"> </span><span class="n">NAK</span>: <span class="kt">u8</span> <span class="o">=</span><span class="w"> </span><span class="mh">0x15</span><span class="p">;</span><span class="w"></span>
+<span class="k">const</span><span class="w"> </span><span class="n">CAN</span>: <span class="kt">u8</span> <span class="o">=</span><span class="w"> </span><span class="mh">0x18</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>To start the file transfer, the receiver sends a <code class="docutils literal notranslate"><span class="pre">NAK</span></code> byte
+while the sender waits for a <code class="docutils literal notranslate"><span class="pre">NAK</span></code> byte. Once the sender has
+received the <code class="docutils literal notranslate"><span class="pre">NAK</span></code> byte, packet transmission begins. The
+receiver only sends a <code class="docutils literal notranslate"><span class="pre">NAK</span></code> byte to begin the file transfer, not
+once for every packet.</p>
+<p>Once file transfer has begun, each packet’s transmission and
+reception is identical. Packets are numbered in sequential order
+starting at <code class="docutils literal notranslate"><span class="pre">1</span></code> and wrap around to <code class="docutils literal notranslate"><span class="pre">0</span></code> after <code class="docutils literal notranslate"><span class="pre">255</span></code>.</p>
+<div class="figure align-center" id="id5">
+<a class="reference internal image-reference" href="../_images/xmodem-diagram.svg"><img alt="XMODEM protocol diagram" src="../_images/xmodem-diagram.svg" width="300px" /></a>
+<p class="caption"><span class="caption-text">XMODEM protocol diagram</span><a class="headerlink" href="lab2.html#id5" title="Permalink to this image">¶</a></p>
+</div>
+<p>To send a packet, the sender:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Sends an <code class="docutils literal notranslate"><span class="pre">SOH</span></code> byte.</p></li>
+<li><p>Sends the packet number.</p></li>
+<li><p>Sends the 1s complement of the packet number
+(<code class="docutils literal notranslate"><span class="pre">255</span> <span class="pre">-</span> <span class="pre">$packet_number</span></code>).</p></li>
+<li><p>Sends the packet itself.</p></li>
+<li><p>Sends the packet checksum.</p>
+<ul class="simple">
+<li><p>The checksum is the sum of all of the bytes in the packet
+mod 256.</p></li>
+</ul>
+</li>
+<li><p>Reads a byte from the receiver.</p>
+<ul class="simple">
+<li><p>If the byte is <code class="docutils literal notranslate"><span class="pre">NAK</span></code>, transmission for the same packet is
+retried up to 10 times.</p></li>
+<li><p>If the byte is <code class="docutils literal notranslate"><span class="pre">ACK</span></code>, the next packet is sent.</p></li>
+</ul>
+</li>
+</ol>
+</div></blockquote>
+<p>The receive a packet, the receiver performs the inverse:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Waits for an <code class="docutils literal notranslate"><span class="pre">SOH</span></code> or <code class="docutils literal notranslate"><span class="pre">EOT</span></code> byte from the sender.</p>
+<ul class="simple">
+<li><p>If a different byte is received, the receiver cancels the
+transfer.</p></li>
+<li><p>If an <code class="docutils literal notranslate"><span class="pre">EOT</span></code> byte is received, the receiver performs end of
+transmission.</p></li>
+</ul>
+</li>
+<li><p>Reads the next byte and compares it to the current packet
+number.</p>
+<ul class="simple">
+<li><p>If the wrong packet number is received, the receiver cancels
+the transfer.</p></li>
+</ul>
+</li>
+<li><p>Reads the next byte and compares it to the 1s complement of the
+packet number.</p>
+<ul class="simple">
+<li><p>If the wrong number is received, the receiver cancels the
+transfer.</p></li>
+</ul>
+</li>
+<li><p>Reads a packet (128 bytes) from the sender.</p></li>
+<li><p>Computes the checksum for the packet.</p>
+<ul class="simple">
+<li><p>The checksum is the sum of all of the bytes in the packet
+mod 256.</p></li>
+</ul>
+</li>
+<li><p>Reads the next byte and compares it to the computed checksum.</p>
+<ul class="simple">
+<li><p>If the checksum differs, sends a <code class="docutils literal notranslate"><span class="pre">NAK</span></code> byte and retries
+reception for the same packet.</p></li>
+<li><p>If the checksum is the same, sends an <code class="docutils literal notranslate"><span class="pre">ACK</span></code> byte and
+receives the next packet.</p></li>
+</ul>
+</li>
+</ol>
+</div></blockquote>
+<p>To cancel a transfer, a <code class="docutils literal notranslate"><span class="pre">CAN</span></code> byte is sent by either the
+receiver or sender. When either side receives a <code class="docutils literal notranslate"><span class="pre">CAN</span></code> byte, it
+errors out, aborting the connection.</p>
+<p>To end the transmission, the sender:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Sends an <code class="docutils literal notranslate"><span class="pre">EOT</span></code> byte.</p></li>
+<li><p>Waits for a <code class="docutils literal notranslate"><span class="pre">NAK</span></code> byte. If a different byte is received, the
+sender errors out.</p></li>
+<li><p>Sends a second <code class="docutils literal notranslate"><span class="pre">EOT</span></code> byte.</p></li>
+<li><p>Waits for an <code class="docutils literal notranslate"><span class="pre">ACK</span></code> byte. If a different byte is received, the
+sender errors out.</p></li>
+</ol>
+</div></blockquote>
+<p>To end the transmission, the receiver performs the following after
+receiving the first <code class="docutils literal notranslate"><span class="pre">EOT</span></code>:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Sends a <code class="docutils literal notranslate"><span class="pre">NAK</span></code> byte.</p></li>
+<li><p>Waits for a second <code class="docutils literal notranslate"><span class="pre">EOT</span></code> byte. If a different byte is
+received, the receiver cancels the transfer.</p></li>
+<li><p>Sends an <code class="docutils literal notranslate"><span class="pre">ACK</span></code> byte.</p></li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="implementing-xmodem">
+<h4>Implementing XMODEM<a class="headerlink" href="lab2.html#implementing-xmodem" title="Permalink to this headline">¶</a></h4>
+<p>We have provided an unfinished implementation of the XMODEM
+protocol in the <code class="docutils literal notranslate"><span class="pre">xmodem</span></code> skeleton subdirectory. Your task is to
+complete the implementation by writing the <code class="docutils literal notranslate"><span class="pre">expect_byte</span></code>,
+<code class="docutils literal notranslate"><span class="pre">expect_byte_or_cancel</span></code>, <code class="docutils literal notranslate"><span class="pre">read_packet</span></code>, and <code class="docutils literal notranslate"><span class="pre">write_packet</span></code>
+methods in <code class="docutils literal notranslate"><span class="pre">src/lib.rs</span></code>. Your implementations should make use of
+the internal state of the <code class="docutils literal notranslate"><span class="pre">Xmodem</span></code> type: <code class="docutils literal notranslate"><span class="pre">packet</span></code> and
+<code class="docutils literal notranslate"><span class="pre">started</span></code>. We recommend reading over the existing code before
+starting.</p>
+<p>You should begin by implementing the <code class="docutils literal notranslate"><span class="pre">expect_byte</span></code> and
+<code class="docutils literal notranslate"><span class="pre">expect_byte_or_cancel</span></code> methods. You should then make use of all
+four of the helper methods (including <code class="docutils literal notranslate"><span class="pre">read_byte</span></code> and
+<code class="docutils literal notranslate"><span class="pre">write_byte</span></code>) to implement <code class="docutils literal notranslate"><span class="pre">read_packet</span></code> and <code class="docutils literal notranslate"><span class="pre">write_packet</span></code>.
+To see how these methods are used, read the <code class="docutils literal notranslate"><span class="pre">transmit</span></code> and
+<code class="docutils literal notranslate"><span class="pre">receive</span></code> implementations which transmit or receive a complete
+data stream using XMODEM via these methods. Be mindful of the
+specifications in the doc-comments. You can test your
+implementation using <code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">test</span></code>. Once you are confident that
+your implementation is correct, proceed to the next subphase.</p>
+<div class="warning admonition">
+<p class="admonition-title">Do not use any additional items from <code class="docutils literal notranslate"><span class="pre">std</span></code>.</p>
+<p>Your implementation should only use items from <code class="docutils literal notranslate"><span class="pre">shim::io</span></code>. It
+should not use other items from <code class="docutils literal notranslate"><span class="pre">std</span></code> or any other libraries.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Our reference implementations for <code class="docutils literal notranslate"><span class="pre">{read,write}_packet</span></code>
+are roughly 43 lines of code each.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>The
+<a class="reference external" href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html">io::Read</a>
+and
+<a class="reference external" href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html">io::Write</a>
+rustdocs will be useful.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">?</span></code> operator generously.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>The test source code can be a helpful guide.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>You can use <code class="docutils literal notranslate"><span class="pre">ioerr!</span></code> macro to make and return a new <code class="docutils literal notranslate"><span class="pre">io::Error</span></code> easily.
+Please refer <code class="docutils literal notranslate"><span class="pre">shim/src/macros.rs</span></code> to find more macros which can be useful.</p>
+</div>
+</div>
+</div>
+<div class="section" id="subphase-d-ttywrite">
+<h3>Subphase D: <code class="docutils literal notranslate"><span class="pre">ttywrite</span></code><a class="headerlink" href="lab2.html#subphase-d-ttywrite" title="Permalink to this headline">¶</a></h3>
+<p>In this subphase, you will write a command line utility,
+<code class="docutils literal notranslate"><span class="pre">ttywrite</span></code>, that will allow you to send data to your Raspberry
+Pi in the raw or via the XMODEM protocol. You will use your
+<code class="docutils literal notranslate"><span class="pre">xmodem</span></code> library from the previous subphase in your
+implementation. You will write your code in
+<code class="docutils literal notranslate"><span class="pre">ttywrite/src/main.rs</span></code>. To test your <code class="docutils literal notranslate"><span class="pre">ttywrite</span></code>
+implementation, use the provided <code class="docutils literal notranslate"><span class="pre">test.sh</span></code> script.</p>
+<div class="note admonition">
+<p class="admonition-title">What is a serial device?</p>
+<p>A serial device is any device that accepts communication one
+bit at a time. This is known as <em>serial communication</em>. In
+contrast, in <em>parallel communication</em> multiple bits are being
+transferred at any point in time in parallel. We will be
+communicating with our Raspberry Pi via its UART device, a
+serial communication device.</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">What is a <em>TTY</em>?</p>
+<p>A <em>TTY</em> is a “teletypewriter”. It is a vestigial term that was
+adopted in computing to describe computer terminals. The term
+later become more general, coming to describe any device
+intended to be communicated with over serial. For this reason,
+your computer calls the device mapping to your Raspberry Pi a
+TTY.</p>
+</div>
+<div class="section" id="command-line-interface">
+<h4>Command-Line Interface<a class="headerlink" href="lab2.html#command-line-interface" title="Permalink to this headline">¶</a></h4>
+<p>The skeleton code we have provided for <code class="docutils literal notranslate"><span class="pre">ttywrite</span></code> already parses
+and validates command-line arguments. To do so, it uses the
+<a class="reference external" href="https://github.com/TeXitoi/structopt">structopt</a> crate from
+<a class="reference external" href="https://crates.io/">crates.io</a> which itself uses
+<a class="reference external" href="https://clap.rs/">clap</a>. You’ll notice that we list it as a
+dependency in the <code class="docutils literal notranslate"><span class="pre">Cargo.toml</span></code> file.
+<a class="reference external" href="https://github.com/TeXitoi/structopt">structopt</a> works through
+code generation. We simply annotate a structure and its fields
+with a declaration of our command-line arguments and
+<a class="reference external" href="https://github.com/TeXitoi/structopt">structopt</a> generates the
+code to actually parse the command-line flags.</p>
+<p>To see the interface that
+<a class="reference external" href="https://github.com/TeXitoi/structopt">structopt</a> generates,
+call the application with <code class="docutils literal notranslate"><span class="pre">--help</span></code>. Remember that you can pass
+arbitrary flags when using <code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">run</span></code>: <code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">run</span> <span class="pre">--</span> <span class="pre">--help</span></code>.
+Take a look at the interface now. Then, take a look at the <code class="docutils literal notranslate"><span class="pre">Opt</span></code>
+structure in <code class="docutils literal notranslate"><span class="pre">main.rs</span></code> and compare the interface with its
+definition.</p>
+<div class="question admonition">
+<p class="admonition-title">What happens when a flag’s input is invalid? (invalid)</p>
+<p>Try passing in some invalid values for flags. For instance,
+it should not be possible to set <code class="docutils literal notranslate"><span class="pre">-f</span></code> to <code class="docutils literal notranslate"><span class="pre">idk</span></code>. How does
+<code class="docutils literal notranslate"><span class="pre">structopt</span></code> know to reject invalid values?</p>
+</div>
+<p>You’ll notice that there are plenty of options. All of these
+correspond to settings available on a serial device. For now it’s
+not important to know exactly what these settings do.</p>
+</div>
+<div class="section" id="talking-to-a-serial-device">
+<h4>Talking to a Serial Device<a class="headerlink" href="lab2.html#talking-to-a-serial-device" title="Permalink to this headline">¶</a></h4>
+<p>In <code class="docutils literal notranslate"><span class="pre">main</span></code>, you’ll see a call to
+<a class="reference external" href="https://docs.rs/serial/0.4.0/serial/fn.open.html">serial::open</a>.
+This is calling the <code class="docutils literal notranslate"><span class="pre">open</span></code> function from the
+<a class="reference external" href="https://docs.rs/serial/0.4.0/serial/">serial</a> crate, also on
+<a class="reference external" href="https://crates.io/">crates.io</a>. This <code class="docutils literal notranslate"><span class="pre">open</span></code> function returns
+a
+<a class="reference external" href="https://docs.rs/serial-unix/0.4.0/serial_unix/struct.TTYPort.html">TTYPort</a>
+which allows you to read and write to the serial device (via its
+<code class="docutils literal notranslate"><span class="pre">io::Read</span></code> and <code class="docutils literal notranslate"><span class="pre">io::Write</span></code> trait implementations) as well as
+read and set settings on a serial device (via its <code class="docutils literal notranslate"><span class="pre">SerialDevice</span></code>
+trait implementation).</p>
+</div>
+<div class="section" id="writing-the-code">
+<h4>Writing the Code<a class="headerlink" href="lab2.html#writing-the-code" title="Permalink to this headline">¶</a></h4>
+<p>Implement the <code class="docutils literal notranslate"><span class="pre">ttywrite</span></code> utility. Your implementation should set
+all of the appropriate settings passed in via the command-line
+stored in the <code class="docutils literal notranslate"><span class="pre">opt</span></code> variable in <code class="docutils literal notranslate"><span class="pre">main</span></code>. It should read from
+<code class="docutils literal notranslate"><span class="pre">stdin</span></code> if no input file is passed in or from the input file if
+one is passed in. It should write the input data to the passed in
+serial device. If the <code class="docutils literal notranslate"><span class="pre">-r</span></code> flag is set, it should send the data
+as it is. Otherwise, you should use your <code class="docutils literal notranslate"><span class="pre">xmodem</span></code> implementation
+from the previous subphase to send the data using the XMODEM
+protocol. You should print the number of bytes sent on a
+successful transmission.</p>
+<p>To transmit using the XMODEM protocol, your code should use either
+the <code class="docutils literal notranslate"><span class="pre">Xmodem::transmit</span></code> or <code class="docutils literal notranslate"><span class="pre">Xmodem::transmit_with_progress</span></code>
+methods from the <code class="docutils literal notranslate"><span class="pre">xmodem</span></code> library. We recommend using
+<code class="docutils literal notranslate"><span class="pre">transmit_with_progress</span></code> so that your utility indicates progress
+throughput the transmission. In its simplest form, this might look
+as follows:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">fn</span> <span class="nf">progress_fn</span><span class="p">(</span><span class="n">progress</span>: <span class="nc">Progress</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Progress: {:?}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">progress</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">Xmodem</span>::<span class="n">transmit_with_progress</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">to</span><span class="p">,</span><span class="w"> </span><span class="n">progress_fn</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>You can test the baseline correctness of your implementation using
+the <code class="docutils literal notranslate"><span class="pre">test.sh</span></code> script in the <code class="docutils literal notranslate"><span class="pre">ttywrite</span></code> directory. When your
+implementation is at least somewhat correct, you will see the
+following when the script is run:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>Opening PTYs...
+Running <span class="nb">test</span> <span class="m">1</span>/10.
+wrote <span class="m">333</span> bytes to input
+...
+Running <span class="nb">test</span> <span class="m">10</span>/10.
+wrote <span class="m">232</span> bytes to input
+SUCCESS
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>You can retrieve a handle to <code class="docutils literal notranslate"><span class="pre">stdin</span></code> with
+<a class="reference external" href="https://doc.rust-lang.org/nightly/std/io/fn.stdin.html">io::stdin()</a>.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>You may find the
+<a class="reference external" href="https://doc.rust-lang.org/nightly/std/io/fn.copy.html">io::copy()</a>
+function useful.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">main()</span></code> function in our reference implementation
+is roughly 35 lines of code.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Keep the
+<a class="reference external" href="https://docs.rs/serial-unix/0.4.0/serial_unix/struct.TTYPort.html">TTYPort</a>
+documentation open while writing your code.</p>
+</div>
+<div class="question admonition">
+<p class="admonition-title">Why does the <code class="docutils literal notranslate"><span class="pre">test.sh</span></code> script always set <code class="docutils literal notranslate"><span class="pre">-r</span></code>? (bad-tests)</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">test.sh</span></code> script that we have provided always uses the
+<code class="docutils literal notranslate"><span class="pre">-r</span></code> flag; it doesn’t test that your utility uses the
+XMODEM protocol when it is asked to. Why might that be? What
+does the XMODEM protocol expect that sending data in the raw
+doesn’t that makes testing its functionality difficult?</p>
+</div>
+</div>
+<div class="section" id="installing-ttywrite-utility">
+<h4>Installing <code class="docutils literal notranslate"><span class="pre">ttywrite</span></code> utility<a class="headerlink" href="lab2.html#installing-ttywrite-utility" title="Permalink to this headline">¶</a></h4>
+<p>After finish writing the <code class="docutils literal notranslate"><span class="pre">ttywrite</span></code> utility,
+install the tool with <code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">install</span> <span class="pre">--path</span> <span class="pre">.</span></code> command.
+This command will be used later
+to communicate with the bootloader.</p>
+</div>
+</div>
+</div>
+<div class="section" id="phase-2-not-a-seashell">
+<h2>Phase 2: <em>Not</em> a Seashell<a class="headerlink" href="lab2.html#phase-2-not-a-seashell" title="Permalink to this headline">¶</a></h2>
+<p>In this phase, you will be implementing drivers for the built-in
+timer, GPIO, and UART devices. You’ll use then these drivers to
+implement a simple shell. In the next phase, you’ll use the same
+drivers to implement a bootloader.</p>
+<div class="note admonition">
+<p class="admonition-title">What’s a driver?</p>
+<p>The term <em>driver</em>, or <em>device driver</em>, describes software that
+directly interacts with and controls a hardware device. Drivers
+expose a higher-level interface to the hardware they control.
+Operating systems may interact with device drivers to expose an
+even higher-level interface. For instance, the Linux kernel
+exposes ALSA (Advanced Linux Sound Architecture), an audio API,
+which interacts with device drivers that in-turn interact
+directly with sound cards.</p>
+</div>
+<div class="section" id="subphase-a-getting-started">
+<h3>Subphase A: Getting Started<a class="headerlink" href="lab2.html#subphase-a-getting-started" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="project-structure">
+<h4>Project Structure<a class="headerlink" href="lab2.html#project-structure" title="Permalink to this headline">¶</a></h4>
+<p>Let’s recall the repository structure we saw at the beginning of this lab.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>.
+├── ...
+├── boot : bootloader *
+├── kern : the main os kernel *
+└── lib  : required libraries
+     ├── pi *
+     ├── shim
+     ├── stack-vec *
+     ├── ttywrite *
+     ├── volatile *
+     └── xmodem *
+</pre></div>
+</div>
+<p>All the libraries used by <code class="docutils literal notranslate"><span class="pre">boot</span></code> and <code class="docutils literal notranslate"><span class="pre">kernel</span></code> are located under
+the <code class="docutils literal notranslate"><span class="pre">lib</span></code> directory.</p>
+<p><code class="docutils literal notranslate"><span class="pre">shim</span></code> library selectively depends on either <code class="docutils literal notranslate"><span class="pre">std</span></code> or <code class="docutils literal notranslate"><span class="pre">no_std</span></code> library.
+With <code class="docutils literal notranslate"><span class="pre">#[cfg(feature</span> <span class="pre">=</span> <span class="pre">&quot;no_std&quot;)]</span></code> specified, <code class="docutils literal notranslate"><span class="pre">shim</span></code> makes use of
+<code class="docutils literal notranslate"><span class="pre">core_io</span></code> and the custom <code class="docutils literal notranslate"><span class="pre">no_std</span></code> module which has minimum library
+we need such as <code class="docutils literal notranslate"><span class="pre">ffi</span></code>, <code class="docutils literal notranslate"><span class="pre">path</span></code> and <code class="docutils literal notranslate"><span class="pre">sync</span></code>. Otherwise, mostly in
+the test code, <code class="docutils literal notranslate"><span class="pre">shim</span></code> just uses <code class="docutils literal notranslate"><span class="pre">std</span></code> library.</p>
+<p><code class="docutils literal notranslate"><span class="pre">pi</span></code> subdirectory contains all of your driver code. The
+<code class="docutils literal notranslate"><span class="pre">pi</span></code> library makes use of the <code class="docutils literal notranslate"><span class="pre">volatile</span></code> library. It also
+depends on the <code class="docutils literal notranslate"><span class="pre">shim</span></code> library.</p>
+<p><code class="docutils literal notranslate"><span class="pre">boot</span></code> and <code class="docutils literal notranslate"><span class="pre">kernel</span></code> make use of the <code class="docutils literal notranslate"><span class="pre">pi</span></code> library to communicate with
+hardware. They also depend on <code class="docutils literal notranslate"><span class="pre">shim</span></code>. In addition to that, <code class="docutils literal notranslate"><span class="pre">boot</span></code>
+also depends on the <code class="docutils literal notranslate"><span class="pre">xmodem</span></code> library, and <code class="docutils literal notranslate"><span class="pre">kernel</span></code> depends on
+the <code class="docutils literal notranslate"><span class="pre">stack-vec</span></code> library. The <code class="docutils literal notranslate"><span class="pre">volatile</span></code> library
+has no dependencies. The diagram below illustrates these
+relationships:</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/dep-diagram.png"><img alt="../_images/dep-diagram.png" src="../_images/dep-diagram.png" style="width: 500px;" /></a>
+</div>
+</div>
+<div class="section" id="kernel">
+<h4>Kernel<a class="headerlink" href="lab2.html#kernel" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">kern</span></code> directory contains the code for the operating
+system kernel: the core of your operating system. Calling <code class="docutils literal notranslate"><span class="pre">make</span></code>
+inside this directory builds the kernel. The build output is
+stored in the <code class="docutils literal notranslate"><span class="pre">build/</span></code> directory. To run the kernel, copy the
+<code class="docutils literal notranslate"><span class="pre">build/kernel.bin</span></code> file to the root of the MicroSD card as
+<code class="docutils literal notranslate"><span class="pre">kernel8.img</span></code>. You may wish to use a script to copy the kernel
+image to the sdcard with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> command.
+Please refer the <a class="reference external" href="tools.html">Tools</a>  page to find details
+about our <code class="docutils literal notranslate"><span class="pre">Makefile</span></code>.</p>
+<p>At present, the kernel does absolutely nothing.
+By the end of this phase, the kernel will start up a shell which
+you can communicate with.</p>
+<p>As we saw above, the <code class="docutils literal notranslate"><span class="pre">kernel</span></code> crate depends on the <code class="docutils literal notranslate"><span class="pre">pi</span></code> library.
+As a result, you can use all of the types and items from the <code class="docutils literal notranslate"><span class="pre">pi</span></code> library
+in the kernel.</p>
+</div>
+<div class="section" id="documentation">
+<h4>Documentation<a class="headerlink" href="lab2.html#documentation" title="Permalink to this headline">¶</a></h4>
+<p>While writing your device drivers, you’ll want to keep the
+<a class="reference external" href="https://cs140e.sergio.bz/docs/BCM2837-ARM-Peripherals.pdf">BCM2837 ARM Peripherals
+Manual</a>
+open.</p>
+</div>
+</div>
+<div class="section" id="subphase-b-system-timer">
+<h3>Subphase B: System Timer<a class="headerlink" href="lab2.html#subphase-b-system-timer" title="Permalink to this headline">¶</a></h3>
+<p>In this subphase, you will write a device driver for the ARM
+system timer. You will primarily be working in
+<code class="docutils literal notranslate"><span class="pre">lib/pi/src/timer.rs</span></code> and <code class="docutils literal notranslate"><span class="pre">kern/src/main.rs</span></code>. The ARM
+system timer is documented on page 172 (section 12) of the
+<a class="reference external" href="https://cs140e.sergio.bz/docs/BCM2837-ARM-Peripherals.pdf">BCM2837 ARM Peripherals
+Manual</a>.</p>
+<p>Start by looking at the existing code in <code class="docutils literal notranslate"><span class="pre">lib/pi/src/timer.rs</span></code>.
+In particular, note the relationship between the following
+sections:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">const</span><span class="w"> </span><span class="n">TIMER_REG_BASE</span>: <span class="kt">usize</span> <span class="o">=</span><span class="w"> </span><span class="n">IO_BASE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x3000</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="cp">#[repr(C)]</span><span class="w"></span>
+<span class="w">  </span><span class="k">struct</span> <span class="nc">Registers</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="n">CS</span>: <span class="nc">Volatile</span><span class="o">&lt;</span><span class="kt">u32</span><span class="o">&gt;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="n">CLO</span>: <span class="nc">ReadVolatile</span><span class="o">&lt;</span><span class="kt">u32</span><span class="o">&gt;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="n">CHI</span>: <span class="nc">ReadVolatile</span><span class="o">&lt;</span><span class="kt">u32</span><span class="o">&gt;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="n">COMPARE</span>: <span class="p">[</span><span class="n">Volatile</span><span class="o">&lt;</span><span class="kt">u32</span><span class="o">&gt;</span><span class="p">;</span><span class="w"> </span><span class="mi">4</span><span class="p">]</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">Timer</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="n">registers</span>: <span class="kp">&amp;</span><span class="nb">&#39;static</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">Registers</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">impl</span><span class="w"> </span><span class="n">Timer</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">new</span><span class="p">()</span><span class="w"> </span>-&gt; <span class="nc">Timer</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">          </span><span class="n">Timer</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">              </span><span class="n">registers</span>: <span class="nc">unsafe</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="n">TIMER_REG_BASE</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">Registers</span><span class="p">)</span><span class="w"> </span><span class="p">},</span><span class="w"></span>
+<span class="w">          </span><span class="p">}</span><span class="w"></span>
+<span class="w">      </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The one line of <code class="docutils literal notranslate"><span class="pre">unsafe</span></code> in this program is very important: it
+casts the <code class="docutils literal notranslate"><span class="pre">TIMER_REG_BASE</span></code> address to a <code class="docutils literal notranslate"><span class="pre">*mut</span> <span class="pre">Registers</span></code> and
+then casts that to an <code class="docutils literal notranslate"><span class="pre">&amp;'static</span> <span class="pre">mut</span> <span class="pre">Registers</span></code>. We are telling
+Rust that we have a static reference to a <code class="docutils literal notranslate"><span class="pre">Registers</span></code> structure
+at address <code class="docutils literal notranslate"><span class="pre">TIMER_REG_BASE</span></code>.</p>
+<p>What is at the <code class="docutils literal notranslate"><span class="pre">TIMER_REG_BASE</span></code> address? On page 172 of the
+<a class="reference external" href="https://cs140e.sergio.bz/docs/BCM2837-ARM-Peripherals.pdf">BCM2837 ARM Peripherals
+Manual</a>,
+you’ll find that <code class="docutils literal notranslate"><span class="pre">0x3000</span></code> is the peripheral offset for the ARM
+system timer. Thus, <code class="docutils literal notranslate"><span class="pre">TIMER_REG_BASE</span></code> is the address at which the
+ARM system timer registers start! After this one line of
+<code class="docutils literal notranslate"><span class="pre">unsafe</span></code>, we can use the <code class="docutils literal notranslate"><span class="pre">registers</span></code> field to access the
+timer’s registers safely. We can read the <code class="docutils literal notranslate"><span class="pre">CLO</span></code> register with
+<code class="docutils literal notranslate"><span class="pre">self.registers.CLO.read()</span></code> and write the <code class="docutils literal notranslate"><span class="pre">CS</span></code> register with
+<code class="docutils literal notranslate"><span class="pre">self.registers.CS.write()</span></code>, then combine them together to represent
+the number of elapsed microseconds.</p>
+<div class="question admonition">
+<p class="admonition-title">Why can’t you write to CLO or CHI? (restricted-reads)</p>
+<p>The BCM2837 documentation states that the <code class="docutils literal notranslate"><span class="pre">CLO</span></code> and
+<code class="docutils literal notranslate"><span class="pre">CHI</span></code> registers are read-only. Our code enforces this
+property. How? What prevents us from writing to <code class="docutils literal notranslate"><span class="pre">CLO</span></code> or
+<code class="docutils literal notranslate"><span class="pre">CHI</span></code>?</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">What exactly is <em>unsafe</em>?</p>
+<p>In short, <code class="docutils literal notranslate"><span class="pre">unsafe</span></code> is a marker for the Rust compiler that
+you’re taking control of memory safety: the compiler won’t
+protect you from memory issues. As a result, in <code class="docutils literal notranslate"><span class="pre">unsafe</span></code>
+sections, Rust lets you do anything you can do in C. In
+particular, you can cast between types with more freedom,
+dereference raw pointers, and fabricate lifetimes.</p>
+<p>But note that <code class="docutils literal notranslate"><span class="pre">unsafe</span></code> is <em>very</em> unsafe. You must ensure that
+everything you do in an <code class="docutils literal notranslate"><span class="pre">unsafe</span></code> section is, in fact <em>safe</em>.
+This is more difficult than it sounds, especially when Rust’s
+idea of <em>safe</em> is much stricter than in other languages. As
+such, you should try not to use <code class="docutils literal notranslate"><span class="pre">unsafe</span></code> at all. For
+operating systems, unfortunately, we <em>must</em> use <code class="docutils literal notranslate"><span class="pre">unsafe</span></code> so
+that we can directly speak to hardware, but we’ll typically
+limit our use to <strong>one</strong> line per driver.</p>
+<p>If you want to learn more about <code class="docutils literal notranslate"><span class="pre">unsafe</span></code>, read <a class="reference external" href="https://doc.rust-lang.org/nightly/nomicon/meet-safe-and-unsafe.html">Chapter 1 of
+the
+Nomicon</a>.</p>
+</div>
+<div class="section" id="implement-the-driver">
+<h4>Implement the Driver<a class="headerlink" href="lab2.html#implement-the-driver" title="Permalink to this headline">¶</a></h4>
+<p>Implement the <code class="docutils literal notranslate"><span class="pre">Timer::read()</span></code>, <code class="docutils literal notranslate"><span class="pre">current_time()</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">spin_sleep()</span></code> in <code class="docutils literal notranslate"><span class="pre">lib/pi/src/timer.rs</span></code>.
+The signatures on these items indicate
+their expected functionality. You’ll need to read the timer’s
+documentation in the BCM manual to implement <code class="docutils literal notranslate"><span class="pre">Timer::read()</span></code>. In
+particular, you should understand which registers to read to
+obtain the timer’s current <code class="docutils literal notranslate"><span class="pre">u64</span></code> value. You can build the <code class="docutils literal notranslate"><span class="pre">pi</span></code>
+library with <code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">build</span></code>. You can also use <code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">check</span></code> to
+type-check the library without actually compiling it.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>You’ll find the
+<a class="reference external" href="https://doc.rust-lang.org/core/time/struct.Duration.html">core::time::Duration</a>
+page useful.</p>
+</div>
+</div>
+<div class="section" id="testing-your-driver">
+<h4>Testing Your Driver<a class="headerlink" href="lab2.html#testing-your-driver" title="Permalink to this headline">¶</a></h4>
+<p>Let’s test your driver by ensuring that <code class="docutils literal notranslate"><span class="pre">spin_sleep()</span></code> is
+accurate. We’ll write the code to do this in
+<code class="docutils literal notranslate"><span class="pre">kern/src/main.rs</span></code>.</p>
+<p>Copy your LED blinky code from phase 4 of lab 1 into
+<code class="docutils literal notranslate"><span class="pre">main.rs</span></code>. Instead of the <code class="docutils literal notranslate"><span class="pre">for</span></code> loop based sleep function,
+use your newly written <code class="docutils literal notranslate"><span class="pre">spin_sleep()</span></code> function with <code class="docutils literal notranslate"><span class="pre">Duration</span></code>
+to pause between blinks. Compile the kernel, load it onto the MicroSD card
+as <code class="docutils literal notranslate"><span class="pre">kernel8.img</span></code>, and then run it on the Raspberry Pi. Ensure
+that the LED blinks at the frequency that you intended it to. Try
+other pause times and ensure that they all work as expected. Until
+you write the bootloader in phase 3, you’ll need to keep swapping
+the MicroSD card between the Pi and your computer to try out
+different binaries.</p>
+<p>If your timer driver is working as expected, proceed to the next
+subphase.</p>
+</div>
+</div>
+<div class="section" id="subphase-c-gpio">
+<h3>Subphase C: GPIO<a class="headerlink" href="lab2.html#subphase-c-gpio" title="Permalink to this headline">¶</a></h3>
+<p>In this subphase, you will write a generic, pin-independent device
+driver for GPIO. You will primarily be working in
+<code class="docutils literal notranslate"><span class="pre">lib/pi/src/gpio.rs</span></code> and <code class="docutils literal notranslate"><span class="pre">kern/src/main.rs</span></code>. The GPIO
+subsystem is documented on page 89 (section 6) of the <a class="reference external" href="https://cs140e.sergio.bz/docs/BCM2837-ARM-Peripherals.pdf">BCM2837 ARM
+Peripherals
+Manual</a>.</p>
+<div class="section" id="state-machines">
+<h4>State Machines<a class="headerlink" href="lab2.html#state-machines" title="Permalink to this headline">¶</a></h4>
+<p>All hardware devices are <a class="reference external" href="https://en.wikipedia.org/wiki/Finite-state_machine">state
+machines</a>:
+they begin at a predetermined state and transition to different
+states based on explicit or implicit inputs. The device exposes
+different functionality depending on which state it is in. In
+other words, only <em>some</em> transitions are valid in <em>some</em> states.
+Importantly, this implies that some transitions are <em>invalid</em> when
+the device is in a given state.</p>
+<p>Most programming languages make it impossible to faithfully encode
+the semantics of a state machine in hardware, but not Rust! Rust
+lets us <em>perfectly</em> encode state machine semantics, and we’ll take
+advantage of this to implement a safer-than-safe device driver for
+the GPIO subsystem. Our driver will ensure that a GPIO pin is
+never misused, and it will do so at compile-time.</p>
+<p>Below is the state diagram for a subset of the GPIO state machine
+for a single pin:</p>
+<div class="figure align-center" id="id6">
+<a class="reference internal image-reference" href="../_images/gpio-diagram.svg"><img alt="GPIO State Diagram" src="../_images/gpio-diagram.svg" width="300px" /></a>
+<p class="caption"><span class="caption-text">GPIO State Diagram</span><a class="headerlink" href="lab2.html#id6" title="Permalink to this image">¶</a></p>
+</div>
+<p>Our goal is to encode this state machine in Rust. Let’s start by
+interpreting the diagram:</p>
+<ul class="simple">
+<li><p>The GPIO starts in the <code class="docutils literal notranslate"><span class="pre">START</span></code> state.</p></li>
+<li><p>From the <code class="docutils literal notranslate"><span class="pre">START</span></code> state it can transition to one of three
+states:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ALT</span></code> - no transitions are possible from this state</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OUTPUT</span></code> - two “self” transitions are possible: <code class="docutils literal notranslate"><span class="pre">SET</span></code>
+and <code class="docutils literal notranslate"><span class="pre">CLEAR</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">INPUT</span></code> - one “self” transition is possible: <code class="docutils literal notranslate"><span class="pre">LEVEL</span></code></p></li>
+</ol>
+</li>
+</ul>
+<div class="question admonition">
+<p class="admonition-title">Which transitions did you follow in your lab 1 <code class="docutils literal notranslate"><span class="pre">blinky</span></code>? (blinky-states)</p>
+<p>When you implementing the blinky code in phase 4 of
+lab 1, you implicitly implemented a subset of this
+state machine. Which transitions did your code implement?</p>
+</div>
+<p>We’ll use Rust’s type system to ensure that a pin can only be
+<code class="docutils literal notranslate"><span class="pre">SET</span></code> and <code class="docutils literal notranslate"><span class="pre">CLEAR</span></code>ed if it has been transitioned to the
+<code class="docutils literal notranslate"><span class="pre">OUTPUT</span></code> state and the <code class="docutils literal notranslate"><span class="pre">LEVEL</span></code> read if it is in the <code class="docutils literal notranslate"><span class="pre">INPUT</span></code>
+state. Take a look at the declaration for the <code class="docutils literal notranslate"><span class="pre">GPIO</span></code> structure
+in <code class="docutils literal notranslate"><span class="pre">lib/pi/src/gpio.rs</span></code>:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">Gpio</span><span class="o">&lt;</span><span class="n">State</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="n">pin</span>: <span class="kt">u8</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="n">registers</span>: <span class="kp">&amp;</span><span class="nb">&#39;static</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">Registers</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="n">_state</span>: <span class="nc">PhantomData</span><span class="o">&lt;</span><span class="n">State</span><span class="o">&gt;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The structure has one generic argument, <code class="docutils literal notranslate"><span class="pre">State</span></code>. Except for
+<code class="docutils literal notranslate"><span class="pre">PhantomData</span></code>, nothing actually <em>uses</em> this argument. This is
+what
+<a class="reference external" href="https://doc.rust-lang.org/nightly/std/marker/struct.PhantomData.html">PhantomData</a>
+is there for: to convince Rust that the structure somehow uses the
+generic even though it otherwise wouldn’t. We’re going to use the
+<code class="docutils literal notranslate"><span class="pre">State</span></code> generic to encode which state the <code class="docutils literal notranslate"><span class="pre">Gpio</span></code> device is in.
+Unlike other generics, <em>we</em> must control this parameter and ensure
+that a client can never fabricate it.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">state!</span></code> macro generates types that represent the states a
+<code class="docutils literal notranslate"><span class="pre">Gpio</span></code> can be in:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="n">states</span><span class="o">!</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="n">Uninitialized</span><span class="p">,</span><span class="w"> </span><span class="n">Input</span><span class="p">,</span><span class="w"> </span><span class="n">Output</span><span class="p">,</span><span class="w"> </span><span class="n">Alt</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="c1">// Each parameter expands to an `enum` that looks like:</span>
+<span class="k">enum</span> <span class="nc">Input</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This is <em>also</em> weird; why would we create an <code class="docutils literal notranslate"><span class="pre">enum</span></code> with no
+variants? <code class="docutils literal notranslate"><span class="pre">enum</span></code>’s with no variants have a nice property: they
+can <em>never</em> be instantiated. In this way, these types act purely
+as markers. No one can ever pass us a value of type <code class="docutils literal notranslate"><span class="pre">Input</span></code>
+because such a value can never be constructed. They exist purely
+at the type-level.</p>
+<p>We can then implement methods corresponding to valid transitions
+given that a <code class="docutils literal notranslate"><span class="pre">Gpio</span></code> is in a certain state:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">impl</span><span class="w"> </span><span class="n">Gpio</span><span class="o">&lt;</span><span class="n">Output</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="sd">/// Sets (turns on) the pin.</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">set</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="sd">/// Clears (turns off) the pin.</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">clear</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">impl</span><span class="w"> </span><span class="n">Gpio</span><span class="o">&lt;</span><span class="n">Input</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="sd">/// Reads the pin&#39;s value.</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">level</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">bool</span> <span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This ensures that a <code class="docutils literal notranslate"><span class="pre">Gpio</span></code> can only be <code class="docutils literal notranslate"><span class="pre">set</span></code> and <code class="docutils literal notranslate"><span class="pre">clear</span></code>ed
+when it is a <code class="docutils literal notranslate"><span class="pre">Gpio&lt;Output&gt;</span></code> and its <code class="docutils literal notranslate"><span class="pre">level</span></code> read when it is a
+<code class="docutils literal notranslate"><span class="pre">Gpio&lt;Input&gt;</span></code>. Perfect! But how do we actually transition
+between states? Hello, <code class="docutils literal notranslate"><span class="pre">Gpio::transition()</span></code>!</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">impl</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Gpio</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">fn</span> <span class="nf">transition</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Gpio</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">Gpio</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">pin</span>: <span class="nc">self</span><span class="p">.</span><span class="n">pin</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="n">registers</span>: <span class="nc">self</span><span class="p">.</span><span class="n">registers</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="n">_state</span>: <span class="nc">PhantomData</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This method lets us transition a <code class="docutils literal notranslate"><span class="pre">Gpio</span></code> from any state to any
+other state. Given a <code class="docutils literal notranslate"><span class="pre">Gpio</span></code> in state <code class="docutils literal notranslate"><span class="pre">T</span></code>, this method returns
+a <code class="docutils literal notranslate"><span class="pre">Gpio</span></code> in state <code class="docutils literal notranslate"><span class="pre">S</span></code>. Note that it works for <em>all</em> <code class="docutils literal notranslate"><span class="pre">S</span></code> and
+<code class="docutils literal notranslate"><span class="pre">T</span></code>. We must be very careful when calling this method. When
+called, we are encoding the specification of a transition in the
+state diagram. If we get the specification or encoding wrong, our
+driver is wrong.</p>
+<p>To use the <code class="docutils literal notranslate"><span class="pre">transition()</span></code> method, we need to tell Rust which
+type we want as an output <code class="docutils literal notranslate"><span class="pre">S</span></code> in <code class="docutils literal notranslate"><span class="pre">Gpio&lt;S&gt;</span></code>. We do this by
+giving Rust enough information so that it can infer the <code class="docutils literal notranslate"><span class="pre">S</span></code>
+type. For instance, consider the implementation of the
+<code class="docutils literal notranslate"><span class="pre">into_output</span></code> method:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">into_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Gpio</span><span class="o">&lt;</span><span class="n">Output</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="bp">self</span><span class="p">.</span><span class="n">into_alt</span><span class="p">(</span><span class="n">Function</span>::<span class="n">Output</span><span class="p">).</span><span class="n">transition</span><span class="p">()</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This method requires its return type to be <code class="docutils literal notranslate"><span class="pre">Gpio&lt;Output&gt;</span></code>. When
+the Rust type system inspects the call to <code class="docutils literal notranslate"><span class="pre">transition()</span></code>, it
+will search for a <code class="docutils literal notranslate"><span class="pre">Gpio::transition()</span></code> method that returns a
+<code class="docutils literal notranslate"><span class="pre">Gpio&lt;Output&gt;</span></code> to satisfy the requirement. Since our
+<code class="docutils literal notranslate"><span class="pre">transition</span></code> method returns <code class="docutils literal notranslate"><span class="pre">Gpio&lt;S&gt;</span></code> for any <code class="docutils literal notranslate"><span class="pre">S</span></code>, Rust will
+replace <code class="docutils literal notranslate"><span class="pre">S</span></code> with <code class="docutils literal notranslate"><span class="pre">Output</span></code> and use that method. The result is
+that we’ve transformed our <code class="docutils literal notranslate"><span class="pre">Gpio&lt;Alt&gt;</span></code> (from the <code class="docutils literal notranslate"><span class="pre">into_alt()</span></code>
+call) into a <code class="docutils literal notranslate"><span class="pre">Gpio&lt;Output&gt;</span></code>.</p>
+<div class="question admonition">
+<p class="admonition-title">What would go wrong if a client fabricates states? (fake-states)</p>
+<p>Consider what would happen if we let the user choose the
+initial state for a <code class="docutils literal notranslate"><span class="pre">Gpio</span></code> structure. What could go wrong?</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Why is this only possible with Rust?</p>
+<p>Notice that the <code class="docutils literal notranslate"><span class="pre">into_</span></code> transition methods take a <code class="docutils literal notranslate"><span class="pre">Gpio</span></code> by
+move. This means that once a <code class="docutils literal notranslate"><span class="pre">Gpio</span></code> is transitioned into a
+another state, it can never be accessed in the previous state.
+Rust’s move semantics make this possible. As long as a type
+doesn’t implement <code class="docutils literal notranslate"><span class="pre">Clone</span></code>, <code class="docutils literal notranslate"><span class="pre">Copy</span></code>, or some other means of
+duplication, there is no coming back from a transition. No
+other language, not even C++, affords us this guarantee at
+compile-time.</p>
+</div>
+</div>
+<div class="section" id="id1">
+<h4>Implement the Driver<a class="headerlink" href="lab2.html#id1" title="Permalink to this headline">¶</a></h4>
+<p>Implement the <code class="docutils literal notranslate"><span class="pre">unimplemented!()</span></code> methods in <code class="docutils literal notranslate"><span class="pre">lib/pi/src/gpio.rs</span></code>.
+The signatures on these items indicate their expected
+functionality. You’ll need to read the GPIO documentation (page
+89, section 6 of the <a class="reference external" href="https://cs140e.sergio.bz/docs/BCM2837-ARM-Peripherals.pdf">BCM2837 ARM Peripherals
+Manual</a>)
+to implement your driver. Remember that you can use
+<code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">check</span></code> to type-check the library without actually
+compiling it.</p>
+</div>
+<div class="section" id="id2">
+<h4>Testing Your Driver<a class="headerlink" href="lab2.html#id2" title="Permalink to this headline">¶</a></h4>
+<p>We’ll again write code in <code class="docutils literal notranslate"><span class="pre">kern/src/main.rs</span></code> to ensure that
+our driver works as expected.</p>
+<p>Instead of reading/writing to raw memory addresses, use your new
+GPIO driver to set and clear GPIO pin 16. Your code should get a
+lot cleaner. Compile the kernel, load it onto the MicroSD card as
+<code class="docutils literal notranslate"><span class="pre">kernel8.img</span></code>, run it on the Raspberry Pi, and ensure your LED
+blinks as before.</p>
+<p>Now, connect more LEDs to your Raspberry Pi. Use GPIO pins 5, 6,
+13, 19, and 26. Refer to the <a class="reference external" href="https://cs140e.sergio.bz/assignments/0-blinky/#powering-the-pi">pin numbering
+diagram</a>
+from assignment 0 to determine their physical location. Have your
+kernel blink all of the LEDs in a pattern of your choice.</p>
+<div class="question admonition">
+<p class="admonition-title">Which pattern did you choose? (led-pattern)</p>
+<p>What pattern did you have your LEDs blink in? If you haven’t
+yet decided, one fun idea is to have them imitate a “loading
+spinner” by arranging the LEDs in a circle and turning them
+on/off in a sequential, circular pattern. <img alt="image0" src="../_images/spinner.svg" /></p>
+</div>
+<p>Once your GPIO driver is working as expected, proceed to the next
+subphase.</p>
+</div>
+</div>
+<div class="section" id="subphase-d-uart">
+<h3>Subphase D: UART<a class="headerlink" href="lab2.html#subphase-d-uart" title="Permalink to this headline">¶</a></h3>
+<p>In this subphase, you will write a device driver for the mini UART
+device on the Raspberry Pi. You will primarily be working in
+<code class="docutils literal notranslate"><span class="pre">lib/pi/src/uart.rs</span></code> and <code class="docutils literal notranslate"><span class="pre">kern/src/main.rs</span></code>. The mini
+UART is documented on page 8 and page 10 (sections 2.1 and 2.2) of
+the <a class="reference external" href="https://cs140e.sergio.bz/docs/BCM2837-ARM-Peripherals.pdf">BCM2837 ARM Peripherals
+Manual</a>.</p>
+<div class="section" id="uart-universal-asynchronous-rx-tx">
+<h4>UART: Universal Asynchronous RX/TX<a class="headerlink" href="lab2.html#uart-universal-asynchronous-rx-tx" title="Permalink to this headline">¶</a></h4>
+<p>A <a class="reference external" href="https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter">UART</a>,
+or universal asynchronous receiver-transmitter, is a device and
+serial protocol for communicating over two wires. These are the
+two wires (rx/tx) that you used in phase 1 of lab 0 to
+connect the UART device on the CP2102 USB module to the UART
+device on the Pi. You can send any kind of data over UART: text,
+binaries, images, anything! As an example, in the next subphase,
+you’ll implement a shell by reading from the UART device on the Pi
+and writing to the UART device on the CP2102 USB module. In phase
+3, you’ll read from the UART on the Pi to download a binary being
+sent via the UART on the CP2102 USB module.</p>
+<p>The UART protocol has several configuration parameters, and both
+the receiver and transmitter need to be configured identically to
+communicate. These parameters are:</p>
+<ul class="simple">
+<li><p><strong>Data Size</strong>: length of a single data frame (8 or 9 bits)</p></li>
+<li><p><strong>Parity Bit</strong>: whether to send a parity (checksum) bit after
+the data</p></li>
+<li><p><strong>Stop Bits</strong>: how many bits to use to signal the end of the
+data (1 or 2)</p></li>
+<li><p><strong>Baud Rate</strong>: transmission rate in bits/second</p></li>
+</ul>
+<p>The mini UART on the Pi does not support parity bits and only
+supports 1 stop bit. As such, only the baud rate and data frame
+length need to be configured. To learn more about UART, see the
+<a class="reference external" href="https://cs140e.sergio.bz/notes/lec4/uart-basics.pdf">Basics of UART
+Communication</a>
+article.</p>
+</div>
+<div class="section" id="id3">
+<h4>Implement the Driver<a class="headerlink" href="lab2.html#id3" title="Permalink to this headline">¶</a></h4>
+<p>At this point, you have all of the tools to write a device driver
+without additional background information (congratulations! 🎉).</p>
+<p>Implement the mini UART device driver in <code class="docutils literal notranslate"><span class="pre">lib/pi/src/uart.rs</span></code>.
+You’ll need to complete the definition of the <code class="docutils literal notranslate"><span class="pre">Registers</span></code>
+structure. Ensure that you use the <code class="docutils literal notranslate"><span class="pre">Volatile</span></code> type with the
+<em>minimal set of capabilities</em> for each register: read-only
+registers should use <code class="docutils literal notranslate"><span class="pre">ReadVolatile</span></code>, write-only registers should
+use <code class="docutils literal notranslate"><span class="pre">WriteVolatile</span></code>, and reserved space should use <code class="docutils literal notranslate"><span class="pre">Reserved</span></code>.
+Then, initialize the device in <code class="docutils literal notranslate"><span class="pre">new()</span></code> by setting the baud rate
+to <code class="docutils literal notranslate"><span class="pre">115200</span></code> (a divider of <code class="docutils literal notranslate"><span class="pre">270</span></code>) and data length to <code class="docutils literal notranslate"><span class="pre">8</span></code>
+bits. Finally, implement the remaining <code class="docutils literal notranslate"><span class="pre">unimplemented!()</span></code>
+methods and the <code class="docutils literal notranslate"><span class="pre">fmt::Write</span></code>, <code class="docutils literal notranslate"><span class="pre">io::Read</span></code> and <code class="docutils literal notranslate"><span class="pre">io::Write</span></code>
+traits for <code class="docutils literal notranslate"><span class="pre">MiniUart</span></code>.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>You’ll need to write to the <code class="docutils literal notranslate"><span class="pre">LCR</span></code>, <code class="docutils literal notranslate"><span class="pre">BAUD</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">CNTL</span></code> registers in <code class="docutils literal notranslate"><span class="pre">new</span></code>.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Use your GPIO driver from the previous subphase.</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h4>Testing Your Driver<a class="headerlink" href="lab2.html#id4" title="Permalink to this headline">¶</a></h4>
+<p>Test your driver by writing a simple “echo” program in
+<code class="docutils literal notranslate"><span class="pre">kern/src/main.rs</span></code>: sit in a hot loop writing out every byte
+you read in. In pseudocode, this looks like:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">loop</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="n">write_byte</span><span class="p">(</span><span class="n">read_byte</span><span class="p">())</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">screen</span> <span class="pre">/dev/&lt;your-path&gt;</span> <span class="pre">115200</span></code> to communicate over UART.
+<code class="docutils literal notranslate"><span class="pre">screen</span></code> sends every keypress over the TTY, so if your echo
+program works correctly, you’ll see every character you type. It
+might help to send an extra character or two each time you receive
+a byte to convince yourself things are working as you expect:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">loop</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">write_byte</span><span class="p">(</span><span class="n">read_byte</span><span class="p">())</span><span class="w"></span>
+<span class="w">    </span><span class="n">write_str</span><span class="p">(</span><span class="s">&quot;&lt;-&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Once your driver works as expected, proceed to the next subphase.</p>
+</div>
+</div>
+<div class="section" id="subphase-e-the-shell">
+<h3>Subphase E: The Shell<a class="headerlink" href="lab2.html#subphase-e-the-shell" title="Permalink to this headline">¶</a></h3>
+<p>In this subphase, you’ll use your new UART driver to implement a
+simple shell that will be the interface to your operating system.
+You will be working in <code class="docutils literal notranslate"><span class="pre">kern/src/console.rs</span></code>,
+<code class="docutils literal notranslate"><span class="pre">kern/src/shell.rs</span></code>, and <code class="docutils literal notranslate"><span class="pre">kernel/src/main.rs</span></code>.</p>
+<div class="section" id="the-console">
+<h4>The <code class="docutils literal notranslate"><span class="pre">Console</span></code><a class="headerlink" href="lab2.html#the-console" title="Permalink to this headline">¶</a></h4>
+<p>To write our shell, we’ll need some notion of a global default
+input and output. Unix and friends typically refer to this is as
+<code class="docutils literal notranslate"><span class="pre">stdin</span></code> and <code class="docutils literal notranslate"><span class="pre">stdout</span></code>; we’ll be calling it <code class="docutils literal notranslate"><span class="pre">Console</span></code>.
+<code class="docutils literal notranslate"><span class="pre">Console</span></code> will allow us to implement the <code class="docutils literal notranslate"><span class="pre">kprint!</span></code> and
+<code class="docutils literal notranslate"><span class="pre">kprintln!</span></code> macros, our kernel-space versions of the familiar
+<code class="docutils literal notranslate"><span class="pre">print!</span></code> and <code class="docutils literal notranslate"><span class="pre">println!</span></code>, and give us a default source for
+reading user input. We’ll use <code class="docutils literal notranslate"><span class="pre">Console</span></code> and these macros to
+implement our shell.</p>
+<p>Take a peek at <code class="docutils literal notranslate"><span class="pre">kernel/src/console.rs</span></code>. The file contains an
+unfinished implementation of the <code class="docutils literal notranslate"><span class="pre">Console</span></code> struct. <code class="docutils literal notranslate"><span class="pre">Console</span></code>
+is a <em>singleton</em> wrapper around a <code class="docutils literal notranslate"><span class="pre">MiniUart</span></code>: only one instance
+of <code class="docutils literal notranslate"><span class="pre">Console</span></code> will ever exist in our kernel. That instance will
+be globally available, for use anywhere and by anything. This will
+allow us to read and write to the mini UART without explicitly
+passing around an instance of <code class="docutils literal notranslate"><span class="pre">MiniUart</span></code> or <code class="docutils literal notranslate"><span class="pre">Console</span></code>.</p>
+</div>
+<div class="section" id="global-mutability">
+<h4>Global Mutability<a class="headerlink" href="lab2.html#global-mutability" title="Permalink to this headline">¶</a></h4>
+<p>The notion of a globally mutable structure is a scary thought,
+especially in the face of Rust. After all, Rust doesn’t allow more
+than one mutable reference to a value, so how can we possibly
+convince it to allow <em>as many as we want</em>? The trick, of course,
+relies on <code class="docutils literal notranslate"><span class="pre">unsafe</span></code>. The idea is as follows: we’ll <em>tell</em> Rust
+that we’re only going to read a value by using an immutable
+reference, but what we <em>actually</em> do is use <code class="docutils literal notranslate"><span class="pre">unsafe</span></code> to “cast”
+that immutable reference to a mutable reference. Because we can
+create as many immutable references as we want, Rust will be none
+the wiser, and we’ll have all of the mutable references we desire!</p>
+<p>Such a function might look like this:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="c1">// This function must never exist.</span>
+<span class="k">fn</span> <span class="nf">make_mut</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">value</span>: <span class="kp">&amp;</span><span class="nc">T</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">unsafe</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* magic */</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Your alarm bells should be ringing: what we’ve proposed so far is
+wildly unsafe. Recall that we still need to ensure that everything
+we do in <code class="docutils literal notranslate"><span class="pre">unsafe</span></code> upholds Rust’s rules. What we’ve proposed thus
+far clearly does not. As it stands, we’re violating the “at most
+one mutable reference at a time” rule. The rule states that at any
+point in the program, a value should have at most one mutable
+reference to it.</p>
+<p>The key insight to maintaining this rule while meeting our
+requirements is as follows: instead of the <em>compiler</em> checking the
+rule for us with its borrow and ownership checker, <em>we</em> will
+ensure that the rule is upheld <em>dynamically, at run-time</em>. As a
+result, we’ll be able to share references to a structure as many
+times as we want (via an <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> reference) while also being able to
+safely retrieve a mutable reference when we need it (via our
+<code class="docutils literal notranslate"><span class="pre">&amp;T</span> <span class="pre">-&gt;</span> <span class="pre">&amp;mut</span> <span class="pre">T</span></code> dynamic borrow checking function).</p>
+<p>There are many concrete implementations of this idea. One such
+implementation ensures that only one mutable reference is returned
+at a time using a lock:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">fn</span> <span class="nf">lock</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">value</span>: <span class="kp">&amp;</span><span class="nc">T</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Locked</span><span class="o">&lt;&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w"> </span><span class="k">unsafe</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">lock</span><span class="p">(</span><span class="n">value</span><span class="p">);</span><span class="w"> </span><span class="n">cast</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">Locked</span><span class="o">&lt;&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">impl</span><span class="w"> </span><span class="nb">Drop</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">Locked</span><span class="o">&lt;&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w"> </span><span class="k">fn</span> <span class="nf">drop</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">unlock</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This is known as
+<a class="reference external" href="https://doc.rust-lang.org/nightly/std/sync/struct.Mutex.html">Mutex</a>
+in the standard library. Another way is to abort the program if
+more than one mutable reference is about to be created:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">fn</span> <span class="nf">get_mut</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">value</span>: <span class="kp">&amp;</span><span class="nc">T</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Mut</span><span class="o">&lt;&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="k">unsafe</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="n">ref_count</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">panic</span><span class="o">!</span><span class="p">()</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">      </span><span class="n">ref_count</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">      </span><span class="n">cast</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">Mut</span><span class="o">&lt;&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">   </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">impl</span><span class="w"> </span><span class="nb">Drop</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">Mut</span><span class="o">&lt;&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="k">fn</span> <span class="nf">drop</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">ref_count</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This is
+<a class="reference external" href="https://doc.rust-lang.org/nightly/core/cell/struct.RefCell.html#method.borrow_mut">RefCell::borrow_mut()</a>.
+And yet another is to only return a mutable reference if it is
+known to be exclusive:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">fn</span> <span class="nf">get_mut</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">value</span>: <span class="kp">&amp;</span><span class="nc">T</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nb">Option</span><span class="o">&lt;</span><span class="n">Mut</span><span class="o">&lt;&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="k">unsafe</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="n">ref_count</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nb">None</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">      </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="n">ref_count</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">         </span><span class="nb">Some</span><span class="p">(</span><span class="n">cast</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">Mut</span><span class="o">&lt;&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span><span class="w"></span>
+<span class="w">      </span><span class="p">}</span><span class="w"></span>
+<span class="w">   </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">impl</span><span class="w"> </span><span class="nb">Drop</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">Mut</span><span class="o">&lt;&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="k">fn</span> <span class="nf">drop</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">ref_count</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This is
+<a class="reference external" href="https://doc.rust-lang.org/nightly/core/cell/struct.RefCell.html#method.try_borrow_mut">RefCell::try_borrow_mut()</a>.
+All of these examples implement some form of “interior
+mutability”: they allow a value to be mutated through an immutable
+reference. For our <code class="docutils literal notranslate"><span class="pre">Console</span></code>, we’ll be using <code class="docutils literal notranslate"><span class="pre">Mutex</span></code> to
+accomplish the same goal. Since the <code class="docutils literal notranslate"><span class="pre">std::Mutex</span></code> implementation
+requires operating system support, we’ve implemented our own
+<code class="docutils literal notranslate"><span class="pre">Mutex</span></code> in <code class="docutils literal notranslate"><span class="pre">kern/src/mutex.rs</span></code>. Our implementation is
+correct for now, but we’ll need to fix it when we introduce
+caching or concurrency to continue to uphold Rust’s rules. You
+don’t need to understand the <code class="docutils literal notranslate"><span class="pre">Mutex</span></code> implementation for now, but
+you should understand how to use one.</p>
+<p>The global singleton is declared as <code class="docutils literal notranslate"><span class="pre">CONSOLE</span></code> in
+<code class="docutils literal notranslate"><span class="pre">kern/src/console.rs</span></code>. The global variable is used by the
+<code class="docutils literal notranslate"><span class="pre">kprint!</span></code> and <code class="docutils literal notranslate"><span class="pre">kprintln!</span></code> macros defined below below. Once
+you’ve implemented <code class="docutils literal notranslate"><span class="pre">Console</span></code>, you’ll be able to use <code class="docutils literal notranslate"><span class="pre">kprint!</span></code>
+and <code class="docutils literal notranslate"><span class="pre">kprintln!</span></code> to print to the console. You’ll also be able to
+use <code class="docutils literal notranslate"><span class="pre">CONSOLE</span></code> to globally access the console.</p>
+<div class="note admonition">
+<p class="admonition-title">Rust also requires <code class="docutils literal notranslate"><span class="pre">static</span></code> globals to be <code class="docutils literal notranslate"><span class="pre">Sync</span></code>.</p>
+<p>In order to store a value of type <code class="docutils literal notranslate"><span class="pre">T</span></code> in a <code class="docutils literal notranslate"><span class="pre">static</span></code> global,
+<code class="docutils literal notranslate"><span class="pre">T</span></code> must implement <code class="docutils literal notranslate"><span class="pre">Sync</span></code>. This is because Rust also
+guarantees data race safety at compile-time. Because global
+values can be accessed from any thread, Rust must ensure that
+those accesses are thread-safe. The <code class="docutils literal notranslate"><span class="pre">Send</span></code> and <code class="docutils literal notranslate"><span class="pre">Sync</span></code>
+traits, along with Rust’s ownership system, ensure data race
+freedom.</p>
+</div>
+<div class="question admonition">
+<p class="admonition-title">Why should we never return an <code class="docutils literal notranslate"><span class="pre">&amp;mut</span> <span class="pre">T</span></code> directly? (drop-container)</p>
+<p>You’ll notice that every example we’ve provided wraps the
+mutable reference in a container and then implements
+<code class="docutils literal notranslate"><span class="pre">Drop</span></code> for that container. What would go wrong if we
+returned an <code class="docutils literal notranslate"><span class="pre">&amp;mut</span> <span class="pre">T</span></code> directly instead?</p>
+</div>
+<div class="question admonition">
+<p class="admonition-title">Where does the <code class="docutils literal notranslate"><span class="pre">write_fmt</span></code> call go? (write-fmt)</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">_print</span></code> helper function calls <code class="docutils literal notranslate"><span class="pre">write_fmt</span></code> on an
+instance of <code class="docutils literal notranslate"><span class="pre">MutexGuard&lt;Console&gt;</span></code>, the return value from
+<code class="docutils literal notranslate"><span class="pre">Mutex&lt;Console&gt;::lock()</span></code>. Which type will have its
+<code class="docutils literal notranslate"><span class="pre">write_fmt</span></code> method called, and where does the method
+implementation come from?</p>
+</div>
+</div>
+<div class="section" id="implement-and-test-console">
+<h4>Implement and Test <code class="docutils literal notranslate"><span class="pre">Console</span></code><a class="headerlink" href="lab2.html#implement-and-test-console" title="Permalink to this headline">¶</a></h4>
+<p>implement all of the <code class="docutils literal notranslate"><span class="pre">unimplemented!()</span></code> methods in
+<code class="docutils literal notranslate"><span class="pre">kern/src/console.rs</span></code>. once you’ve implemented everything, use
+the <code class="docutils literal notranslate"><span class="pre">kprint!</span></code> and <code class="docutils literal notranslate"><span class="pre">kprintln!</span></code> macros in
+<code class="docutils literal notranslate"><span class="pre">kern/src/main.rs</span></code> to write to the console when you receive a
+character. you can use these macros exactly like <code class="docutils literal notranslate"><span class="pre">print!</span></code> and
+<code class="docutils literal notranslate"><span class="pre">println!</span></code>. use <code class="docutils literal notranslate"><span class="pre">screen</span> <span class="pre">/dev/&lt;your-path&gt;</span> <span class="pre">115200</span></code> to
+communicate with your pi and ensure that your kernel works as
+expected.</p>
+<div class="note admonition">
+<p class="admonition-title">If this were C…</p>
+<p>The fact that we get a <code class="docutils literal notranslate"><span class="pre">println!</span></code> implementation for free
+with zero effort is just another advantage to using Rust. If
+this were C, we’d need to implement <code class="docutils literal notranslate"><span class="pre">printf</span></code> ourselves. In
+Rust, the compiler provides a generic, abstracted, and safe
+OS-independent implementation. Whew!</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Your <code class="docutils literal notranslate"><span class="pre">Console</span></code> implementations should be very short:
+about a line each.</p>
+</div>
+</div>
+<div class="section" id="implement-the-shell">
+<h4>Implement the Shell<a class="headerlink" href="lab2.html#implement-the-shell" title="Permalink to this headline">¶</a></h4>
+<div class="figure align-center" id="id7">
+<a class="reference internal image-reference" href="../_images/shell.gif"><img alt="'Finished' Product" src="../_images/shell.gif" style="width: 500px;" /></a>
+<p class="caption"><span class="caption-text">‘Finished’ Product</span><a class="headerlink" href="lab2.html#id7" title="Permalink to this image">¶</a></p>
+</div>
+<p>You’re now ready to implement the shell in
+<code class="docutils literal notranslate"><span class="pre">kern/src/shell.rs</span></code>. We’ve provided a <code class="docutils literal notranslate"><span class="pre">Command</span></code> structure
+for your use. The <code class="docutils literal notranslate"><span class="pre">Command::parse()</span></code> method provides a simple
+command-line argument parser, returning a <code class="docutils literal notranslate"><span class="pre">Command</span></code> struct. The
+parse method splits the passed in string on spaces and stores all
+of the non-empty arguments in the <code class="docutils literal notranslate"><span class="pre">args</span></code> field as a <code class="docutils literal notranslate"><span class="pre">StackVec</span></code>
+using the passed in <code class="docutils literal notranslate"><span class="pre">buf</span></code> as storage. You must implement
+<code class="docutils literal notranslate"><span class="pre">Command::path()</span></code> yourself.</p>
+<p>Use all of your available libraries (<code class="docutils literal notranslate"><span class="pre">Command</span></code>, <code class="docutils literal notranslate"><span class="pre">StackVec</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Console</span></code> via <code class="docutils literal notranslate"><span class="pre">CONSOLE</span></code>, <code class="docutils literal notranslate"><span class="pre">kprint!</span></code>, <code class="docutils literal notranslate"><span class="pre">kprintln!</span></code>, and
+anything else!) to implement a shell in the <code class="docutils literal notranslate"><span class="pre">shell</span></code> function.
+Your shell should print the <code class="docutils literal notranslate"><span class="pre">prefix</span></code> string on each line it
+waits for input. In the GIF above, for instance, <code class="docutils literal notranslate"><span class="pre">&quot;&gt;</span> <span class="pre">&quot;</span></code> is being
+used as the prefix. Your shell should then read a line of input
+from the user, parse the line into a command, and attempt to
+execute it. It should do this ad-infinitum. Since our operating
+system is only just beginning, we can’t run any interesting
+commands just yet. We can, however, build known commands like
+<code class="docutils literal notranslate"><span class="pre">echo</span></code> into the shell.</p>
+<p>To complete your implementation, your shell should…</p>
+<ul class="simple">
+<li><p>implement the <code class="docutils literal notranslate"><span class="pre">echo</span></code> built-in: <code class="docutils literal notranslate"><span class="pre">echo</span> <span class="pre">$a</span> <span class="pre">$b</span> <span class="pre">$c</span></code> should print
+<code class="docutils literal notranslate"><span class="pre">$a</span> <span class="pre">$b</span> <span class="pre">$c</span></code></p></li>
+<li><p>accept both <code class="docutils literal notranslate"><span class="pre">\r</span></code> and <code class="docutils literal notranslate"><span class="pre">\n</span></code> as “enter”, marking the end of a
+line</p></li>
+<li><p>accept both backspace and delete (ASCII <code class="docutils literal notranslate"><span class="pre">8</span></code> and <code class="docutils literal notranslate"><span class="pre">127</span></code>) to
+erase a single character</p></li>
+<li><p>ring the bell (ASCII <code class="docutils literal notranslate"><span class="pre">7</span></code>) if an unrecognized non-visible
+character is sent to it</p></li>
+<li><p>print <code class="docutils literal notranslate"><span class="pre">unknown</span> <span class="pre">command:</span> <span class="pre">$command</span></code> for an unknown command
+<code class="docutils literal notranslate"><span class="pre">$command</span></code></p></li>
+<li><p>disallow backspacing through the prefix</p></li>
+<li><p>disallow typing more characters than allowed</p></li>
+<li><p>accept commands at most 512 bytes in length</p></li>
+<li><p>accept at most 64 arguments per command</p></li>
+<li><p>start a new line, without error, with the <code class="docutils literal notranslate"><span class="pre">prefix</span></code> if the
+user enters an empty command</p></li>
+<li><p>print <code class="docutils literal notranslate"><span class="pre">error:</span> <span class="pre">too</span> <span class="pre">many</span> <span class="pre">arguments</span></code> if the user passes in too
+many arguments</p></li>
+</ul>
+<p>Test your implementation by calling your new <code class="docutils literal notranslate"><span class="pre">shell()</span></code> function
+in <code class="docutils literal notranslate"><span class="pre">kern/src/main.rs</span></code>. Minus the “SOS” banner, you should be
+able to replicate the GIF above. You should also be able to test
+all of the requirements we’ve set. Once your shell works as
+expected, revel in your accomplishments. Then, proceed to the next
+phase.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>A byte literal, <code class="docutils literal notranslate"><span class="pre">b'a'</span></code> is the <code class="docutils literal notranslate"><span class="pre">u8</span></code> ASCII value for a
+character <code class="docutils literal notranslate"><span class="pre">'a'</span></code>.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">\u{b}</span></code> in a string literal to print any character
+with ASCII byte value <code class="docutils literal notranslate"><span class="pre">b</span></code>.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>You must print both <code class="docutils literal notranslate"><span class="pre">\r</span></code> and <code class="docutils literal notranslate"><span class="pre">\n</span></code> to begin a new line
+at the line start.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>To erase a character, backspace, print a space, then
+backspace again.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">StackVec</span></code> to buffer the user’s input.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>You’ll find the
+<a class="reference external" href="https://doc.rust-lang.org/nightly/core/str/fn.from_utf8.html">core::str::from_utf8()</a>
+function useful.</p>
+</div>
+<div class="question admonition">
+<p class="admonition-title">How does your shell tie the many pieces together? (shell-lookback)</p>
+<p>Your shell makes use of much of the code you’ve written.
+Briefly explain: which pieces does it makes use of and in
+what way?</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="phase-3-boot-em-up">
+<h2>Phase 3: Boot ‘em Up<a class="headerlink" href="lab2.html#phase-3-boot-em-up" title="Permalink to this headline">¶</a></h2>
+<p>In this phase, you’ll use everything you’ve written thus far to
+implement a bootloader for your Raspberry Pi. You’ll be working
+primarily in <code class="docutils literal notranslate"><span class="pre">boot/src/main.rs</span></code>.</p>
+<p>You’ve likely become frustrated with the monotonous motions of
+swapping MicroSD cards to load a new binary onto your Pi. The
+bootloader you will write in this phase eliminates that process
+entirely. You’ll replace the binary on the MicroSD <em>one more
+time</em>, this time with the bootloader. From then on, you can load
+new binaries remotely from your computer without ever touching the
+MicroSD card again.</p>
+<p>The bootloader itself is a “kernel” of sorts that accepts XMODEM
+file transfers over UART. It writes the data received into memory
+at a known address and then executes it. We’ll use our
+<code class="docutils literal notranslate"><span class="pre">ttywrite</span></code> utility to send it binaries. As a result, the process
+to load a new binary onto the Pi will be as simple as:</p>
+<ol class="arabic simple">
+<li><p>Resetting the Pi to start the bootloader.</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">transmit</span></code> command, which will build your kernel and
+transmit it with <code class="docutils literal notranslate"><span class="pre">ttywrite</span> <span class="pre">-i</span> <span class="pre">build/kern.bin</span> <span class="pre">/dev/ttyUSB0</span></code>
+command.</p></li>
+</ol>
+<div class="section" id="loading-binaries">
+<h3>Loading Binaries<a class="headerlink" href="lab2.html#loading-binaries" title="Permalink to this headline">¶</a></h3>
+<p>By default, the Raspberry Pi 3 loads files named <code class="docutils literal notranslate"><span class="pre">kernel8.img</span></code>
+at address <code class="docutils literal notranslate"><span class="pre">0x80000</span></code>. Said another way, the Pi will sequentially
+copy the contents of <code class="docutils literal notranslate"><span class="pre">kernel8.img</span></code> to <code class="docutils literal notranslate"><span class="pre">0x80000</span></code> and, after
+some initialization, set the ARM’s program counter to <code class="docutils literal notranslate"><span class="pre">0x80000</span></code>.
+As a result, we must ensure that our binary expects to be loaded
+at this address. This means that all of the addresses in the
+binary should begin at <code class="docutils literal notranslate"><span class="pre">0x80000</span></code>.</p>
+<p>Because the <strong>linker</strong> is what decides the addresses for all
+symbols in our binary, we must somehow inform the linker of this
+desire. To do this, we use a <em>linker script</em>: a file read by the
+linker that describes how we want it to assign addresses to
+symbols in our binary. Our kernel’s linker script can be found in
+<code class="docutils literal notranslate"><span class="pre">kern/.cargo/layout.ld</span></code>. You’ll notice the address <code class="docutils literal notranslate"><span class="pre">0x80000</span></code>
+on the second line. Indeed, this line instructs the linker to
+begin allocating addresses at <code class="docutils literal notranslate"><span class="pre">0x80000</span></code>.</p>
+<p>To maintain compatibility with these defaults, our bootloader will
+<em>also</em> load binaries at address <code class="docutils literal notranslate"><span class="pre">0x80000</span></code>. But this raises an
+issue: if our bootloader’s binary is at address <code class="docutils literal notranslate"><span class="pre">0x80000</span></code>,
+loading a different binary at the same address will result in
+overwriting our bootloader <em>as we’re executing it!</em> To avoid this
+conflict, we <strong>must</strong> use different start addresses for the
+bootloader and the binaries it loads. We’d like to maintain
+compatibility with the Pi’s defaults, so we’ll need to change the
+start address of the bootloader. How?</p>
+</div>
+<div class="section" id="making-space">
+<h3>Making Space<a class="headerlink" href="lab2.html#making-space" title="Permalink to this headline">¶</a></h3>
+<p>The first step is to choose a new address. As you can see in
+<code class="docutils literal notranslate"><span class="pre">boot/.cargo/layout.ld</span></code>, we’ve chosen <code class="docutils literal notranslate"><span class="pre">0x4000000</span></code> as the
+start address for our bootloader. While this fixes the addresses
+in the binary, the Pi will continue to load it at <code class="docutils literal notranslate"><span class="pre">0x80000</span></code>.
+Thankfully, we can ask the Pi to load our binary at a different
+address via a <code class="docutils literal notranslate"><span class="pre">kernel_address</span></code> parameter in the firmware’s
+<code class="docutils literal notranslate"><span class="pre">config.txt</span></code>. Ensure you modify your <code class="docutils literal notranslate"><span class="pre">config.txt</span></code> in microSD
+to have <code class="docutils literal notranslate"><span class="pre">kernel_address=0x4000000</span></code> line.</p>
+<p>As a result of this change, the memory between <code class="docutils literal notranslate"><span class="pre">0x80000</span></code> and
+<code class="docutils literal notranslate"><span class="pre">0x4000000</span></code> will be entirely unused by the bootloader, and we
+can load binaries up to <code class="docutils literal notranslate"><span class="pre">0x4000000</span> <span class="pre">-</span> <span class="pre">0x80000</span></code> bytes in size
+without conflict.</p>
+<div class="question admonition">
+<p class="admonition-title">Is 63.5MiB really enough? (small-kernels)</p>
+<p>You might be thinking that the free space we’ve set apart
+isn’t enough. This is a fair concern. One way to answer the
+question is to look at the file size of kernels from
+successful operating systems. Would they fit?</p>
+<p>Determine how large the kernel binary is for the operating
+system you’re running now. On newer versions of macOS, the
+binary is <code class="docutils literal notranslate"><span class="pre">/System/Library/Kernels/kernel</span></code>. On older
+versions of macOS, the binary is <code class="docutils literal notranslate"><span class="pre">/mach_kernel</span></code>. On Linux,
+the binary is usually located in <code class="docutils literal notranslate"><span class="pre">/boot/</span></code> and is named
+either <code class="docutils literal notranslate"><span class="pre">vmlinuz</span></code>, <code class="docutils literal notranslate"><span class="pre">vmlinux</span></code>, or <code class="docutils literal notranslate"><span class="pre">bzImage</span></code>. How big is
+your kernel’s binary? Would it fit in the 63.5MiB free space
+we’ve created?</p>
+</div>
+<div class="section" id="implement-the-bootloader">
+<h4>Implement the Bootloader<a class="headerlink" href="lab2.html#implement-the-bootloader" title="Permalink to this headline">¶</a></h4>
+<p>Implement the bootloader in <code class="docutils literal notranslate"><span class="pre">boot/src/main.rs</span></code>. We’ve
+declared the bootloader’s start address, the loaded binary’s start
+address, and the maximum binary size in <code class="docutils literal notranslate"><span class="pre">const</span></code> declarations at
+the top of the file. We’ve also provided a <code class="docutils literal notranslate"><span class="pre">jump_to</span></code> function
+that unconditionally branches to the address <code class="docutils literal notranslate"><span class="pre">addr</span></code>. This has
+the effect of setting the program counter to that address. Your
+bootloader should use these declarations along with your existing
+code from the <code class="docutils literal notranslate"><span class="pre">pi</span></code> and <code class="docutils literal notranslate"><span class="pre">xmodem</span></code> libraries to receive a
+transmission over UART and write it to the memory address the
+binary expects to be loaded at. When the transmission is complete,
+your bootloader should execute the new binary.</p>
+<p>Be aware that your bootloader should continuously attempt to
+initiate an XMODEM reception by setting a low timeout value (say,
+750ms) and attempting a new reception if a timeout occurs. If a
+reception fails for any other reason, print an error message and
+try again. Once you’ve implemented the bootloader, test it by
+sending your kernel binary from <code class="docutils literal notranslate"><span class="pre">kern/build/kernel.bin</span></code> to
+your Pi using your <code class="docutils literal notranslate"><span class="pre">ttywrite</span></code> utility. If all is well, you
+should see your shell when you <code class="docutils literal notranslate"><span class="pre">screen</span></code> into your Pi.</p>
+<div class="question admonition">
+<p class="admonition-title">Why is the timeout necessary? (bootloader-timeout)</p>
+<p>Without the bootloader timing out and retrying a reception,
+it is possible for the transmitter to stall indefinitely
+under some conditions. What are those conditions, and why
+would the transmitter stall indefinitely?</p>
+</div>
+<div class="warning admonition">
+<p class="admonition-title"><code class="docutils literal notranslate"><span class="pre">config.txt</span></code></p>
+<p>Remember to use the version of <code class="docutils literal notranslate"><span class="pre">config.txt</span></code> compatible with bootloader binaries!</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Our reference <code class="docutils literal notranslate"><span class="pre">main()</span></code> function is 15 lines of code.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>You’ll find the
+<a class="reference external" href="https://doc.rust-lang.org/nightly/core/slice/fn.from_raw_parts_mut.html">core::slice::from_raw_parts_mut()</a>
+function useful.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">&amp;mut</span> <span class="pre">[u8]</span></code> type implements <code class="docutils literal notranslate"><span class="pre">io::Write</span></code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="submission">
+<h2>Submission<a class="headerlink" href="lab2.html#submission" title="Permalink to this headline">¶</a></h2>
+<p>Once you’ve completed the tasks above, you’re done and ready to
+submit! Congratulations!</p>
+<p>Ensure you’ve committed your changes. Any uncommitted changes
+<em>will not</em> be visible to us, thus unconsidered for grading.</p>
+<p>Before submitting, check if you’ve answered every question and
+passed every unit tests for the libraries. Note that there are no
+unit tests for <code class="docutils literal notranslate"><span class="pre">pi</span></code> and <code class="docutils literal notranslate"><span class="pre">kernel</span></code>. You’re responsible for
+ensuring that they work as expected.</p>
+<p>When you’re ready, push a commit to your GitHub repository with
+a tag named <code class="docutils literal notranslate"><span class="pre">lab2-done</span></code>.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="c1"># submit lab1</span>
+$ git tag lab2-done
+$ git push --tags
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="lab3.html" class="btn btn-neutral float-right" title="Lab 3: FAT32 Filesystem" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="lab1.html" class="btn btn-neutral float-left" title="Lab 1: Bootstrapping Raspberry Pi" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Dec 14, 2021.
+      </span>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    
+
+<script src="../_static/email.js"></script>
+<script src="../_static/custom.js"></script>
+
+
+
+</body>
+</html>

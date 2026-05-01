@@ -1,0 +1,51 @@
+=============
+Final Project
+=============
+
+Introduction
+------------
+
+The main goal is to have fun and explore more advanced O/S topics. You
+do not have to do novel research. But if you are interested in exploring
+more adventurous topic as a research, feel free to let us know (mailto:staff).
+
+If you are doing your own project, we'll grade you on how much you got
+working, how elegant your design is, how well can you explain it, and
+how interesting and creative your solution is. We do realize that time
+is limited, so we don't expect you to re-write Linux by the end of the
+semester. Try to make sure your goals are reasonable; perhaps set a
+minimum goal that's definitely achievable (e.g., something of the
+scale of lab 5) and a more ambitious goal if things go well. In a
+team, no more than four members are allowed.
+
+Deliverables
+------------
+
+2. Feb 27, 2020: Proposal day.
+3. Apr 09, 2020: First demo day.
+4. Apr 14, 2020: Second demo day.
+5. Apr 20, 2016: Final submission.
+
+Project ideas (if you found none)
+---------------------------------
+
+- Implementing a toy ARM hypervisor in Rust
+- Enabling ASLR for RustOS
+- Supporting (remote) GDB support vis gdb-server
+- Tracing memory allocs/deallocs in Rust
+- Handling OOM in Rust! How would you change the allocation interface,
+  like Linux's ``GFP_*``? and which memory pages should we reclaim?
+- Supporting device driver modules
+- Enabling Security-mode of ARMv8
+- Supporting PAN/UAO or BTI/PAC of ARMv8
+- Fuzzing RustOS's interfaces or file systems
+- Quickcheck on RustOS's interfaces or file systems
+- Supporting AArch32 or mixes of AArch32/64
+- Rust abstractions for Linux device drivers
+- On-demand paging w/ 4KB pages
+- Writable fat32 file systems
+- Evictable block pages/caches
+- Supporting user threads (and stdlib's concurrency)
+- Implementing fork()/clone()
+- Implementing non-blocking synchronization (sleepable mutex)
+- Implementing different scheduling policies (like Linux's)

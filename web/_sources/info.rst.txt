@@ -1,0 +1,115 @@
+===================
+General Information
+===================
+
+CS-3210 is primarily intended for senior students (motivated junior
+students) and graduate students who want to concentrate on systems.
+To benefit from the course, low-level programming skills
+(e.g., C or ASM programming) and preliminary knowledge on computer
+system (e.g., CS 2200) and architecture (e.g., CS 2110).
+You will be asked to design and implement core components of an
+operating system through labs, assignments and a final project.
+
+------------
+Prerequisite
+------------
+- **C programming (strict)**
+- **CS 2200 - Systems and Networks (strict)**
+- CS 2110 - Computer Organization and Programming (recommended)
+- CS 3220 - Processor Design (recommended)
+
+--------
+Meetings
+--------
+
+- When: TR 3:05pm - 4:15pm
+- Where: Klaus 1456
+
+------
+Grades
+------
+
+- Preparation (10%)
+- Quiz (30%: 10%+20%)
+- Lab (40%)
+- Final project (20%)
+
+    - Proposal presentation (5%)
+    - Demo & presentation (15%)
+    - Write-up (5%)
+
+--------
+Policies
+--------
+
+Similar to UW's `CSE 451
+<http://courses.cs.washington.edu/courses/cse451/15au/>`__ and
+MIT's `6.828 <https://pdos.csail.mit.edu/6.828/2014/>`__,
+CS3210 provides **a week** days of a grace period (late days)
+and strictly follows the cheating policy
+(read `GT's Academic Misconduct Policy <http://www.policylibrary.gatech.edu/student-affairs/code-conduct>`__).
+
+.. note::
+
+    **Late days**: you have **a week** late days.
+
+    Late days must be used in 24-hour (integer) chunks. You can divide
+    them up among the labs whenever you like; you don’t have to ask or tell
+    us. They are intended for emergencies where you fall behind due to
+    illness, job interviews, athletic events, deadlines in other classes,
+    etc.
+
+.. important::
+
+    **Cheating vs. collaboration**
+
+    Collaboration is a very good thing. On the other hand, cheating is
+    considered a very serious offense and is vigorously prosecuted.
+    Vigorous prosecution requires that you be advised of
+    the cheating policy of the course before the offending act.
+
+    For this semester, the policy is simple: don’t cheat:
+        - *Never* share code or text on the project.
+        - *Never* use someone else’s code or text in your solutions.
+        - *Never* consult project code or text that might be on the Internet.
+
+    On the other hand, for this class, you are strongly encouraged to:
+        - Share ideas.
+        - Explain your code to someone to see if they know why it doesn’t work.
+        - Help someone else debug if they’ve run into a wall.
+
+    If you obtain help of any kind, always **write the name(s) of your sources**.
+
+----
+Text
+----
+
+- (optional) `Operating Systems: Three Easy Pieces <http://pages.cs.wisc.edu/~remzi/OSTEP>`__
+- (optional) `xv6: a simple, Unix-like teaching operating system <r/xv6-rev8-book.pdf>`__
+- (optional) `Linux Kernel Development <http://proquest.safaribooksonline.com/book/programming/linux/9780768696974>`__
+- (optional) `Operating Systems: Principles and Practice, Thomas Anderson and Michael Dahlin <http://ospp.cs.washington.edu>`__
+
+--------
+Staff/TA
+--------
+
+Feel free to send us an email to make an appointment,
+or if you have any questions/concerns.
+You can ask the desk for the elevator access at Coda.
+
+- Office hours: Fri at Coda C0915 Atlantic, 10-11 AM,
+  Yechan Bae (mailto:yechan) 
+- Office hours: Tue at Coda C0906 Underwood, 5-6 PM,
+  Sujin Park (mailto:sujin)
+- Office hours: Wed at Coda C1008 Bolton, 11 AM - 12 PM,
+  Mansour Alharthi (mailto:mansour)
+
+---------------
+Acknowledgments
+---------------
+
+This course reuses much of the material from
+UW's `CSE 451 <http://courses.cs.washington.edu/courses/cse451/15au/>`__,
+`OSPP <http://ospp.cs.washington.edu/>`__,
+MIT's `6.828 <https://pdos.csail.mit.edu/6.828/2014/>`__
+and `Stanford's cs140e 2018 <https://cs140e.sergio.bz>`__.

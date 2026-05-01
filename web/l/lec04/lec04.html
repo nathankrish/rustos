@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Rust 2: Ownership and Lifetime</title>
+<meta charset="utf-8"/>
+<meta content="ie=edge" http-equiv="x-ua-compatible"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="../shower/styles/ribbon.css" rel="stylesheet"/>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+  position: relative; left: -1em; text-align: right; vertical-align: baseline;
+  border: none; display: inline-block;
+  -webkit-touch-callout: none; -webkit-user-select: none;
+  -khtml-user-select: none; -moz-user-select: none;
+  -ms-user-select: none; user-select: none;
+  padding: 0 4px; width: 4em;
+  color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+{   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style>
+section pre code {
+  line-height: 1.4 !important;
+  font-size: 20px !important;
+}
+.compact code {
+  line-height: 1.4 !important;
+  font-size: 16px !important;
+}
+ul.compact {
+  line-height: 1.5 !important;
+  font-size: 20px !important;
+}
+.writeup {
+    font-size: 20px !important;
+}
+a.sourceLine { background: none !important; }
+section.region { display: none !important; }
+pre.numberSource { margin-left: 2em; }
+div.sourceCode { overflow: hidden; }
+a.sourceLine::before { text-decoration: none; }
+
+pre > code.sourceCode > span > a:first-child::before { text-decoration: none !important; }
+</style>
+<script src="../shower/js/jquery-2.2.0.min.js"></script>
+</head>
+<body class="shower list">
+<header class="caption">
+<h1>CS3210 Design Operating Systems</h1>
+<p>Taesoo Kim</p>
+</header>
+<header class="caption">
+</header>
+<section class="slide" id="cover">
+<br/><br/><br/><br/>
+<h2>Rust 2: Ownership and Lifetime</h2>
+<p> Taesoo Kim</p>
+<style>
+ #cover h2 {
+   /* margin:180px 0 0; */
+   color: #666;
+   text-align:center;
+   font-size: 60px;
+   font-weight: bold;
+   margin-bottom: 0em;
+ }
+ #cover p {
+   margin:30px 0 0;
+   text-align:center;
+   font-style:italic;
+   font-size:40px;
+ }
+ </style>
+</section>
+
+<section class="slide level1" id="administrivia"><div>
+<h1>Administrivia</h1>
+<ul>
+<li>“Lab 0: Rustlings” is due (<mark>DUE: Jan 20</mark>)</li>
+<li>“Lab 1: Bootstrapping Raspberry Pi” is out early per request!</li>
+<li><strong>Perpetration</strong>: Rpi 3 + sdcard + reader (from Lab 1)</li>
+<li>TA office hours
+<ul>
+<li><strong>Fri</strong> at Coda C0915, <strong>10-11 AM</strong>, Yechan Bae</li>
+<li><strong>Tue</strong> at Coda C0906, <strong>05-06 PM</strong>, Sujin Park</li>
+<li><strong>Wed</strong> at Coda C1008, <strong>11-12 PM</strong>, Mansour Alharthi</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="qa"><div>
+<h1>Q&amp;A</h1>
+<ul>
+<li>Q2. Compare <code>&amp;str</code> with <code>String</code></li>
+<li>Q3. Compare <code>&amp;str</code> with <code>&amp;String</code></li>
+<li>Q4. Compare <code>str</code> with <code>[u8; N]</code>?</li>
+<li>Q5. Compare <code>str</code> with <code>[u8]</code>?</li>
+<li>Q6. Compare <code>&amp;str</code> with <code>&amp;[u8]</code>?</li>
+</ul>
+</div></section>
+<section class="slide level1" id="qa-1"><div>
+<h1>Q&amp;A</h1>
+<ol type="1">
+<li>Code accepted by Rustc vs. not? (all code rejected by Rustc is unsafe?)</li>
+</ol>
+<blockquote>
+<p>The book mentioned the lifetime system being too coarse and throwing compiler errors where it shouldn’t, since it hasn’t been updated and fixed yet. Have you personally experienced this often, and wrote correct code that was counted as incorrect? Should we expect this to happen often?</p>
+</blockquote>
+<ol type="1">
+<li>Is str and string literal the same?</li>
+<li>Why traits instead of classes? (→ Lec 8)</li>
+</ol>
+</div></section>
+<section class="slide level1" id="agenda"><div>
+<h1>Agenda</h1>
+<ul>
+<li>Slice and owned types</li>
+<li>Lifetime</li>
+</ul>
+</div></section>
+<section class="slide level1" id="owned-type-str-vs.-string"><div>
+<h1>Owned type: &amp;str vs. String</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb1-1"><a href="lec04.html#cb1-1"></a><span class="kw">let</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>); <span class="co">// what's thye type of s?</span></span>
+<span id="cb1-2"><a href="lec04.html#cb1-2"></a></span>
+<span id="cb1-3"><a href="lec04.html#cb1-3"></a><span class="kw">let</span> x = <span class="st">"Hello"</span>; <span class="co">// what's the type of x?</span></span>
+<span id="cb1-4"><a href="lec04.html#cb1-4"></a><span class="kw">let</span> _: () = x;</span></code></pre></div>
+<iframe height="80%" src="code/str-type.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="owned-type-str-vs.-string-1"><div>
+<h1>Owned type: &amp;str vs. String</h1>
+<ul>
+<li><code>&amp;str</code>: a shared reference of a type <code>str</code> (i.e., <code>[u8]</code> ← Q. what’s this?)</li>
+<li>Guess what are the values in <span class="citation" data-cites="rsp">@rsp</span> and <span class="citation" data-cites="rsp+8">@rsp+8</span>?</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb2-1"><a href="lec04.html#cb2-1"></a><span class="kw">let</span> x = <span class="st">"Hello"</span>;</span></code></pre></div>
+<iframe height="80%" src="code/str.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="owned-type-str-vs.-string-2"><div>
+<h1>Owned type: &amp;str vs. String</h1>
+<ul>
+<li>Type doesn’t necessarily mean to have a concrete size (noted <code>?Sized</code> or DST)
+<ul>
+<li>No way to store (copy/move) them into memory</li>
+<li>Its value (<code>T</code>) is only referred via a reference (<code>&amp;T</code>)</li>
+<li>There exist a corresponding owner type (i.e., <code>String</code> for <code>str</code>)</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb3-1"><a href="lec04.html#cb3-1"></a><span class="pp">dbg!</span>(<span class="pp">std::mem::size_of::</span>&lt;<span class="dt">str</span>&gt;());</span>
+<span id="cb3-2"><a href="lec04.html#cb3-2"></a><span class="co">//=&gt; error: `str` doesn't have a size known at compile-time</span></span>
+<span id="cb3-3"><a href="lec04.html#cb3-3"></a><span class="pp">dbg!</span>(<span class="pp">std::mem::size_of::</span>&lt;&amp;<span class="dt">str</span>&gt;());   <span class="co">//=&gt; 16</span></span>
+<span id="cb3-4"><a href="lec04.html#cb3-4"></a></span>
+<span id="cb3-5"><a href="lec04.html#cb3-5"></a><span class="pp">dbg!</span>(<span class="pp">std::mem::size_of::</span>&lt;<span class="dt">String</span>&gt;()); <span class="co">//=&gt; 24</span></span>
+<span id="cb3-6"><a href="lec04.html#cb3-6"></a><span class="pp">dbg!</span>(<span class="pp">std::mem::size_of::</span>&lt;&amp;<span class="dt">String</span>&gt;());<span class="co">//=&gt;  8</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-benefit-of-owned-type"><div>
+<h1>Example: benefit of owned type</h1>
+<ul>
+<li><code>String</code> abstracts a string it contains (so called, a <strong>container type</strong>)</li>
+<li>Again, there is no way we can store <code>?Sized</code> like <code>str</code> into stack</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb4-1"><a href="lec04.html#cb4-1"></a><span class="kw">let</span> <span class="kw">mut</span> x = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb4-2"><a href="lec04.html#cb4-2"></a>x.push_str(<span class="st">" World!"</span>); <span class="co">// Isn't the size of String changed?</span></span>
+<span id="cb4-3"><a href="lec04.html#cb4-3"></a></span>
+<span id="cb4-4"><a href="lec04.html#cb4-4"></a><span class="pp">dbg!</span>(x);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-benefit-of-owned-type-1"><div>
+<h1>Example: benefit of owned type</h1>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb5-1"><a href="lec04.html#cb5-1"></a><span class="kw">impl</span> <span class="dt">String</span> <span class="op">{</span></span>
+<span id="cb5-2"><a href="lec04.html#cb5-2"></a>    <span class="kw">pub</span> <span class="kw">fn</span> push_str(&amp;<span class="kw">mut</span> <span class="kw">self</span>, string: &amp;<span class="dt">str</span>) <span class="op">{</span> .. <span class="op">}</span></span>
+<span id="cb5-3"><a href="lec04.html#cb5-3"></a>    <span class="co">//              |</span></span>
+<span id="cb5-4"><a href="lec04.html#cb5-4"></a>    <span class="co">//              +--&gt; a mutable reference</span></span>
+<span id="cb5-5"><a href="lec04.html#cb5-5"></a><span class="op">}</span></span>
+<span id="cb5-6"><a href="lec04.html#cb5-6"></a></span>
+<span id="cb5-7"><a href="lec04.html#cb5-7"></a><span class="kw">let</span> <span class="kw">mut</span> x = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb5-8"><a href="lec04.html#cb5-8"></a></span>
+<span id="cb5-9"><a href="lec04.html#cb5-9"></a><span class="op">{</span></span>
+<span id="cb5-10"><a href="lec04.html#cb5-10"></a>  <span class="co">//=&gt; String::push_str(&amp;x, " World!")</span></span>
+<span id="cb5-11"><a href="lec04.html#cb5-11"></a>  x.push_str(<span class="st">" World!"</span>);</span>
+<span id="cb5-12"><a href="lec04.html#cb5-12"></a><span class="op">}</span></span>
+<span id="cb5-13"><a href="lec04.html#cb5-13"></a></span>
+<span id="cb5-14"><a href="lec04.html#cb5-14"></a><span class="pp">dbg!</span>(x);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="introducing-a-slice-type-e.g.-str"><div>
+<h1>Introducing a slice type (e.g., &amp;str)</h1>
+<ul>
+<li><strong>Slice type</strong>, &amp;[T] → <em>borrows</em> a contiguous list of elements</li>
+<li>Simply, (ptr, len): <code>ptr</code> points to the beginning element of the list</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb6-1"><a href="lec04.html#cb6-1"></a><span class="kw">let</span> x: &amp;<span class="dt">str</span> = <span class="st">"Hello"</span>;</span></code></pre></div>
+<iframe height="80%" src="code/str.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="example-of-a-slice-type"><div>
+<h1>Example of a slice type</h1>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb7-1"><a href="lec04.html#cb7-1"></a><span class="kw">let</span> x = <span class="dt">String</span>::from(<span class="st">"Hello World"</span>);</span>
+<span id="cb7-2"><a href="lec04.html#cb7-2"></a><span class="kw">let</span> y = &amp;x<span class="op">[</span><span class="dv">0</span>..<span class="dv">5</span><span class="op">]</span>;</span></code></pre></div>
+<p style="text-align:center;margin:0"><img src="img/slice.svg" style="width:60%"/></p>
+</div></section>
+<section class="slide level1" id="thinking-of-memory-safety"><div>
+<h1>Thinking of memory safety</h1>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource cc numberLines"><code class="sourceCode cpp"><span id="cb8-1"><a href="lec04.html#cb8-1"></a><span class="co">// in C++</span></span>
+<span id="cb8-2"><a href="lec04.html#cb8-2"></a><span class="bu">std::</span>string s = <span class="st">"Hello"</span>;</span>
+<span id="cb8-3"><a href="lec04.html#cb8-3"></a><span class="at">const</span> <span class="dt">char</span> *c = s.c_str();</span>
+<span id="cb8-4"><a href="lec04.html#cb8-4"></a></span>
+<span id="cb8-5"><a href="lec04.html#cb8-5"></a>s.append(<span class="st">" World!"</span>);</span>
+<span id="cb8-6"><a href="lec04.html#cb8-6"></a></span>
+<span id="cb8-7"><a href="lec04.html#cb8-7"></a><span class="bu">std::</span>cout &lt;&lt; c;</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb9-1"><a href="lec04.html#cb9-1"></a><span class="co">// in Rust</span></span>
+<span id="cb9-2"><a href="lec04.html#cb9-2"></a><span class="kw">let</span> <span class="kw">mut</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb9-3"><a href="lec04.html#cb9-3"></a><span class="kw">let</span> c = s.as_str();</span>
+<span id="cb9-4"><a href="lec04.html#cb9-4"></a>    </span>
+<span id="cb9-5"><a href="lec04.html#cb9-5"></a>s.push_str(<span class="st">" World!"</span>);</span>
+<span id="cb9-6"><a href="lec04.html#cb9-6"></a></span>
+<span id="cb9-7"><a href="lec04.html#cb9-7"></a><span class="pp">dbg!</span>(c);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="memory-safety-by-restricted-aliasing"><div>
+<h1>Memory safety by restricted aliasing</h1>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb10-1"><a href="lec04.html#cb10-1"></a><span class="kw">let</span> <span class="kw">mut</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb10-2"><a href="lec04.html#cb10-2"></a><span class="kw">let</span> c = s.as_str();</span>
+<span id="cb10-3"><a href="lec04.html#cb10-3"></a>    </span>
+<span id="cb10-4"><a href="lec04.html#cb10-4"></a>s.push_str(<span class="st">" World!"</span>);</span>
+<span id="cb10-5"><a href="lec04.html#cb10-5"></a></span>
+<span id="cb10-6"><a href="lec04.html#cb10-6"></a><span class="pp">dbg!</span>(c);</span></code></pre></div>
+<iframe height="80%" src="code/err-str.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="aliasing-for-better-optimization"><div>
+<h1>Aliasing for better optimization</h1>
+<ul>
+<li>Do both Rust/C implementations have same semantics?</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb11-1"><a href="lec04.html#cb11-1"></a><span class="co">// in Rust (rustc -C opt-level=3)</span></span>
+<span id="cb11-2"><a href="lec04.html#cb11-2"></a><span class="kw">fn</span> compute(input: &amp;<span class="dt">u32</span>, output: &amp;<span class="kw">mut</span> <span class="dt">u32</span>) <span class="op">{</span></span>
+<span id="cb11-3"><a href="lec04.html#cb11-3"></a>  <span class="kw">if</span> *input &gt; <span class="dv">10</span> <span class="op">{</span> *output  = <span class="dv">1</span>; <span class="op">}</span></span>
+<span id="cb11-4"><a href="lec04.html#cb11-4"></a>  <span class="kw">if</span> *input &gt;  <span class="dv">5</span> <span class="op">{</span> *output *= <span class="dv">2</span>; <span class="op">}</span></span>
+<span id="cb11-5"><a href="lec04.html#cb11-5"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource c numberLines"><code class="sourceCode c"><span id="cb12-1"><a href="lec04.html#cb12-1"></a><span class="co">// in C (gcc -O3)</span></span>
+<span id="cb12-2"><a href="lec04.html#cb12-2"></a><span class="dt">void</span> compute(<span class="dt">int</span> *input, <span class="dt">int</span> *output) {</span>
+<span id="cb12-3"><a href="lec04.html#cb12-3"></a>  <span class="cf">if</span> (*input &gt; <span class="dv">10</span>) *output  = <span class="dv">1</span>;</span>
+<span id="cb12-4"><a href="lec04.html#cb12-4"></a>  <span class="cf">if</span> (*input &gt;  <span class="dv">5</span>) *output *= <span class="dv">2</span>;</span>
+<span id="cb12-5"><a href="lec04.html#cb12-5"></a>}</span></code></pre></div>
+<p>Ref. <a href="https://doc.rust-lang.org/nomicon/aliasing.html">Nomicon: 3.2 Aliasing</a></p>
+</div></section>
+<section class="slide level1" id="aliasing-c-version"><div>
+<h1>Aliasing: C version</h1>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource c numberLines"><code class="sourceCode c"><span id="cb13-1"><a href="lec04.html#cb13-1"></a><span class="dt">void</span> compute(<span class="dt">int</span> *input, <span class="dt">int</span> *output):</span>
+<span id="cb13-2"><a href="lec04.html#cb13-2"></a>  <span class="cf">if</span> (*input &gt; <span class="dv">10</span>) *output  = <span class="dv">1</span>;</span>
+<span id="cb13-3"><a href="lec04.html#cb13-3"></a>  <span class="cf">if</span> (*input &gt;  <span class="dv">5</span>) *output *= <span class="dv">2</span>;</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource asm numberLines"><code class="sourceCode fasm"><span id="cb14-1"><a href="lec04.html#cb14-1"></a><span class="dv">0000000000001190</span> &lt;compute&gt;:</span>
+<span id="cb14-2"><a href="lec04.html#cb14-2"></a><span class="fu">    1190:</span>  <span class="bu">mov</span>    <span class="kw">eax</span>,<span class="dt">DWORD</span> <span class="dt">PTR</span> [<span class="kw">rdi</span>]</span>
+<span id="cb14-3"><a href="lec04.html#cb14-3"></a><span class="fu">    1192:</span>  <span class="bu">cmp</span>    <span class="kw">eax</span>,<span class="bn">0xa</span></span>
+<span id="cb14-4"><a href="lec04.html#cb14-4"></a> +--<span class="dv">1195</span>:  <span class="bu">jle</span>    119f &lt;compute+<span class="bn">0xf</span>&gt;</span>
+<span id="cb14-5"><a href="lec04.html#cb14-5"></a> |  <span class="dv">1197</span>:  <span class="bu">mov</span>    <span class="dt">DWORD</span> <span class="dt">PTR</span> [<span class="kw">rsi</span>]<span class="bn">,0x1</span></span>
+<span id="cb14-6"><a href="lec04.html#cb14-6"></a> |  119d:  <span class="bu">mov</span>    <span class="kw">eax</span>,<span class="dt">DWORD</span> <span class="dt">PTR</span> [<span class="kw">rdi</span>]</span>
+<span id="cb14-7"><a href="lec04.html#cb14-7"></a> +-&gt;119f:  <span class="bu">cmp</span>    <span class="kw">eax</span><span class="bn">,0x5</span></span>
+<span id="cb14-8"><a href="lec04.html#cb14-8"></a> +--11a2:  <span class="bu">jle</span>    11a6 &lt;compute+<span class="bn">0x16</span>&gt;</span>
+<span id="cb14-9"><a href="lec04.html#cb14-9"></a> |  11a4:  <span class="bu">shl</span>    <span class="dt">DWORD</span> <span class="dt">PTR</span> [<span class="kw">rsi</span>],<span class="dv">1</span></span>
+<span id="cb14-10"><a href="lec04.html#cb14-10"></a> +-&gt;11a6:  <span class="bu">ret</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="aliasing-rust-version"><div>
+<h1>Aliasing: Rust version</h1>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb15-1"><a href="lec04.html#cb15-1"></a><span class="kw">fn</span> compute(input: &amp;<span class="dt">u32</span>, output: &amp;<span class="kw">mut</span> <span class="dt">u32</span>):</span>
+<span id="cb15-2"><a href="lec04.html#cb15-2"></a>  <span class="kw">if</span> *input &gt; <span class="dv">10</span> <span class="op">{</span> *output  = <span class="dv">1</span>; <span class="op">}</span></span>
+<span id="cb15-3"><a href="lec04.html#cb15-3"></a>  <span class="kw">if</span> *input &gt;  <span class="dv">5</span> <span class="op">{</span> *output *= <span class="dv">2</span>; <span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource asm numberLines"><code class="sourceCode fasm"><span id="cb16-1"><a href="lec04.html#cb16-1"></a>00000000000044c0 &lt;testing::compute&gt;:</span>
+<span id="cb16-2"><a href="lec04.html#cb16-2"></a><span class="fu">    44c0:</span>  <span class="bu">mov</span>    <span class="kw">eax</span>,<span class="dt">DWORD</span> <span class="dt">PTR</span> [<span class="kw">rdi</span>]</span>
+<span id="cb16-3"><a href="lec04.html#cb16-3"></a><span class="fu">    44c2:</span>  <span class="bu">cmp</span>    <span class="kw">eax</span>,<span class="bn">0xb</span></span>
+<span id="cb16-4"><a href="lec04.html#cb16-4"></a>+---44c5:  <span class="bu">jb</span>     44d4 &lt;testing::compute+<span class="bn">0x14</span>&gt;</span>
+<span id="cb16-5"><a href="lec04.html#cb16-5"></a>|   44c7:  <span class="bu">mov</span>    <span class="dt">DWORD</span> <span class="dt">PTR</span> [<span class="kw">rsi</span>]<span class="bn">,0x1</span></span>
+<span id="cb16-6"><a href="lec04.html#cb16-6"></a>|   44cd:  <span class="bu">mov</span>    <span class="kw">eax</span><span class="bn">,0x2</span></span>
+<span id="cb16-7"><a href="lec04.html#cb16-7"></a>|+- 44d2:  <span class="bu">jmp</span>    44dd &lt;testing::compute+<span class="bn">0x1d</span>&gt;</span>
+<span id="cb16-8"><a href="lec04.html#cb16-8"></a>+|-&gt;44d4:  <span class="bu">cmp</span>    <span class="kw">eax</span><span class="bn">,0x6</span></span>
+<span id="cb16-9"><a href="lec04.html#cb16-9"></a> |+-44d7:  <span class="bu">jb</span>     44df &lt;testing::compute+<span class="bn">0x1f</span>&gt;</span>
+<span id="cb16-10"><a href="lec04.html#cb16-10"></a> || 44d9:  <span class="bu">mov</span>    <span class="kw">eax</span>,<span class="dt">DWORD</span> <span class="dt">PTR</span> [<span class="kw">rsi</span>]</span>
+<span id="cb16-11"><a href="lec04.html#cb16-11"></a> || 44db:  <span class="bu">add</span>    <span class="kw">eax</span>,<span class="kw">eax</span></span>
+<span id="cb16-12"><a href="lec04.html#cb16-12"></a> +|&gt;44dd:  <span class="bu">mov</span>    <span class="dt">DWORD</span> <span class="dt">PTR</span> [<span class="kw">rsi</span>],<span class="kw">eax</span></span>
+<span id="cb16-13"><a href="lec04.html#cb16-13"></a>  +&gt;44df:  <span class="bu">ret</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="aliasing-rust-version-1"><div>
+<h1>Aliasing: Rust version</h1>
+<ul>
+<li>#loads (from <code>input</code>) and #stores (to <code>output</code>)?</li>
+<li>e.g., input=11, input=6, input=0?</li>
+</ul>
+<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource asm numberLines"><code class="sourceCode fasm"><span id="cb17-1"><a href="lec04.html#cb17-1"></a>00000000000044c0 &lt;testing::compute&gt;:</span>
+<span id="cb17-2"><a href="lec04.html#cb17-2"></a><span class="fu">    44c0:</span>  <span class="bu">mov</span>    <span class="kw">eax</span>,<span class="dt">DWORD</span> <span class="dt">PTR</span> [<span class="kw">rdi</span>]</span>
+<span id="cb17-3"><a href="lec04.html#cb17-3"></a><span class="fu">    44c2:</span>  <span class="bu">cmp</span>    <span class="kw">eax</span>,<span class="bn">0xb</span></span>
+<span id="cb17-4"><a href="lec04.html#cb17-4"></a>+---44c5:  <span class="bu">jb</span>     44d4 &lt;testing::compute+<span class="bn">0x14</span>&gt;</span>
+<span id="cb17-5"><a href="lec04.html#cb17-5"></a>|   44c7:  <span class="bu">mov</span>    <span class="dt">DWORD</span> <span class="dt">PTR</span> [<span class="kw">rsi</span>]<span class="bn">,0x1  </span><span class="co">; Q. isn't ok to mov 0x2/ret?</span></span>
+<span id="cb17-6"><a href="lec04.html#cb17-6"></a>|   44cd:  <span class="bu">mov</span>    <span class="kw">eax</span><span class="bn">,0x2</span></span>
+<span id="cb17-7"><a href="lec04.html#cb17-7"></a>|+- 44d2:  <span class="bu">jmp</span>    44dd &lt;testing::compute+<span class="bn">0x1d</span>&gt;</span>
+<span id="cb17-8"><a href="lec04.html#cb17-8"></a>+|-&gt;44d4:  <span class="bu">cmp</span>    <span class="kw">eax</span><span class="bn">,0x6</span></span>
+<span id="cb17-9"><a href="lec04.html#cb17-9"></a> |+-44d7:  <span class="bu">jb</span>     44df &lt;testing::compute+<span class="bn">0x1f</span>&gt;</span>
+<span id="cb17-10"><a href="lec04.html#cb17-10"></a> || 44d9:  <span class="bu">mov</span>    <span class="kw">eax</span>,<span class="dt">DWORD</span> <span class="dt">PTR</span> [<span class="kw">rsi</span>]</span>
+<span id="cb17-11"><a href="lec04.html#cb17-11"></a> || 44db:  <span class="bu">add</span>    <span class="kw">eax</span>,<span class="kw">eax</span></span>
+<span id="cb17-12"><a href="lec04.html#cb17-12"></a> +|&gt;44dd:  <span class="bu">mov</span>    <span class="dt">DWORD</span> <span class="dt">PTR</span> [<span class="kw">rsi</span>],<span class="kw">eax</span></span>
+<span id="cb17-13"><a href="lec04.html#cb17-13"></a>  +&gt;44df:  <span class="bu">ret</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="lifetime"><div>
+<h1>Lifetime</h1>
+<ul>
+<li>Rust’s borrow checker enforces rules based on lifetime (Rule 0)</li>
+</ul>
+<div class="sourceCode" id="cb18"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb18-1"><a href="lec04.html#cb18-1"></a><span class="kw">let</span> y = <span class="op">{</span></span>
+<span id="cb18-2"><a href="lec04.html#cb18-2"></a>  <span class="kw">let</span> x = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb18-3"><a href="lec04.html#cb18-3"></a>  &amp;x</span>
+<span id="cb18-4"><a href="lec04.html#cb18-4"></a><span class="op">}</span>;</span></code></pre></div>
+<iframe height="80%" src="code/err-lifetime.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="lifetime-1"><div>
+<h1>Lifetime</h1>
+<ul>
+<li>Q. Scoping rules vs. lifetime?</li>
+</ul>
+<div class="sourceCode" id="cb19"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb19-1"><a href="lec04.html#cb19-1"></a><span class="kw">fn</span> main() <span class="op">{</span></span>
+<span id="cb19-2"><a href="lec04.html#cb19-2"></a>  <span class="kw">let</span> <span class="kw">mut</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb19-3"><a href="lec04.html#cb19-3"></a>  <span class="kw">let</span> r1 = &amp;<span class="kw">mut</span> s;</span>
+<span id="cb19-4"><a href="lec04.html#cb19-4"></a>  <span class="kw">let</span> r2 = &amp;s;</span>
+<span id="cb19-5"><a href="lec04.html#cb19-5"></a></span>
+<span id="cb19-6"><a href="lec04.html#cb19-6"></a>  <span class="pp">dbg!</span>(r2);</span>
+<span id="cb19-7"><a href="lec04.html#cb19-7"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="notating-lifetime"><div>
+<h1>Notating lifetime</h1>
+<ul>
+<li>Each scope (i.e., let binding) introduces a new, associated lifetime</li>
+<li>For now, lifetime ~= scope</li>
+</ul>
+<div class="sourceCode" id="cb20"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb20-1"><a href="lec04.html#cb20-1"></a><span class="kw">let</span> x = <span class="dv">0</span>;</span>
+<span id="cb20-2"><a href="lec04.html#cb20-2"></a><span class="kw">let</span> y = &amp;x;</span>
+<span id="cb20-3"><a href="lec04.html#cb20-3"></a><span class="co">//  |   |</span></span>
+<span id="cb20-4"><a href="lec04.html#cb20-4"></a><span class="co">//  |   +--&gt; a reference (a borrower) should live shorter than the owner</span></span>
+<span id="cb20-5"><a href="lec04.html#cb20-5"></a><span class="co">//  +--&gt; y can contain a refernece that lives longer than itself</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb21-1"><a href="lec04.html#cb21-1"></a><span class="ot">'a</span>: <span class="op">{</span>                      <span class="co">// this scope's lifetime is 'a</span></span>
+<span id="cb21-2"><a href="lec04.html#cb21-2"></a>  <span class="kw">let</span> x: <span class="dt">i32</span> = <span class="dv">0</span>;</span>
+<span id="cb21-3"><a href="lec04.html#cb21-3"></a>  <span class="ot">'b</span>: <span class="op">{</span>                    <span class="co">// this scope's lifetime is 'b</span></span>
+<span id="cb21-4"><a href="lec04.html#cb21-4"></a>    <span class="kw">let</span> y: &amp;<span class="dt">i32</span> = &amp;x;</span>
+<span id="cb21-5"><a href="lec04.html#cb21-5"></a>  <span class="op">}</span></span>
+<span id="cb21-6"><a href="lec04.html#cb21-6"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="notating-lifetime-1"><div>
+<h1>Notating lifetime</h1>
+<ul>
+<li>Each variables and references have an associated lifetime
+<ul>
+<li><code>x['a]</code>: <code>x</code>’s lifetime is <code>'a</code></li>
+<li><code>&amp;'a</code>: referring to a variable that lives at least <code>'a</code></li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb22"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb22-1"><a href="lec04.html#cb22-1"></a><span class="ot">'a</span>: <span class="op">{</span></span>
+<span id="cb22-2"><a href="lec04.html#cb22-2"></a>  <span class="kw">let</span> x<span class="op">[</span><span class="ot">'a</span><span class="op">]</span>: <span class="dt">i32</span> = <span class="dv">0</span>;</span>
+<span id="cb22-3"><a href="lec04.html#cb22-3"></a>  <span class="ot">'b</span>: <span class="op">{</span></span>
+<span id="cb22-4"><a href="lec04.html#cb22-4"></a>    <span class="co">// y's lifetime is 'b</span></span>
+<span id="cb22-5"><a href="lec04.html#cb22-5"></a>    <span class="kw">let</span> y<span class="op">[</span><span class="ot">'b</span><span class="op">]</span>: &amp;<span class="ot">'a</span> <span class="dt">i32</span> = &amp;x<span class="op">[</span><span class="ot">'a</span><span class="op">]</span>;</span>
+<span id="cb22-6"><a href="lec04.html#cb22-6"></a>    <span class="co">//                   &amp;x's lifetime is 'a (or shorter)</span></span>
+<span id="cb22-7"><a href="lec04.html#cb22-7"></a></span>
+<span id="cb22-8"><a href="lec04.html#cb22-8"></a>    <span class="co">// -&gt; y can only contain a reference that lives longer than itself</span></span>
+<span id="cb22-9"><a href="lec04.html#cb22-9"></a>    <span class="op">}</span></span>
+<span id="cb22-10"><a href="lec04.html#cb22-10"></a>  <span class="op">}</span></span>
+<span id="cb22-11"><a href="lec04.html#cb22-11"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="notating-lifetime-2"><div>
+<h1>Notating lifetime</h1>
+<ul>
+<li>The borrow checker always tries to minimize the extent of a lifetime (<a href="https://doc.rust-lang.org/nomicon/lifetimes.html">ref</a>)</li>
+</ul>
+<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb23-1"><a href="lec04.html#cb23-1"></a><span class="ot">'a</span>: <span class="op">{</span></span>
+<span id="cb23-2"><a href="lec04.html#cb23-2"></a>  <span class="kw">let</span> x<span class="op">[</span><span class="ot">'a</span><span class="op">]</span>: <span class="dt">i32</span> = <span class="dv">0</span>;</span>
+<span id="cb23-3"><a href="lec04.html#cb23-3"></a>  <span class="ot">'b</span>: <span class="op">{</span></span>
+<span id="cb23-4"><a href="lec04.html#cb23-4"></a>    <span class="kw">let</span> y<span class="op">[</span><span class="ot">'b</span><span class="op">]</span>: &amp;<span class="op">[</span><span class="ot">'a</span> -&gt; <span class="ot">'b</span><span class="op">]</span> <span class="dt">i32</span> = &amp;x<span class="op">[</span><span class="ot">'a</span><span class="op">]</span>;</span>
+<span id="cb23-5"><a href="lec04.html#cb23-5"></a>    <span class="co">// -&gt; y can only contain a reference that lives longer than itself</span></span>
+<span id="cb23-6"><a href="lec04.html#cb23-6"></a>    <span class="co">//    reduce its lifetime from 'a to 'b</span></span>
+<span id="cb23-7"><a href="lec04.html#cb23-7"></a>    <span class="op">}</span></span>
+<span id="cb23-8"><a href="lec04.html#cb23-8"></a>  <span class="op">}</span></span>
+<span id="cb23-9"><a href="lec04.html#cb23-9"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-lifetime-notation"><div>
+<h1>Example: lifetime notation</h1>
+<div class="sourceCode" id="cb24"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb24-1"><a href="lec04.html#cb24-1"></a><span class="kw">let</span> x = <span class="dv">0</span>;</span>
+<span id="cb24-2"><a href="lec04.html#cb24-2"></a><span class="kw">let</span> y = &amp;x;</span>
+<span id="cb24-3"><a href="lec04.html#cb24-3"></a><span class="kw">let</span> z = &amp;y;</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb25-1"><a href="lec04.html#cb25-1"></a><span class="ot">'a</span>: <span class="op">{</span>                      <span class="co">// this scope's lifetime is 'a</span></span>
+<span id="cb25-2"><a href="lec04.html#cb25-2"></a>  <span class="kw">let</span> x: <span class="dt">i32</span> = <span class="dv">0</span>;</span>
+<span id="cb25-3"><a href="lec04.html#cb25-3"></a>  <span class="ot">'b</span>: <span class="op">{</span>                    <span class="co">// this scope's lifetime is 'b</span></span>
+<span id="cb25-4"><a href="lec04.html#cb25-4"></a>    <span class="kw">let</span> y: &amp;<span class="dt">i32</span> = &amp;x;</span>
+<span id="cb25-5"><a href="lec04.html#cb25-5"></a>    <span class="ot">'c</span>: <span class="op">{</span>                  <span class="co">// this scope's lifetime is 'c</span></span>
+<span id="cb25-6"><a href="lec04.html#cb25-6"></a>      <span class="kw">let</span> z: &amp;&amp;<span class="dt">i32</span> = &amp;y;</span>
+<span id="cb25-7"><a href="lec04.html#cb25-7"></a>    <span class="op">}</span></span>
+<span id="cb25-8"><a href="lec04.html#cb25-8"></a>  <span class="op">}</span></span>
+<span id="cb25-9"><a href="lec04.html#cb25-9"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-lifetime-notation-1"><div>
+<h1>Example: lifetime notation</h1>
+<div class="sourceCode" id="cb26"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb26-1"><a href="lec04.html#cb26-1"></a><span class="kw">let</span> x = <span class="dv">0</span>;</span>
+<span id="cb26-2"><a href="lec04.html#cb26-2"></a><span class="kw">let</span> y = &amp;x;</span>
+<span id="cb26-3"><a href="lec04.html#cb26-3"></a><span class="kw">let</span> z = &amp;y;</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb27-1"><a href="lec04.html#cb27-1"></a><span class="ot">'a</span>: <span class="op">{</span></span>
+<span id="cb27-2"><a href="lec04.html#cb27-2"></a>  <span class="kw">let</span> x: <span class="dt">i32</span> = <span class="dv">0</span>;</span>
+<span id="cb27-3"><a href="lec04.html#cb27-3"></a>  <span class="ot">'b</span>: <span class="op">{</span></span>
+<span id="cb27-4"><a href="lec04.html#cb27-4"></a>    <span class="kw">let</span> y: &amp;<span class="ot">'b</span> <span class="dt">i32</span> = &amp;<span class="op">[</span><span class="ot">'a</span> -&gt; <span class="ot">'b</span><span class="op">]</span> x;</span>
+<span id="cb27-5"><a href="lec04.html#cb27-5"></a>    <span class="ot">'c</span>: <span class="op">{</span></span>
+<span id="cb27-6"><a href="lec04.html#cb27-6"></a>      <span class="kw">let</span> z: &amp;<span class="ot">'c</span> &amp;<span class="ot">'b</span> <span class="dt">i32</span> = &amp;<span class="op">[</span><span class="ot">'b</span> -&gt; <span class="ot">'c</span><span class="op">]</span> y;</span>
+<span id="cb27-7"><a href="lec04.html#cb27-7"></a>    <span class="op">}</span></span>
+<span id="cb27-8"><a href="lec04.html#cb27-8"></a>  <span class="op">}</span></span>
+<span id="cb27-9"><a href="lec04.html#cb27-9"></a><span class="op">}</span></span></code></pre></div>
+<p>Ref. <a href="https://doc.rust-lang.org/nomicon/lifetimes.html">Nomicon, Ch3.3 Lifetime</a></p>
+</div></section>
+<section class="slide level1" id="example-lifetime-notation-2"><div>
+<h1>Example: lifetime notation</h1>
+<div class="sourceCode" id="cb28"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb28-1"><a href="lec04.html#cb28-1"></a><span class="kw">let</span> x = <span class="dv">0</span>;</span>
+<span id="cb28-2"><a href="lec04.html#cb28-2"></a><span class="kw">let</span> z;</span>
+<span id="cb28-3"><a href="lec04.html#cb28-3"></a><span class="kw">let</span> y = &amp;x;</span>
+<span id="cb28-4"><a href="lec04.html#cb28-4"></a>z = y;</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-lifetime-notation-3"><div>
+<h1>Example: lifetime notation</h1>
+<div class="sourceCode" id="cb29"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb29-1"><a href="lec04.html#cb29-1"></a><span class="kw">let</span> x = <span class="dv">0</span>;</span>
+<span id="cb29-2"><a href="lec04.html#cb29-2"></a><span class="kw">let</span> z;</span>
+<span id="cb29-3"><a href="lec04.html#cb29-3"></a><span class="kw">let</span> y = &amp;x;</span>
+<span id="cb29-4"><a href="lec04.html#cb29-4"></a>z = y;</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb30-1"><a href="lec04.html#cb30-1"></a><span class="ot">'a</span>: <span class="op">{</span></span>
+<span id="cb30-2"><a href="lec04.html#cb30-2"></a>  <span class="kw">let</span> x<span class="op">[</span><span class="ot">'a</span><span class="op">]</span>: <span class="dt">i32</span> = <span class="dv">0</span>;</span>
+<span id="cb30-3"><a href="lec04.html#cb30-3"></a>  <span class="ot">'b</span>: <span class="op">{</span></span>
+<span id="cb30-4"><a href="lec04.html#cb30-4"></a>    <span class="kw">let</span> z<span class="op">[</span><span class="ot">'b</span><span class="op">]</span>: &amp;<span class="ot">'b</span> <span class="dt">i32</span>;</span>
+<span id="cb30-5"><a href="lec04.html#cb30-5"></a>    <span class="ot">'c</span>: <span class="op">{</span></span>
+<span id="cb30-6"><a href="lec04.html#cb30-6"></a>      <span class="kw">let</span> y<span class="op">[</span><span class="ot">'c</span><span class="op">]</span>: &amp;<span class="ot">'c</span> <span class="dt">i32</span> = &amp;<span class="op">[</span><span class="ot">'a</span> -&gt; <span class="ot">'c</span><span class="op">]</span> x;</span>
+<span id="cb30-7"><a href="lec04.html#cb30-7"></a>      </span>
+<span id="cb30-8"><a href="lec04.html#cb30-8"></a>      <span class="co">// </span><span class="al">WARNING</span><span class="co">: &amp;'b i32 &lt;- &amp;'c i32</span></span>
+<span id="cb30-9"><a href="lec04.html#cb30-9"></a>      <span class="co">//  z contains a reference that lives shorter than itself!</span></span>
+<span id="cb30-10"><a href="lec04.html#cb30-10"></a>      z = y;</span>
+<span id="cb30-11"><a href="lec04.html#cb30-11"></a>    <span class="op">}</span></span>
+<span id="cb30-12"><a href="lec04.html#cb30-12"></a>  <span class="op">}</span></span>
+<span id="cb30-13"><a href="lec04.html#cb30-13"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-lifetime-notation-4"><div>
+<h1>Example: lifetime notation</h1>
+<div class="sourceCode" id="cb31"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb31-1"><a href="lec04.html#cb31-1"></a><span class="kw">let</span> x = <span class="dv">0</span>;</span>
+<span id="cb31-2"><a href="lec04.html#cb31-2"></a><span class="kw">let</span> z;</span>
+<span id="cb31-3"><a href="lec04.html#cb31-3"></a><span class="kw">let</span> y = &amp;x;</span>
+<span id="cb31-4"><a href="lec04.html#cb31-4"></a>z = y;</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb32-1"><a href="lec04.html#cb32-1"></a><span class="ot">'a</span>: <span class="op">{</span></span>
+<span id="cb32-2"><a href="lec04.html#cb32-2"></a>  <span class="kw">let</span> x<span class="op">[</span><span class="ot">'a</span><span class="op">]</span>: <span class="dt">i32</span> = <span class="dv">0</span>;</span>
+<span id="cb32-3"><a href="lec04.html#cb32-3"></a>  <span class="ot">'b</span>: <span class="op">{</span></span>
+<span id="cb32-4"><a href="lec04.html#cb32-4"></a>    <span class="kw">let</span> z<span class="op">[</span><span class="ot">'b</span><span class="op">]</span>: &amp;<span class="ot">'b</span> <span class="dt">i32</span>;</span>
+<span id="cb32-5"><a href="lec04.html#cb32-5"></a>    <span class="ot">'c</span>: <span class="op">{</span></span>
+<span id="cb32-6"><a href="lec04.html#cb32-6"></a>      <span class="co">// in fact, &amp;x can be 'b or even 'a!</span></span>
+<span id="cb32-7"><a href="lec04.html#cb32-7"></a>      <span class="kw">let</span> y<span class="op">[</span><span class="ot">'c</span><span class="op">]</span>: &amp;<span class="ot">'b</span> <span class="dt">i32</span> = &amp;<span class="ot">'b</span> x;</span>
+<span id="cb32-8"><a href="lec04.html#cb32-8"></a></span>
+<span id="cb32-9"><a href="lec04.html#cb32-9"></a>      <span class="co">// Okay. &amp;'b i32 &lt;- &amp;'b i32</span></span>
+<span id="cb32-10"><a href="lec04.html#cb32-10"></a>      z = y;</span>
+<span id="cb32-11"><a href="lec04.html#cb32-11"></a>    <span class="op">}</span></span>
+<span id="cb32-12"><a href="lec04.html#cb32-12"></a>  <span class="op">}</span></span>
+<span id="cb32-13"><a href="lec04.html#cb32-13"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="wait-why-trying-to-minimize-lifetime"><div>
+<h1>Wait, why trying to minimize lifetime?</h1>
+<ul>
+<li>Is it a safe program?</li>
+<li>How can Rust reason about this program’s safety?</li>
+</ul>
+<div class="sourceCode" id="cb33"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb33-1"><a href="lec04.html#cb33-1"></a><span class="kw">fn</span> main() <span class="op">{</span></span>
+<span id="cb33-2"><a href="lec04.html#cb33-2"></a>  <span class="kw">let</span> <span class="kw">mut</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb33-3"><a href="lec04.html#cb33-3"></a>  <span class="kw">let</span> r1 = &amp;<span class="kw">mut</span> s;</span>
+<span id="cb33-4"><a href="lec04.html#cb33-4"></a>  <span class="kw">let</span> r2 = &amp;s;</span>
+<span id="cb33-5"><a href="lec04.html#cb33-5"></a></span>
+<span id="cb33-6"><a href="lec04.html#cb33-6"></a>  <span class="pp">dbg!</span>(r2);</span>
+<span id="cb33-7"><a href="lec04.html#cb33-7"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="lets-analyze-a-previous-example"><div>
+<h1>Let’s analyze a previous example</h1>
+<div class="sourceCode" id="cb34"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb34-1"><a href="lec04.html#cb34-1"></a><span class="kw">let</span> y = <span class="op">{</span></span>
+<span id="cb34-2"><a href="lec04.html#cb34-2"></a>  <span class="kw">let</span> x = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb34-3"><a href="lec04.html#cb34-3"></a>  &amp;x</span>
+<span id="cb34-4"><a href="lec04.html#cb34-4"></a><span class="op">}</span>;</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb35-1"><a href="lec04.html#cb35-1"></a><span class="ot">'a</span>: <span class="op">{</span></span>
+<span id="cb35-2"><a href="lec04.html#cb35-2"></a>  <span class="kw">let</span> y<span class="op">[</span><span class="ot">'a</span><span class="op">]</span> = <span class="ot">'b</span>: <span class="op">{</span></span>
+<span id="cb35-3"><a href="lec04.html#cb35-3"></a>    <span class="kw">let</span> x<span class="op">[</span><span class="ot">'b</span><span class="op">]</span> = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb35-4"><a href="lec04.html#cb35-4"></a>    &amp;<span class="ot">'b</span> x</span>
+<span id="cb35-5"><a href="lec04.html#cb35-5"></a>  <span class="op">}</span>;</span>
+<span id="cb35-6"><a href="lec04.html#cb35-6"></a>  <span class="co">// </span><span class="al">WARNING</span><span class="co">. y['a] contains a reference that lives shorter (&amp;'b)!</span></span>
+<span id="cb35-7"><a href="lec04.html#cb35-7"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-function-callreturn"><div>
+<h1>Example: function call/return</h1>
+<div class="sourceCode" id="cb36"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb36-1"><a href="lec04.html#cb36-1"></a><span class="kw">fn</span> to_string(data: &amp;<span class="dt">u32</span>) -&gt; &amp;<span class="dt">String</span> <span class="op">{</span></span>
+<span id="cb36-2"><a href="lec04.html#cb36-2"></a>  <span class="kw">let</span> s = <span class="pp">format!</span>(<span class="st">"{}"</span>, data);</span>
+<span id="cb36-3"><a href="lec04.html#cb36-3"></a>  &amp;s</span>
+<span id="cb36-4"><a href="lec04.html#cb36-4"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-function-callreturn-1"><div>
+<h1>Example: function call/return</h1>
+<div class="sourceCode" id="cb37"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb37-1"><a href="lec04.html#cb37-1"></a><span class="kw">fn</span> to_string(data: &amp;<span class="dt">u32</span>) -&gt; &amp;<span class="dt">String</span> <span class="op">{</span></span>
+<span id="cb37-2"><a href="lec04.html#cb37-2"></a>  <span class="kw">let</span> s = <span class="pp">format!</span>(<span class="st">"{}"</span>, data);</span>
+<span id="cb37-3"><a href="lec04.html#cb37-3"></a>  &amp;s</span>
+<span id="cb37-4"><a href="lec04.html#cb37-4"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb38-1"><a href="lec04.html#cb38-1"></a><span class="kw">fn</span> to_string&lt;<span class="ot">'a</span>&gt;(data: &amp;<span class="ot">'a</span> <span class="dt">u32</span>) -&gt; &amp;<span class="ot">'a</span> <span class="dt">String</span> <span class="op">{</span></span>
+<span id="cb38-2"><a href="lec04.html#cb38-2"></a>  <span class="ot">'b</span>: <span class="op">{</span></span>
+<span id="cb38-3"><a href="lec04.html#cb38-3"></a>    <span class="kw">let</span> s<span class="op">[</span><span class="ot">'b</span><span class="op">]</span> = <span class="pp">format!</span>(<span class="st">"{}"</span>, data);</span>
+<span id="cb38-4"><a href="lec04.html#cb38-4"></a>    &amp;<span class="ot">'b</span> s</span>
+<span id="cb38-5"><a href="lec04.html#cb38-5"></a>    <span class="co">// </span><span class="al">WARNING</span><span class="co">: &amp;'a &lt;- &amp;'b</span></span>
+<span id="cb38-6"><a href="lec04.html#cb38-6"></a>    <span class="co">//  the return value contains a reference that lives shorter</span></span>
+<span id="cb38-7"><a href="lec04.html#cb38-7"></a>  <span class="op">}</span></span>
+<span id="cb38-8"><a href="lec04.html#cb38-8"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-how-to-fix"><div>
+<h1>Example: how to fix?</h1>
+<ul>
+<li>Does this type signature ever make sense in safe Rust?</li>
+</ul>
+<div class="sourceCode" id="cb39"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb39-1"><a href="lec04.html#cb39-1"></a><span class="kw">fn</span> to_string(data: &amp;<span class="dt">u32</span>) -&gt; &amp;<span class="dt">String</span> <span class="op">{</span></span>
+<span id="cb39-2"><a href="lec04.html#cb39-2"></a>  <span class="kw">let</span> s = <span class="pp">format!</span>(<span class="st">"{}"</span>, data);</span>
+<span id="cb39-3"><a href="lec04.html#cb39-3"></a>  &amp;s</span>
+<span id="cb39-4"><a href="lec04.html#cb39-4"></a><span class="op">}</span></span>
+<span id="cb39-5"><a href="lec04.html#cb39-5"></a></span>
+<span id="cb39-6"><a href="lec04.html#cb39-6"></a><span class="co">// or even simpler?</span></span>
+<span id="cb39-7"><a href="lec04.html#cb39-7"></a><span class="kw">fn</span> to_string() -&gt; &amp;<span class="dt">String</span>;</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-aliasing-a-mutable-reference-again"><div>
+<h1>Example: aliasing a mutable reference (again)</h1>
+<ul>
+<li>Q. why this code should be rejected?</li>
+</ul>
+<div class="sourceCode" id="cb40"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb40-1"><a href="lec04.html#cb40-1"></a><span class="kw">let</span> <span class="kw">mut</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb40-2"><a href="lec04.html#cb40-2"></a><span class="kw">let</span> c = s.as_str();</span>
+<span id="cb40-3"><a href="lec04.html#cb40-3"></a>    </span>
+<span id="cb40-4"><a href="lec04.html#cb40-4"></a>s.push_str(<span class="st">" World!"</span>);</span>
+<span id="cb40-5"><a href="lec04.html#cb40-5"></a></span>
+<span id="cb40-6"><a href="lec04.html#cb40-6"></a><span class="pp">dbg!</span>(c);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-aliasing-a-mutable-reference-again-1"><div>
+<h1>Example: aliasing a mutable reference (again)</h1>
+<div class="sourceCode" id="cb41"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb41-1"><a href="lec04.html#cb41-1"></a><span class="kw">let</span> <span class="kw">mut</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb41-2"><a href="lec04.html#cb41-2"></a><span class="kw">let</span> c = s.as_str();</span>
+<span id="cb41-3"><a href="lec04.html#cb41-3"></a>    </span>
+<span id="cb41-4"><a href="lec04.html#cb41-4"></a>s.push_str(<span class="st">" World!"</span>);</span>
+<span id="cb41-5"><a href="lec04.html#cb41-5"></a></span>
+<span id="cb41-6"><a href="lec04.html#cb41-6"></a><span class="pp">dbg!</span>(c);</span></code></pre></div>
+<iframe height="80%" src="code/err-str.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="example-aliasing-a-mutable-reference-again-2"><div>
+<h1>Example: aliasing a mutable reference (again)</h1>
+<div class="sourceCode" id="cb42"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb42-1"><a href="lec04.html#cb42-1"></a><span class="kw">let</span> <span class="kw">mut</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb42-2"><a href="lec04.html#cb42-2"></a><span class="co">// =&gt; fn as_str(&amp;'a self) -&gt; &amp;'a str </span></span>
+<span id="cb42-3"><a href="lec04.html#cb42-3"></a><span class="kw">let</span> c = s.as_str();</span>
+<span id="cb42-4"><a href="lec04.html#cb42-4"></a></span>
+<span id="cb42-5"><a href="lec04.html#cb42-5"></a><span class="co">// =&gt; fn push_str(&amp;'a mut self, string: &amp;'a str)</span></span>
+<span id="cb42-6"><a href="lec04.html#cb42-6"></a>s.push_str(<span class="st">" World!"</span>);</span>
+<span id="cb42-7"><a href="lec04.html#cb42-7"></a></span>
+<span id="cb42-8"><a href="lec04.html#cb42-8"></a><span class="pp">dbg!</span>(c);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-aliasing-a-mutable-reference-again-3"><div>
+<h1>Example: aliasing a mutable reference (again)</h1>
+<div class="sourceCode" id="cb43"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb43-1"><a href="lec04.html#cb43-1"></a><span class="kw">let</span> <span class="kw">mut</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb43-2"><a href="lec04.html#cb43-2"></a><span class="co">// =&gt; fn as_str(&amp;'a self) -&gt; &amp;'a str </span></span>
+<span id="cb43-3"><a href="lec04.html#cb43-3"></a><span class="kw">let</span> _r1 = &amp;s;</span>
+<span id="cb43-4"><a href="lec04.html#cb43-4"></a><span class="kw">let</span> c = <span class="dt">String</span>::as_str(_r1);</span>
+<span id="cb43-5"><a href="lec04.html#cb43-5"></a></span>
+<span id="cb43-6"><a href="lec04.html#cb43-6"></a><span class="co">// =&gt; fn push_str(&amp;'a mut self, string: &amp;'a str)</span></span>
+<span id="cb43-7"><a href="lec04.html#cb43-7"></a><span class="kw">let</span> _r2 = &amp;<span class="kw">mut</span> s;</span>
+<span id="cb43-8"><a href="lec04.html#cb43-8"></a><span class="dt">String</span>::push_str(_r2, <span class="st">" World!"</span>);</span>
+<span id="cb43-9"><a href="lec04.html#cb43-9"></a></span>
+<span id="cb43-10"><a href="lec04.html#cb43-10"></a><span class="pp">dbg!</span>(c);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-aliasing-a-mutable-reference-again-4"><div>
+<h1>Example: aliasing a mutable reference (again)</h1>
+<div class="sourceCode" id="cb44"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb44-1"><a href="lec04.html#cb44-1"></a><span class="kw">let</span> <span class="kw">mut</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb44-2"><a href="lec04.html#cb44-2"></a><span class="kw">let</span> _r1: &amp;<span class="dt">String</span> = &amp;s;</span>
+<span id="cb44-3"><a href="lec04.html#cb44-3"></a><span class="kw">let</span> c: &amp;<span class="dt">str</span> = <span class="dt">String</span>::as_str(_r1);</span>
+<span id="cb44-4"><a href="lec04.html#cb44-4"></a></span>
+<span id="cb44-5"><a href="lec04.html#cb44-5"></a><span class="kw">let</span> _r2: &amp;<span class="kw">mut</span> <span class="dt">String</span> = &amp;<span class="kw">mut</span> s;</span>
+<span id="cb44-6"><a href="lec04.html#cb44-6"></a><span class="dt">String</span>::push_str(_r2, <span class="st">" World!"</span>);</span>
+<span id="cb44-7"><a href="lec04.html#cb44-7"></a></span>
+<span id="cb44-8"><a href="lec04.html#cb44-8"></a><span class="pp">dbg!</span>(c);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-aliasing-a-mutable-reference-again-5"><div>
+<h1>Example: aliasing a mutable reference (again)</h1>
+<div class="sourceCode" id="cb45"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb45-1"><a href="lec04.html#cb45-1"></a><span class="ot">'a</span>: <span class="op">{</span></span>
+<span id="cb45-2"><a href="lec04.html#cb45-2"></a>  <span class="kw">let</span> <span class="kw">mut</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb45-3"><a href="lec04.html#cb45-3"></a>  <span class="ot">'b</span>: <span class="op">{</span></span>
+<span id="cb45-4"><a href="lec04.html#cb45-4"></a>    <span class="kw">let</span> _r1: &amp;<span class="dt">String</span> = &amp;s;</span>
+<span id="cb45-5"><a href="lec04.html#cb45-5"></a>    <span class="kw">let</span> c: &amp;<span class="dt">str</span> = <span class="dt">String</span>::as_str(_r1);</span>
+<span id="cb45-6"><a href="lec04.html#cb45-6"></a></span>
+<span id="cb45-7"><a href="lec04.html#cb45-7"></a>    <span class="ot">'c</span>: <span class="op">{</span></span>
+<span id="cb45-8"><a href="lec04.html#cb45-8"></a>      <span class="kw">let</span> _r2: &amp;<span class="kw">mut</span> <span class="dt">String</span> = &amp;<span class="kw">mut</span> s;</span>
+<span id="cb45-9"><a href="lec04.html#cb45-9"></a>      <span class="dt">String</span>::push_str(_r2, <span class="st">" World!"</span>);</span>
+<span id="cb45-10"><a href="lec04.html#cb45-10"></a>     <span class="op">}</span></span>
+<span id="cb45-11"><a href="lec04.html#cb45-11"></a></span>
+<span id="cb45-12"><a href="lec04.html#cb45-12"></a>     <span class="pp">dbg!</span>(c);</span>
+<span id="cb45-13"><a href="lec04.html#cb45-13"></a>  <span class="op">}</span></span>
+<span id="cb45-14"><a href="lec04.html#cb45-14"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-aliasing-a-mutable-reference-again-6"><div>
+<h1>Example: aliasing a mutable reference (again)</h1>
+<div class="sourceCode" id="cb46"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb46-1"><a href="lec04.html#cb46-1"></a><span class="ot">'a</span>: <span class="op">{</span></span>
+<span id="cb46-2"><a href="lec04.html#cb46-2"></a>  <span class="kw">let</span> <span class="kw">mut</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb46-3"><a href="lec04.html#cb46-3"></a>  <span class="ot">'b</span>: <span class="op">{</span></span>
+<span id="cb46-4"><a href="lec04.html#cb46-4"></a>    <span class="kw">let</span> _r1: &amp;<span class="ot">'b</span> <span class="dt">String</span> = &amp;<span class="op">[</span><span class="ot">'a</span> -&gt; <span class="ot">'b</span><span class="op">]</span>s;</span>
+<span id="cb46-5"><a href="lec04.html#cb46-5"></a>    <span class="kw">let</span> c: &amp;<span class="ot">'b</span> <span class="dt">str</span> = <span class="dt">String</span>::as_str(_r1);</span>
+<span id="cb46-6"><a href="lec04.html#cb46-6"></a></span>
+<span id="cb46-7"><a href="lec04.html#cb46-7"></a>    <span class="ot">'c</span>: <span class="op">{</span></span>
+<span id="cb46-8"><a href="lec04.html#cb46-8"></a>      <span class="kw">let</span> _r2: &amp;<span class="ot">'c</span> <span class="kw">mut</span> <span class="dt">String</span> = &amp;<span class="op">[</span><span class="ot">'a</span> -&gt; <span class="ot">'c</span><span class="op">]</span> <span class="kw">mut</span> s;</span>
+<span id="cb46-9"><a href="lec04.html#cb46-9"></a>      <span class="dt">String</span>::push_str(_r2, <span class="st">" World!"</span>);</span>
+<span id="cb46-10"><a href="lec04.html#cb46-10"></a>     <span class="op">}</span></span>
+<span id="cb46-11"><a href="lec04.html#cb46-11"></a></span>
+<span id="cb46-12"><a href="lec04.html#cb46-12"></a>     <span class="pp">dbg!</span>(c);</span>
+<span id="cb46-13"><a href="lec04.html#cb46-13"></a>  <span class="op">}</span></span>
+<span id="cb46-14"><a href="lec04.html#cb46-14"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-aliasing-a-mutable-reference-again-7"><div>
+<h1>Example: aliasing a mutable reference (again)</h1>
+<ul>
+<li>Rejected not because of <code>&amp;str</code> but for an outstanding <code>&amp;String</code>!</li>
+</ul>
+<div class="sourceCode" id="cb47"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb47-1"><a href="lec04.html#cb47-1"></a><span class="ot">'a</span>: <span class="op">{</span></span>
+<span id="cb47-2"><a href="lec04.html#cb47-2"></a>  <span class="kw">let</span> <span class="kw">mut</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb47-3"><a href="lec04.html#cb47-3"></a>  <span class="ot">'b</span>: <span class="op">{</span></span>
+<span id="cb47-4"><a href="lec04.html#cb47-4"></a>    <span class="kw">let</span> _r1: &amp;<span class="ot">'b</span> <span class="dt">String</span> = &amp;<span class="op">[</span><span class="ot">'a</span> -&gt; <span class="ot">'b</span><span class="op">]</span>s;</span>
+<span id="cb47-5"><a href="lec04.html#cb47-5"></a>    <span class="kw">let</span> c: &amp;<span class="ot">'b</span> <span class="dt">str</span> = <span class="dt">String</span>::as_str(_r1);</span>
+<span id="cb47-6"><a href="lec04.html#cb47-6"></a></span>
+<span id="cb47-7"><a href="lec04.html#cb47-7"></a>    <span class="ot">'c</span>: <span class="op">{</span></span>
+<span id="cb47-8"><a href="lec04.html#cb47-8"></a>      <span class="kw">let</span> _r2: &amp;<span class="ot">'c</span> <span class="kw">mut</span> <span class="dt">String</span> = &amp;<span class="op">[</span><span class="ot">'a</span> -&gt; <span class="ot">'c</span><span class="op">]</span> <span class="kw">mut</span> s;</span>
+<span id="cb47-9"><a href="lec04.html#cb47-9"></a>      <span class="dt">String</span>::push_str(_r2, <span class="st">" World!"</span>);</span>
+<span id="cb47-10"><a href="lec04.html#cb47-10"></a>     <span class="op">}</span></span>
+<span id="cb47-11"><a href="lec04.html#cb47-11"></a></span>
+<span id="cb47-12"><a href="lec04.html#cb47-12"></a>     <span class="pp">dbg!</span>(c);</span>
+<span id="cb47-13"><a href="lec04.html#cb47-13"></a>  <span class="op">}</span></span>
+<span id="cb47-14"><a href="lec04.html#cb47-14"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-lifetime-vs.-scope-again"><div>
+<h1>Example: lifetime vs. scope (again)</h1>
+<ul>
+<li>Q. What’s <code>c</code>’s scope and lifetime?</li>
+</ul>
+<div class="sourceCode" id="cb48"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb48-1"><a href="lec04.html#cb48-1"></a><span class="kw">let</span> <span class="kw">mut</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb48-2"><a href="lec04.html#cb48-2"></a><span class="kw">let</span> c = s.as_str();</span>
+<span id="cb48-3"><a href="lec04.html#cb48-3"></a><span class="pp">dbg!</span>(c);</span>
+<span id="cb48-4"><a href="lec04.html#cb48-4"></a>    </span>
+<span id="cb48-5"><a href="lec04.html#cb48-5"></a>s.push_str(<span class="st">" World!"</span>);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-lifetime-vs.-scope-again-1"><div>
+<h1>Example: lifetime vs. scope (again)</h1>
+<ul>
+<li>Q. What’s <code>c</code>’s scope and lifetime?</li>
+</ul>
+<div class="sourceCode" id="cb49"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb49-1"><a href="lec04.html#cb49-1"></a><span class="ot">'a</span>: <span class="op">{</span></span>
+<span id="cb49-2"><a href="lec04.html#cb49-2"></a>  <span class="kw">let</span> <span class="kw">mut</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb49-3"><a href="lec04.html#cb49-3"></a>  <span class="ot">'b</span>: <span class="op">{</span></span>
+<span id="cb49-4"><a href="lec04.html#cb49-4"></a>    <span class="kw">let</span> c = <span class="dt">String</span>::as_str(&amp;<span class="ot">'b</span> s);</span>
+<span id="cb49-5"><a href="lec04.html#cb49-5"></a>    <span class="pp">dbg!</span>(c);</span>
+<span id="cb49-6"><a href="lec04.html#cb49-6"></a>   <span class="op">}</span></span>
+<span id="cb49-7"><a href="lec04.html#cb49-7"></a>  <span class="ot">'c</span>: <span class="op">{</span></span>
+<span id="cb49-8"><a href="lec04.html#cb49-8"></a>    <span class="dt">String</span>::push_str(&amp;<span class="ot">'c</span> <span class="kw">mut</span> s, &amp;<span class="ot">'c</span> <span class="st">" World!"</span>);</span>
+<span id="cb49-9"><a href="lec04.html#cb49-9"></a>  <span class="op">}</span></span>
+<span id="cb49-10"><a href="lec04.html#cb49-10"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="lifetime-elision"><div>
+<h1>Lifetime elision</h1>
+<ul>
+<li>Lifetime <strong>should be annotated</strong> by developers unless it can be <em>trivially</em> inferred</li>
+</ul>
+<div class="sourceCode" id="cb50"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb50-1"><a href="lec04.html#cb50-1"></a>&amp;<span class="ot">'a</span> T</span>
+<span id="cb50-2"><a href="lec04.html#cb50-2"></a>&amp;<span class="ot">'a</span> <span class="kw">mut</span> T</span>
+<span id="cb50-3"><a href="lec04.html#cb50-3"></a>T&lt;<span class="ot">'a</span>&gt;</span>
+<span id="cb50-4"><a href="lec04.html#cb50-4"></a></span>
+<span id="cb50-5"><a href="lec04.html#cb50-5"></a><span class="kw">fn</span> print(s: &amp;<span class="dt">str</span>);        <span class="co">// elided</span></span>
+<span id="cb50-6"><a href="lec04.html#cb50-6"></a><span class="kw">fn</span> print&lt;<span class="ot">'a</span>&gt;(s: &amp;<span class="ot">'a</span> <span class="dt">str</span>); <span class="co">// expanded</span></span>
+<span id="cb50-7"><a href="lec04.html#cb50-7"></a></span>
+<span id="cb50-8"><a href="lec04.html#cb50-8"></a><span class="kw">fn</span> get_str() -&gt; &amp;<span class="dt">str</span>;     <span class="co">// Q. how to interpret?</span></span>
+<span id="cb50-9"><a href="lec04.html#cb50-9"></a><span class="kw">fn</span> get_longer(s1: &amp;<span class="dt">str</span>, s2: &amp;<span class="dt">str</span>) -&gt; &amp;<span class="dt">str</span>; <span class="co">// Q. how to interpret?</span></span></code></pre></div>
+<p>Ref. <a href="https://doc.rust-lang.org/nomicon/lifetime-elision.html">Nomicon, 3.5 Lifetime Elision</a></p>
+</div></section>
+<section class="slide level1" id="example-using-lifetime-annotation"><div>
+<h1>Example: using lifetime annotation</h1>
+<ul>
+<li>Q. How do first and second <code>lhs()</code> implementations differ?</li>
+</ul>
+<div class="sourceCode" id="cb51"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb51-1"><a href="lec04.html#cb51-1"></a><span class="kw">fn</span> lhs&lt;<span class="ot">'a</span>&gt;(s1: &amp;<span class="ot">'a</span> <span class="dt">str</span>, s2: &amp;<span class="ot">'a</span> <span class="dt">str</span>) -&gt; &amp;<span class="ot">'a</span> <span class="dt">str</span> <span class="op">{}</span></span>
+<span id="cb51-2"><a href="lec04.html#cb51-2"></a><span class="kw">fn</span> lhs&lt;<span class="ot">'a</span>, <span class="ot">'b</span>&gt;(s1: &amp;<span class="ot">'a</span> <span class="dt">str</span>, s2: &amp;<span class="ot">'b</span> <span class="dt">str</span>) -&gt; &amp;<span class="ot">'a</span> <span class="dt">str</span> <span class="op">{}</span></span>
+<span id="cb51-3"><a href="lec04.html#cb51-3"></a></span>
+<span id="cb51-4"><a href="lec04.html#cb51-4"></a><span class="kw">fn</span> rhs&lt;<span class="ot">'a</span>, <span class="ot">'b</span>&gt;(s1: &amp;<span class="ot">'a</span> <span class="dt">str</span>, s2: &amp;<span class="ot">'b</span> <span class="dt">str</span>) -&gt; &amp;<span class="ot">'b</span> <span class="dt">str</span> <span class="op">{}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-using-lifetime-annotation-1"><div>
+<h1>Example: using lifetime annotation</h1>
+<div class="sourceCode" id="cb52"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb52-1"><a href="lec04.html#cb52-1"></a><span class="co">// an instance of S should live as long as s ('a)</span></span>
+<span id="cb52-2"><a href="lec04.html#cb52-2"></a><span class="co">//   or consider it as a constructor function that accepts</span></span>
+<span id="cb52-3"><a href="lec04.html#cb52-3"></a><span class="co">//   &amp;'a str and produces S that should live just long as 'a</span></span>
+<span id="cb52-4"><a href="lec04.html#cb52-4"></a><span class="kw">struct</span> S&lt;<span class="ot">'a</span>&gt; <span class="op">{</span></span>
+<span id="cb52-5"><a href="lec04.html#cb52-5"></a>  s: &amp;<span class="ot">'a</span> <span class="dt">str</span>,</span>
+<span id="cb52-6"><a href="lec04.html#cb52-6"></a><span class="op">}</span></span>
+<span id="cb52-7"><a href="lec04.html#cb52-7"></a></span>
+<span id="cb52-8"><a href="lec04.html#cb52-8"></a><span class="co">// promises to produce &amp;str that lives just long as both params</span></span>
+<span id="cb52-9"><a href="lec04.html#cb52-9"></a><span class="kw">fn</span> get_longer&lt;<span class="ot">'a</span>&gt;(s1: &amp;<span class="ot">'a</span> <span class="dt">str</span>, s2: &amp;<span class="ot">'a</span> <span class="dt">str</span>) -&gt; &amp;<span class="ot">'a</span> <span class="dt">str</span> <span class="op">{</span></span>
+<span id="cb52-10"><a href="lec04.html#cb52-10"></a>  <span class="kw">if</span> s1.len() &lt; s2.len() <span class="op">{</span></span>
+<span id="cb52-11"><a href="lec04.html#cb52-11"></a>    s2</span>
+<span id="cb52-12"><a href="lec04.html#cb52-12"></a>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span id="cb52-13"><a href="lec04.html#cb52-13"></a>    s1</span>
+<span id="cb52-14"><a href="lec04.html#cb52-14"></a>  <span class="op">}</span></span>
+<span id="cb52-15"><a href="lec04.html#cb52-15"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-complicated-lifetime"><div>
+<h1>Example: complicated lifetime</h1>
+<ul>
+<li>Q. is it possible to define this function?</li>
+<li>Q. how bottom two functions are semantically different?</li>
+<li>Q. is it legitimate to define the function both ways?</li>
+</ul>
+<div class="sourceCode" id="cb53"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb53-1"><a href="lec04.html#cb53-1"></a><span class="kw">fn</span> get(s: &amp;<span class="dt">str</span>) -&gt; (&amp;<span class="dt">str</span>, &amp;<span class="dt">str</span>) <span class="op">{}</span></span>
+<span id="cb53-2"><a href="lec04.html#cb53-2"></a></span>
+<span id="cb53-3"><a href="lec04.html#cb53-3"></a><span class="kw">fn</span> get&lt;<span class="ot">'a</span>&gt;(s: &amp;<span class="ot">'a</span> <span class="dt">str</span>) -&gt; (&amp;<span class="ot">'a</span> <span class="dt">str</span>, &amp;<span class="ot">'a</span> <span class="dt">str</span>) <span class="op">{}</span></span>
+<span id="cb53-4"><a href="lec04.html#cb53-4"></a><span class="kw">fn</span> get&lt;<span class="ot">'a</span>, <span class="ot">'b</span>&gt;(s: &amp;<span class="ot">'a</span> <span class="dt">str</span>) -&gt; (&amp;<span class="ot">'a</span> <span class="dt">str</span>, &amp;<span class="ot">'b</span> <span class="dt">str</span>) <span class="op">{}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="unbounded-lifetime-static"><div>
+<h1>Unbounded lifetime (’static)</h1>
+<div class="sourceCode" id="cb54"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb54-1"><a href="lec04.html#cb54-1"></a><span class="kw">let</span> _: () = <span class="st">"Hello"</span>;</span></code></pre></div>
+<iframe height="80%" src="code/err-static.html" width="100%"></iframe>
+</div></section>
+<section class="slide level1" id="example-using-static"><div>
+<h1>Example: using ’static</h1>
+<ul>
+<li>Reducing the lifetime from <code>'static</code> to <code>'a</code></li>
+</ul>
+<div class="sourceCode" id="cb55"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb55-1"><a href="lec04.html#cb55-1"></a><span class="co">// String::from(s: &amp;str) -&gt; String</span></span>
+<span id="cb55-2"><a href="lec04.html#cb55-2"></a><span class="kw">let</span> s = <span class="dt">String</span>::from(<span class="st">"Hello"</span>);</span>
+<span id="cb55-3"><a href="lec04.html#cb55-3"></a></span>
+<span id="cb55-4"><a href="lec04.html#cb55-4"></a><span class="co">// =&gt; fn push_str(&amp;mut self, string: &amp;str)</span></span>
+<span id="cb55-5"><a href="lec04.html#cb55-5"></a>s.push_str(<span class="st">" World!"</span>);</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="next-lecture"><div>
+<h1>Next lecture</h1>
+<ul>
+<li>Next: Rust 3: Unsafety (and Safety)</li>
+<li>Don’t forget to submit answers to prep-questions (<mark>DUE: 10pm</mark>)</li>
+<li>“Lab 0: Rustlings” is due (<mark>DUE: Jan 20</mark>)</li>
+<li>“Lab 1: Bootstrapping Raspberry Pi” is out early per request!</li>
+<li>Perpetration: Rpi 3 + sdcard + reader (from Lab 1)</li>
+</ul>
+</div></section>
+<section class="slide level1" id="references"><div>
+<h1>References</h1>
+<ul>
+<li><a href="https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html">Understanding Ownership</a></li>
+<li><a href="https://doc.rust-lang.org/nomicon/ownership.html">Ownership and Lifetimes</a></li>
+<li><a href="https://doc.rust-lang.org/nomicon/lifetime-elision.html">Lifetime Elision</a></li>
+<li><a href="https://doc.rust-lang.org/nomicon/dot-operator.html">The Dot Operator</a></li>
+</ul>
+</div></section>
+<div class="progress"><div></div></div>
+<script src="../shower/js/shower.js"></script>
+</body>
+</html>

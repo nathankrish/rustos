@@ -1,0 +1,262 @@
+Lab 0: Rustlings
+================
+
+- **Handed out:** Tuesday, January 7, 2020
+- **Due:** Monday, January 20, 2020
+
+Introduction
+------------
+
+Welcome to CS3210! We're really excited that you've decided to
+join us for this inaugural incarnation. We hope you have as much
+fun taking this class as we've had developing it! And, of course,
+we hope you learn a ton.
+
+We're hoping to do things a little differently in CS3210 than the
+norm. In particular, we want *you* to write the majority of the
+code, and we want your code to execute on *real* hardware, doing
+*real* things. There's going to be very little scaffolding
+provided for you, and all of your code will target and run on the
+Raspberry Pi 3/B/B+, a quad-core ARMv8 Cortex-A53 based embedded
+platform.
+
+Unlike last serveral years,
+we'll be programming a toy OS
+in `Rust <https://www.rust-lang.org/en-US/>`__,
+"a systems programming language that runs blazingly fast, prevents segfaults,
+and guarantees thread safety."
+You can think of Rust as a
+successor to C and C++, but it's more useful to think of it as a
+brand new language with new concepts. Don't try to program in Rust
+as if it's C, C++, Java, or any other language you're used to.
+Instead, see it as an opportunity to learn a new way to write
+software - a new *rusty* way. By the end of the term, we think
+you'll agree that Rust helps you write more correct, more
+reliable, and importantly more secure software,
+which are the key properties for operating systems!
+
+You'll be writing a lot of code in CS3210, though we think that
+the majority of your time will be spent thinking about what needs
+to happen. We expect that most assignments will take about 15-20
+hours a week to complete, which means you should, under no circumstance,
+procrastinate in CS3210.
+Start early, ask questions, visit us at the office hours,
+and importantly have fun - you'll learn much more if you give yourself
+a chance to think through hard problems.
+
+We're here to answer any and all questions. Please don't hesitate
+to reach out to us. Best of luck!
+
+Overview
+~~~~~~~~
+
+Mastering a programming language takes time.
+In fact, truly mastering a single programming language
+takes *long* time, perhaps our lifetime.
+In other words, it's unrealistic to assume
+that we become a true master of Rust in a week
+- but we all hope we can start tinkering anything with Rust
+at the end of this semester.
+
+As a warm up, we will spend sometime
+to understand syntactic as well as semantic
+foundation of the Rust programming language
+by answering a series of questions we prepared.
+
+To get set up your environment,
+let's first install required dependencies
+and the Rust ecosystems, namely ``rustc`` and ``cargo``.
+We assume that you are doing the assignments
+on a latest LTS Ubuntu distribution (i.e., Ubuntu 18.04 LTS).
+If you are not running Ubuntu natively,
+please check the `Tool <tools.html>`__ page
+to prepare a Ubuntu virtual machine.
+Also if you are not familiar with ``git``,
+please first check
+`Pro Git Book <https://git-scm.com/book/en/v2>`__.
+
+.. code-block:: sh
+
+    $ git clone https://github.com/sslab-gatech/cs3210-rustos-public.git --origin skeleton rustos
+    $ cd rustos
+
+    # This script automatically setup the environment
+    $ bin/setup.sh
+    ...
+
+    $ export PATH=$HOME/.cargo/bin:$PATH
+    $ rustc --version
+    rustc 1.37.0-nightly (0af8e872e 2019-06-30)
+
+In the repository, we try hard to keep everything in place
+- no additional download or dependencies. It looks like:
+
+.. code-block:: none
+
+    .
+    ├── bin : common binaries/utilities (e.g., objdump for aarch64)
+    ├── doc : reference documents
+    └── tut : tutorial/practices (i.e., no further reuse for later labs)
+        └── 0-rustlings : this contains files for lab0
+
+Rustlings
+---------
+
+.. figure:: https://i.imgur.com/LbZJgmm.gif
+   :align: center
+   :width: 300px           
+
+Our goal of lab0 is to guide you to read
+from `Chapter 1 <https://doc.rust-lang.org/rust-by-example/hello.html>`__ to
+`Chapter 18 <https://doc.rust-lang.org/rust-by-example/error.html>`__
+of `Rust By Example <https://doc.rust-lang.org/rust-by-example/index.html>`__.
+
+To check your understanding,
+we will use `Rustlings <https://github.com/rust-lang/rustlings/>`__,
+which is a neat way
+to get familiarized with Rust
+by solving a series of *simple* exercises.
+It provides an interactive session of training
+by comprehending the compiler error messages
+and resolving it.
+While doing exercises,
+you would like to read various chapters of
+`The Rust Book <https://doc.rust-lang.org/book/index.html>`__.
+You can also find more pointers on Rust
+in the course's reference page.
+
+.. code-block:: sh
+
+   $ cd tut/0-rustlings
+   $ ./rustlings help
+   ...
+   SUBCOMMANDS:
+        help      Prints this message or the help of the given subcommand(s)
+        hint      Returns a hint for the current exercise
+        run       Runs/Tests a single exercise
+        verify    Verifies all exercises according to the recommended order
+        watch     Reruns `verify` when files were edited
+
+To start your exercise, 
+you can invoke the ``watch`` command
+that guides you which exercise to work on
+in a proper order:
+
+.. code-block:: sh
+
+   $ ./rustlings watch
+
+If you'd like, you can also do each exercise (files in ``exercises/``)
+by invoking ``./rustling run [name]``.
+
+.. code-block:: sh
+
+   $ ./rustlings run variables1
+    ! Compilation of exercises/variables/variables1.rs failed! Compiler error message:
+    
+    error[E0425]: cannot find value `x` in this scope
+      --> exercises/variables/variables1.rs:12:5
+       |
+    12 |     x = 5;
+       |     ^ not found in this scope
+    
+    error[E0425]: cannot find value `x` in this scope
+      --> exercises/variables/variables1.rs:13:36
+       |
+    13 |     println!("x has the value {}", x);
+       |                                    ^ not found in this scope
+    
+    error: aborting due to 2 previous errors
+    
+    For more information about this error, try `rustc --explain E0425`.
+
+If you find the exercise too difficult,
+ask rustlings for hints of the exercise, like below:
+
+.. code-block:: sh
+
+    $ rustlings hint variables1
+    Hint: The declaration on line 12 is missing a keyword that is needed in Rust
+    to create a new variable binding
+
+To complete this assignment, ``./rusting verify`` should say
+all the prepared exercises are successfully completed!
+
+Assignment Submission
+---------------------
+
+We are going to use `Georgia Tech's GitHub <https://github.gatech.edu>`__
+for the assignment submission in CS3210.
+After logging into the system,
+`create a repository <https://help.github.com/en/github/getting-started-with-github/create-a-repo>`__ named ``rustos``.
+When creating the repository, **make it private**
+and **do not initialize the repository with a README**.
+Next, give TAs' accounts access to your repository for the grading purpose.
+You should add us in ``Settings > Collaborators`` in your repository menu.
+
+* Yechan Bae (ybae38)
+* Sujin Park (spark800)
+* Mansour Alharthi (malharthi9)
+* Taesoo Kim (tkim92)
+
+Once you have created the repository, **inform us via**
+`Google Form <https://forms.gle/5nz7F3DoWGELjtev8>`__.
+
+To submit your code for lab0,
+push a commit to the GitHub repository with a tag named ``lab0-done``.
+We will fetch the assignment code from your repository on each deadline.
+The following git command samples might be helpful.
+
+.. code-block:: sh
+
+    # connect your local repository to GitHub
+    $ git remote add origin https://github.gatech.edu/[id]/rustos
+    $ git push -u origin master
+
+    # make a commit and publish the update
+    $ git status
+    $ git add -A
+    $ git commit -a -m "yay, lab0 done!"
+    $ git push
+
+    # submit lab0
+    $ git tag lab0-done
+    $ git push --tags
+
+
+Grading Policy
+~~~~~~~~~~~~~~
+
+Your score will be simply calculated based
+on the submission date of the "completed" assignment.
+The meaning of "completion" is for your repository
+to be **tagged** as "labN-done" (e.g., lab0-done).
+If your code in the repo
+passes all test cases
+provided as part of the assignment **on time**,
+you will get the maximum score (i.e., 100) for the corresponding lab.
+If you are late in submitting the completed assignment,
+your score of the lab
+will be ``max(0, 100*[#passes/#testcases] - [#late-day]*10)``, in theory.
+
+However, we give **a week** (7 days in total for all labs)
+of a grace period, which you can use without even letting
+us know! For example,
+if you are one-day late in submitting the first lab
+(i.e., the completed lab0),
+you still get 100 points for the lab
+but your grace period is *first* reduced to 6 days.
+Once you don't have any grace period left,
+the above rule for the lab effectively takes place.
+For example, if you don't have any grace period
+but again late in submitting the lab one day,
+your score would be ``max(0, 100 - 1*10)``, so ``90``
+for the completed lab.
+
+We will regularly fetch your repository after the initial deadline,
+and your score and the grace period will be automatically updated on canvas.
+Please `send us an email <http://headstrong.gtisc.gatech.edu:8080/info.html#staff-ta>`__
+if you made a late change to the assignment
+and your score had not updated for a week.
+
+We really hope *all* the students in this class get A!

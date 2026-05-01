@@ -1,0 +1,48 @@
+Reference Materials
+===================
+
+Rust
+----
+- `Rust by Example <https://doc.rust-lang.org/rust-by-example/>`__
+- `Rust Book <https://doc.rust-lang.org/book/index.html>`__
+- `The Rustonomicon <https://doc.rust-lang.org/stable/nomicon/>`__
+- `Rust Macro <https://danielkeep.github.io/tlborm/book/index.html>`__
+- `MicroRust <https://droogmic.github.io/microrust/>`__
+- `Rust in Three Days <https://ferrous-systems.github.io/rust-three-days-course/presentation/?locale=en-US#/>`__
+
+You might want to start from here:
+
+.. code-block:: sh
+
+    $ rustup doc
+
+
+ARM/Raspberry Pi
+----------------
+
+- `Raspberry Pi Hardware <https://www.raspberrypi.org/documentation/hardware/>`__
+- `Bare metal Raspberry Pi 3 Tutorials <https://github.com/bztsrc/raspi3-tutorial>`__
+- `Arm Architecture Reference Manual <https://static.docs.arm.com/ddi0487/ea/DDI0487E_a_armv8_arm.pdf?_ga=2.90112923.1004222476.1576790635-1220902883.1575563072>`__
+- `Raspberry Pi OS <https://s-matyukevich.github.io/raspberry-pi-os/>`__
+
+Rust OS
+-------
+- `Writing an OS in Rust (Blog OS) <https://os.phil-opp.com/>`__
+- `Rust Raspi3 OS Tutorials <https://github.com/rust-embedded/rust-raspi3-OS-tutorials>`__
+- `Making a RISC-V Operating System using Rust <http://osblog.stephenmarz.com/>`__
+- `Redox <https://www.redox-os.org/>`__
+- `Tock <https://www.tockos.org/>`__
+
+C Programming
+-------------
+- `The C programming language <http://www.amazon.com/The-Programming-Language-Brian-Kernighan/dp/0131103628>`__
+- `Modern C <http://icube-icps.unistra.fr/index.php/Jens_Gustedt>`__
+- `Learn C The Hard Way <https://learncodethehardway.org/c/>`__
+
+UNIX
+----
+- `The UNIX Operating System <https://www.youtube.com/watch?v=tc4ROCJYbm0>`__, AT&T Archives at YouTube
+- `The UNIX Time-Sharing System <https://www.cs.berkeley.edu/~brewer/cs262/UNIX-annotated.pdf>`__, Dennis M. Ritchie and Ken L.Thompson, Bell System Technical Journal
+- `The Evolution of the Unix Time-sharing System <http://www.read.seas.harvard.edu/~kohler/class/aosref/ritchie84evolution.pdf>`__, Dennis M. Ritchie
+- `A Commentary on the Sixth Edition UNIX Operating System <r/unix6.pdf>`__, John Lions
+

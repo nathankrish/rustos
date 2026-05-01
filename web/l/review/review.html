@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Q1 Review</title>
+<meta charset="utf-8"/>
+<meta content="ie=edge" http-equiv="x-ua-compatible"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="../shower/styles/ribbon.css" rel="stylesheet"/>
+<style>
+section pre code {
+  line-height: 1.4 !important;
+  font-size: 20px !important;
+}
+.compact code {
+  line-height: 1.4 !important;
+  font-size: 16px !important;
+}
+ul.compact {
+  line-height: 1.5 !important;
+  font-size: 20px !important;
+}
+.writeup {
+    font-size: 20px !important;
+}
+a.sourceLine { background: none !important; }
+section.region { display: none !important; }
+pre.numberSource { margin-left: 2em; }
+div.sourceCode { overflow: hidden; }
+a.sourceLine::before { text-decoration: none; }
+
+pre > code.sourceCode > span > a:first-child::before { text-decoration: none !important; }
+</style>
+<script src="../shower/js/jquery-2.2.0.min.js"></script>
+</head>
+<body class="shower list">
+<header class="caption">
+<h1>CS3210 Design Operating Systems</h1>
+<p>Taesoo Kim</p>
+</header>
+<header class="caption">
+</header>
+<section class="slide" id="cover">
+<br/><br/><br/><br/>
+<h2>Q1 Review</h2>
+<p> Taesoo Kim</p>
+<style>
+ #cover h2 {
+   /* margin:180px 0 0; */
+   color: #666;
+   text-align:center;
+   font-size: 60px;
+   font-weight: bold;
+   margin-bottom: 0em;
+ }
+ #cover p {
+   margin:30px 0 0;
+   text-align:center;
+   font-style:italic;
+   font-size:40px;
+ }
+ </style>
+</section>
+
+<section class="slide level1" id="about-proposals"><div>
+<h1>About Proposals</h1>
+<ul>
+<li>A few overlapping topics: find unique/interesting perspectives
+<ul>
+<li>Audio/PWM</li>
+<li>Video/HDMI</li>
+<li>Writable FS</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="audiopwm"><div>
+<h1>Audio/PWM</h1>
+<ul>
+<li>How to mix two or more audios, like your laptop?</li>
+<li>How to design system calls for user program (e.g., fd/dev)?</li>
+<li>How to design device driver interfaces (e.g., ioctl)?</li>
+<li>How to orchestrate them in the interrupt handler?</li>
+</ul>
+</div></section>
+<section class="slide level1" id="videohdmi"><div>
+<h1>Video/HDMI</h1>
+<ul>
+<li>How to design GUI interface like X.org?</li>
+<li>How to utilize Video Core?</li>
+<li>Can you support 3d rendering?</li>
+</ul>
+</div></section>
+<section class="slide level1" id="writable-sdcard"><div>
+<h1>Writable SDCard</h1>
+<ul>
+<li>What would be the right interface/syscalls?</li>
+<li>How to handle a file descriptor (we don’t have!)?</li>
+<li>What if the power goes off in the middle of writing a big file?</li>
+<li>When are you going to update FAT (sync/datasync)?</li>
+<li>(e.g., Encrypted FS is a good way to differentiate!)</li>
+</ul>
+</div></section>
+<section class="slide level1" id="quiz"><div>
+<h1>Quiz</h1>
+<ul>
+<li><strong>[30 point]</strong> Rust → Lectures on Rust 1-6</li>
+<li><strong>[30 point]</strong> Heap allocator → LEC 13</li>
+<li><strong>[40 point]</strong> File system → LEC 11</li>
+</ul>
+<p>→ <strong><em>Complete/review your Lab3 before the exam!</em></strong></p>
+</div></section>
+<section class="slide level1" id="review-heap-allocator"><div>
+<h1>Review: Heap allocator</h1>
+<ul>
+<li>Understand pros/cons of these two allocators:
+<ul>
+<li><strong>Bump allocator</strong>: simplest form, no reuse/free</li>
+<li><strong>Bin allocator</strong>: attempting to minimize fragmentation</li>
+</ul></li>
+<li>Think of how to address cons?</li>
+</ul>
+<p>Ref. <a href="https://os.phil-opp.com/allocator-designs/">Allocator Designs</a></p>
+</div></section>
+<section class="slide level1" id="bump-allocator"><div>
+<h1>Bump allocator</h1>
+<ul>
+<li>Q. How to do <code>alloc()</code>?</li>
+<li>Q. How to do <code>free()</code>?</li>
+<li>Q. How to handle layout (i.e., alignment)?</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/bump.svg" style="width:70%"/></p>
+</div></section>
+<section class="slide level1" id="maintaining-free-chunks-for-reuse"><div>
+<h1>Maintaining free chunks for reuse</h1>
+<ul>
+<li>Q. How to do <code>free()</code>?</li>
+<li>Q. How to do <code>alloc()</code>?</li>
+<li>Q. Where to store “link” then?</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/linked-list-allocation.svg" style="width: 80%"/></p>
+</div></section>
+<section class="slide level1" id="bin-allocator"><div>
+<h1>Bin allocator</h1>
+<ul>
+<li>Introducing <strong>size-based caching</strong> on freed chunks</li>
+<li>Maintaining a linked list per a group of free chunks with similar sizes (i.e., bin)</li>
+<li>Q. How to do <code>alloc()</code>?</li>
+<li>Q. How to do <code>free()</code>?</li>
+</ul>
+<pre><code>      Bins
+sz=16 [ -]---&gt;[fd]---&gt;[fd]--&gt;NULL
+sz=24 [ -]---&gt;[fd]---&gt;NULL
+sz=32 [ -]---&gt;NULL
+       ...</code></pre>
+</div></section>
+<section class="slide level1" id="review-fat32"><div>
+<h1>Review: FAT32</h1>
+<ul>
+<li>Be familiar with the FAT disk layout</li>
+<li>What’s the role of FAT?</li>
+<li>How to structure FAT?</li>
+<li>How the size of a file would be determined?</li>
+</ul>
+</div></section>
+<section class="slide level1" id="fat32-overview-disk-layout"><div>
+<h1>Fat32 Overview: Disk Layout</h1>
+<ul>
+<li>Starts with (extended) BIOS Parameter Block (E/BPB)</li>
+<li>Followed by <strong><em>FAT</em></strong> (File Allocation Table)</li>
+<li>Followed by <strong><em>Cluster</em></strong></li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/MBR.svg" style="width:90%"/></p>
+</div></section>
+<section class="slide level1" id="about-fat"><div>
+<h1>About FAT</h1>
+<ul>
+<li>Entry 0: indicating ID (ok to ignore)</li>
+<li><strong><em>Entry 1</em></strong>: indicating a special maker for the end of cluster (EOC)</li>
+<li>Other special markers: e.g., 0x?FFFFFF7 for bad sectors</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/fat.svg" style="width:90%"/></p>
+</div></section>
+<section class="slide level1" id="example-fat"><div>
+<h1>Example FAT</h1>
+<p style="text-align:center;margin:0"><img src="img/ex-fat.png" style="width:90%"/></p>
+</div></section>
+<div class="progress"><div></div></div>
+<script src="../shower/js/shower.js"></script>
+</body>
+</html>

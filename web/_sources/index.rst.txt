@@ -1,0 +1,33 @@
+===========================================
+CS-3210: Design Operating Systems
+===========================================
+
+.. toctree::
+   :hidden:
+   :glob:
+
+   info
+   cal
+   lab
+   proj
+   refs
+   
+----
+News
+----
+
+- 04/16/2020: Lab5 has been released!
+- 03/16/2020: We are switching to online lectures, See `@665 <https://piazza.com/class/k4iwq4owaka7pc?cid=665>`_.
+- 03/02/2020: Lab4 has been released!
+- 02/06/2020: Lab3 has been released!
+- 01/27/2020: We migrated our pre-lecture survey to `here <https://gatech.co1.qualtrics.com/jfe/form/SV_3q6Y3jezjQgnk2h>`__,
+  See `@141 <https://piazza.com/class/k4iwq4owaka7pc?cid=141>`__.
+- 01/24/2020: Lab2 has been released!
+- 01/17/2020: Lab1 has been updated.
+  Please check Piazza for additional information.
+- 01/16/2020: Lab1 has been released!
+- 01/07/2020: Hotfix for lab0 has been released.
+  Please check Piazza for additional information.
+- 01/07/2020: The classroom for CS 3210 has changed from Kendeda 230 to Klaus 1456.
+  We're sorry for the inconvenient.
+- 12/28/2020: Welcome to cs3210!

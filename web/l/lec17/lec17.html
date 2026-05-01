@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Virtual Memory</title>
+<meta charset="utf-8"/>
+<meta content="ie=edge" http-equiv="x-ua-compatible"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="../shower/styles/ribbon.css" rel="stylesheet"/>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+  position: relative; left: -1em; text-align: right; vertical-align: baseline;
+  border: none; display: inline-block;
+  -webkit-touch-callout: none; -webkit-user-select: none;
+  -khtml-user-select: none; -moz-user-select: none;
+  -ms-user-select: none; user-select: none;
+  padding: 0 4px; width: 4em;
+  color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+{   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style>
+section pre code {
+  line-height: 1.4 !important;
+  font-size: 20px !important;
+}
+.compact code {
+  line-height: 1.4 !important;
+  font-size: 16px !important;
+}
+ul.compact {
+  line-height: 1.5 !important;
+  font-size: 20px !important;
+}
+.writeup {
+    font-size: 20px !important;
+}
+a.sourceLine { background: none !important; }
+section.region { display: none !important; }
+pre.numberSource { margin-left: 2em; }
+div.sourceCode { overflow: hidden; }
+a.sourceLine::before { text-decoration: none; }
+
+pre > code.sourceCode > span > a:first-child::before { text-decoration: none !important; }
+</style>
+<script src="../shower/js/jquery-2.2.0.min.js"></script>
+</head>
+<body class="shower list">
+<header class="caption">
+<h1>CS3210 Design Operating Systems</h1>
+<p>Taesoo Kim</p>
+</header>
+<header class="caption">
+</header>
+<section class="slide" id="cover">
+<br/><br/><br/><br/>
+<h2>Virtual Memory</h2>
+<p> Taesoo Kim</p>
+<style>
+ #cover h2 {
+   /* margin:180px 0 0; */
+   color: #666;
+   text-align:center;
+   font-size: 60px;
+   font-weight: bold;
+   margin-bottom: 0em;
+ }
+ #cover p {
+   margin:30px 0 0;
+   text-align:center;
+   font-style:italic;
+   font-size:40px;
+ }
+ </style>
+</section>
+
+<section class="slide level1" id="administrivia"><div>
+<h1>Administrivia</h1>
+<ul>
+<li>First off, be safe/healthy!</li>
+<li>Last miles:
+<ol type="1">
+<li><strong><em>Virtual</em></strong> final project demo/presentation: 7 to 10-min video (DUE: <mark>Apr 13</mark>)</li>
+<li>Final project peer-evaluation (DUE: <mark>Apr 14</mark>/<mark>Apr 16</mark>)</li>
+<li>Final write-up/code (DUE: <mark>May 1</mark>)</li>
+<li>Quiz #2 will be distributed at <mark>9am on Apr 21</mark> (take-home/open-ended, 24h)</li>
+<li>Lab4 (DUE: <mark>Apr 20</mark> w/ 2-week late days)</li>
+</ol></li>
+</ul>
+</div></section>
+<section class="slide level1" id="virtual-final-project-demopresentation"><div>
+<h1>Virtual final project demo/presentation</h1>
+<ul>
+<li>7-10 min video (depending on #members in the team)</li>
+<li>Upload the video to Youtube</li>
+<li>Submit the link to us!</li>
+</ul>
+</div></section>
+<section class="slide level1" id="grading-policy-new"><div>
+<h1>Grading policy (new)</h1>
+<ul>
+<li>Preparation: 10%</li>
+<li>Quiz: 30%
+<ul>
+<li>20%: <strong><em>max(Q1, Q2)</em></strong></li>
+<li>10%: <strong><em>min(Q1, Q2)</em></strong></li>
+</ul></li>
+<li>Lab: 40%: 8% + 8% + 8% + 8% + 8% (<strong><em>bonus 8% for lab5</em></strong>)</li>
+<li>Final project: 20%
+<ul>
+<li>Demo &amp; presentation: <strong><em>5%</em></strong> (peer evaluation)</li>
+<li>Write-up/code: 15% (by TAs)</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="qa"><div>
+<h1>Q&amp;A</h1>
+<blockquote>
+<p>Why can kernel access user program memory? For what purpose?</p>
+</blockquote>
+<blockquote>
+<p>Given limited memory space, how does an embedded device handle virtual memory?</p>
+</blockquote>
+<blockquote>
+<p>How does an operating system give the illusion of multiple things occurring simultaneously? For example, if I run a Python script, download a file from the web, and fetch a web page in my browser all at the same time it looks to me as if my Python script is running through to completion without being scheduled out by the scheduler but it also seems like the file I’m downloading never gets interrupted and same with fetching the web page.</p>
+</blockquote>
+</div></section>
+<section class="slide level1" id="incorporating-io-in-scheduling"><div>
+<h1>Incorporating I/O in scheduling</h1>
+<p style="text-align:center;margin:0"><img src="img/io.png" style="width:65%"/></p>
+</div></section>
+<section class="slide level1" id="agenda"><div>
+<h1>Agenda</h1>
+<ul>
+<li>LEC 15: Interrupt and Exception (Lab4, Phase 1)</li>
+<li>LEC 16: Process and Scheduling (Lab4, Phase 2)</li>
+<li><strong><em>LEC 17: Virtual Memory (Lab4, Phase 3/4)</em></strong></li>
+<li>LEC 18: Multicore and Synchronization (Lab5, Phase 1)</li>
+</ul>
+</div></section>
+<section class="slide level1" id="summary-abstraction-process-ref"><div>
+<h1>Summary: Abstraction: “process” (<a href="http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-intro.pdf">ref</a>)</h1>
+<ul>
+<li>The problems of a single process model (i.e., firmware)
+<ol type="1">
+<li>Only one program is allowed to run</li>
+<li>Need to develop a program with consideration of running programs</li>
+</ol></li>
+</ul>
+<p>→ How to provide the illusion of owning the hardware?</p>
+</div></section>
+<section class="slide level1" id="summary-abstraction-process-ref-1"><div>
+<h1>Summary: Abstraction: “process” (<a href="http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-intro.pdf">ref</a>)</h1>
+<ul>
+<li>Key idea: abstracting the <em>memory</em> (virtual address space) and CPU (time sharing)
+<ol type="1">
+<li><strong>Exception level</strong> → provides a strong <em>isolation</em> for a user process</li>
+<li><strong>Interrupt handling</strong> → allowing <em>preemptive multitasking</em></li>
+</ol></li>
+</ul>
+</div></section>
+<section class="slide level1" id="today-virtual-memory"><div>
+<h1>Today: virtual memory</h1>
+<ul>
+<li>Isolation each processes by abstracting the virtual address space</li>
+<li>Disclaimer: more than isolation (i.e., lots of applications)
+<ol type="1">
+<li>On-demand paging</li>
+<li>Page swapping</li>
+</ol></li>
+</ul>
+</div></section>
+<section class="slide level1" id="prep-qa"><div>
+<h1>Prep Q&amp;A</h1>
+<ol type="1">
+<li>Can we use EL3 for userspace, EL0 for kernel (yes/no)? why not?</li>
+<li>Kernel can not read userspace memory (yes/no)?</li>
+<li>Userspace can not read kernel’s memory (yes/no)?</li>
+<li>Pointers in kernel are using physical address (yes/no)?</li>
+<li>Processes requiring 3GB memory cannot run on a machine with 2GB RAM (yes/no)?</li>
+</ol>
+</div></section>
+<section class="slide level1 cover"><img height="100%" src="img/bcm2836-peripherals.png" width="100%"/></section>
+<section class="slide level1" id="address-translation-by-mmu-in-aarch64"><div>
+<h1>Address translation by MMU in Aarch64</h1>
+<p style="text-align:center;margin:0"><img src="img/vm.png" style="width:50%"/></p>
+</div></section>
+<section class="slide level1" id="address-translation-by-mmu-in-aarch64-1"><div>
+<h1>Address translation by MMU in Aarch64</h1>
+<p style="text-align:center;margin:0"><img src="img/vm-aarch64.png" style="width:70%"/></p>
+</div></section>
+<section class="slide level1" id="unique-mmu-designs-of-aarch64"><div>
+<h1>Unique MMU designs of Aarch64</h1>
+<ul>
+<li>Two translation tables for top/bottom of the address space
+<ol type="1">
+<li><strong><em>TTBR1</em></strong>: a table for an address starting with 0b111…</li>
+<li><strong><em>TTBR0</em></strong>: a table for an address starting with 0b000…</li>
+</ol></li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/ttbr.png" style="width:40%"/></p>
+</div></section>
+<section class="slide level1" id="unique-mmu-designs-of-aarch64-1"><div>
+<h1>Unique MMU designs of Aarch64</h1>
+<ul>
+<li>IPS (Intermediate Physical Address Size): control the maximum output address size</li>
+<li>TG (Translation Granule): 00=4KB, 01=16KB, 11=64KB</li>
+<li>T0/1SZ: #bits to dispatch the address to TTBR0/1</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/tsz.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="translation-overview"><div>
+<h1>Translation overview</h1>
+<ul>
+<li>Given a <em>virtual address</em>:
+<ol type="1">
+<li>Decide which table (i.e., TTBR0/1) to use for address translation (based on T0/1SZ)</li>
+<li>Look up the entry inside the table (based on page size, TG)</li>
+<li>Output the <em>physical address</em> (limited by IPS)</li>
+</ol></li>
+</ul>
+</div></section>
+<section class="slide level1" id="example-2-level-translation"><div>
+<h1>Example: 2-level translation</h1>
+<ul>
+<li>TG = 11 (64KB)</li>
+<li>T0/1SZ = 22 (42-bit address space)</li>
+<li>8192 x 64-bit entries in the page table</li>
+<li>One entry refers 512MB (<strong><em>block</em></strong> descriptor)</li>
+</ul>
+</div></section>
+<section class="slide level1 cover"><img height="100%" src="img/trans2.png" width="100%"/></section>
+<section class="slide level1" id="example-3-level-translation"><div>
+<h1>Example: 3-level translation</h1>
+<ul>
+<li>TG = 11 (64KB)</li>
+<li>T0/1SZ = 22 (42-bit address space)</li>
+<li>8192 x 64-bit entries in the page table (L2)
+<ul>
+<li>One entry refers another page table, 64KB (<strong><em>table</em></strong> descriptor)</li>
+</ul></li>
+<li>8192 x 64-bit entries in the page table (L3)
+<ul>
+<li>One entry refers 64KB (<strong><em>block</em></strong> descriptor)</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1 cover"><img height="100%" src="img/trans3.png" width="100%"/></section>
+<section class="slide level1" id="table-entry"><div>
+<h1>Table entry</h1>
+<ul>
+<li>Each entry in the page table (refer the reference for more detail!)</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/entry.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="table-entry-for-supported-page-sizes"><div>
+<h1>Table entry for supported page sizes</h1>
+<ul>
+<li>4KB page: translating up to <strong>four</strong> levels (pros/cons?)</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/entry4.png" style="width:70%"/></p>
+<ul>
+<li>64KB page: translating up to three levels (pros/cons?)</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/entry64.png" style="width:70%"/></p>
+</div></section>
+<section class="slide level1" id="cache-polices"><div>
+<h1>Cache polices</h1>
+<ul>
+<li>MAIR (Memory Attribute Indirection Register): 3-bit index in the page table entry
+<ul>
+<li>Indicating that the cache policies of each memory block</li>
+<li>e.g., Cacheable or Non-cacheable</li>
+</ul></li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/mair.png" style="width:70%"/></p>
+</div></section>
+<section class="slide level1" id="memory-attribute"><div>
+<h1>Memory attribute</h1>
+<ul>
+<li>Unprivileged eXecute Never (UXN) / Privileged eXecute Never (PXN)</li>
+<li>AF is the access flag</li>
+<li>SH is the shareable attribute</li>
+<li>AP is the access permission</li>
+<li>Indx is the index into the MAIR_ELn.</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/attr.png" style="width:70%"/></p>
+</div></section>
+<section class="slide level1" id="memory-attribute-1"><div>
+<h1>Memory attribute</h1>
+<ul>
+<li>AP (access permission) for kernel/user R/W</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/perm.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="address-spaces-in-rustos"><div>
+<h1>Address spaces in RustOS</h1>
+<ul>
+<li>TTBR0 for the kernel space (4GB)</li>
+<li>TTBR1 for the user space (1GB)</li>
+<li>64KB page</li>
+</ul>
+</div></section>
+<section class="slide level1" id="mair-in-rustos"><div>
+<h1>MAIR in RustOS</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb1-1"><a href="lec17.html#cb1-1"></a><span class="co">// (ref: D7.2.70: Memory Attribute Indirection Register)</span></span>
+<span id="cb1-2"><a href="lec17.html#cb1-2"></a>MAIR_EL1<span class="op">.</span>set(</span>
+<span id="cb1-3"><a href="lec17.html#cb1-3"></a>    (<span class="dv">0xFF</span> <span class="op">&lt;&lt;</span>  <span class="dv">0</span>) <span class="op">|</span><span class="co">// AttrIdx=0: normal, IWBWA, OWBWA, NTR</span></span>
+<span id="cb1-4"><a href="lec17.html#cb1-4"></a>    (<span class="dv">0x04</span> <span class="op">&lt;&lt;</span>  <span class="dv">8</span>) <span class="op">|</span><span class="co">// AttrIdx=1: device, nGnRE (must be OSH too)</span></span>
+<span id="cb1-5"><a href="lec17.html#cb1-5"></a>    (<span class="dv">0x44</span> <span class="op">&lt;&lt;</span> <span class="dv">16</span>)<span class="op">,</span> <span class="co">// AttrIdx=2: non cacheable</span></span>
+<span id="cb1-6"><a href="lec17.html#cb1-6"></a>)<span class="op">;</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="ttbr-in-rustos"><div>
+<h1>TTBR in RustOS</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb2-1"><a href="lec17.html#cb2-1"></a><span class="co">// (ref: D7.2.91: Translation Control Register)</span></span>
+<span id="cb2-2"><a href="lec17.html#cb2-2"></a>TCR_EL1<span class="op">.</span>set(</span>
+<span id="cb2-3"><a href="lec17.html#cb2-3"></a>    (<span class="dv">0b00</span> <span class="op">&lt;&lt;</span> <span class="dv">37</span>) <span class="op">|</span><span class="co">// TBI=0, no tagging</span></span>
+<span id="cb2-4"><a href="lec17.html#cb2-4"></a>    (ips  <span class="op">&lt;&lt;</span> <span class="dv">32</span>) <span class="op">|</span><span class="co">// IPS</span></span>
+<span id="cb2-5"><a href="lec17.html#cb2-5"></a>    (<span class="dv">0b11</span> <span class="op">&lt;&lt;</span> <span class="dv">30</span>) <span class="op">|</span><span class="co">// TG1=64k</span></span>
+<span id="cb2-6"><a href="lec17.html#cb2-6"></a>    (<span class="dv">0b11</span> <span class="op">&lt;&lt;</span> <span class="dv">28</span>) <span class="op">|</span><span class="co">// SH1=3 inner</span></span>
+<span id="cb2-7"><a href="lec17.html#cb2-7"></a>    (<span class="dv">0b01</span> <span class="op">&lt;&lt;</span> <span class="dv">26</span>) <span class="op">|</span><span class="co">// ORGN1=1 write back</span></span>
+<span id="cb2-8"><a href="lec17.html#cb2-8"></a>    (<span class="dv">0b01</span> <span class="op">&lt;&lt;</span> <span class="dv">24</span>) <span class="op">|</span><span class="co">// IRGN1=1 write back</span></span>
+<span id="cb2-9"><a href="lec17.html#cb2-9"></a>    (<span class="dv">0b0</span>  <span class="op">&lt;&lt;</span> <span class="dv">23</span>) <span class="op">|</span><span class="co">// EPD1 enables higher half</span></span>
+<span id="cb2-10"><a href="lec17.html#cb2-10"></a>    ((USER_MASK_BITS <span class="kw">as</span> <span class="dt">u64</span>) <span class="op">&lt;&lt;</span> <span class="dv">16</span>) <span class="op">|</span> <span class="co">// T1SZ=34 (1GB)</span></span>
+<span id="cb2-11"><a href="lec17.html#cb2-11"></a>    (<span class="dv">0b01</span> <span class="op">&lt;&lt;</span> <span class="dv">14</span>) <span class="op">|</span><span class="co">// TG0=64k</span></span>
+<span id="cb2-12"><a href="lec17.html#cb2-12"></a>    (<span class="dv">0b11</span> <span class="op">&lt;&lt;</span> <span class="dv">12</span>) <span class="op">|</span><span class="co">// SH0=3 inner</span></span>
+<span id="cb2-13"><a href="lec17.html#cb2-13"></a>    (<span class="dv">0b01</span> <span class="op">&lt;&lt;</span> <span class="dv">10</span>) <span class="op">|</span><span class="co">// ORGN0=1 write back</span></span>
+<span id="cb2-14"><a href="lec17.html#cb2-14"></a>    (<span class="dv">0b01</span> <span class="op">&lt;&lt;</span>  <span class="dv">8</span>) <span class="op">|</span><span class="co">// IRGN0=1 write back</span></span>
+<span id="cb2-15"><a href="lec17.html#cb2-15"></a>    (<span class="dv">0b0</span>  <span class="op">&lt;&lt;</span>  <span class="dv">7</span>) <span class="op">|</span><span class="co">// EPD0 enables lower half</span></span>
+<span id="cb2-16"><a href="lec17.html#cb2-16"></a>    ((KERNEL_MASK_BITS <span class="kw">as</span> <span class="dt">u64</span>) <span class="op">&lt;&lt;</span> <span class="dv">0</span>)<span class="op">,</span> <span class="co">// T0SZ=32 (4GB)</span></span>
+<span id="cb2-17"><a href="lec17.html#cb2-17"></a>)<span class="op">;</span></span>
+<span id="cb2-18"><a href="lec17.html#cb2-18"></a></span>
+<span id="cb2-19"><a href="lec17.html#cb2-19"></a>TTBR0_EL1<span class="op">.</span>set(baddr)<span class="op">;</span></span>
+<span id="cb2-20"><a href="lec17.html#cb2-20"></a>TTBR1_EL1<span class="op">.</span>set(baddr)<span class="op">;</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="page-table-in-rustos"><div>
+<h1>Page Table in RustOS</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb3-1"><a href="lec17.html#cb3-1"></a><span class="at">#[</span>repr<span class="at">(</span>C<span class="at">)]</span></span>
+<span id="cb3-2"><a href="lec17.html#cb3-2"></a><span class="at">#[</span>repr<span class="at">(</span>align<span class="at">(</span><span class="dv">65536</span><span class="at">))]</span></span>
+<span id="cb3-3"><a href="lec17.html#cb3-3"></a><span class="kw">pub</span> <span class="kw">struct</span> PageTable <span class="op">{</span></span>
+<span id="cb3-4"><a href="lec17.html#cb3-4"></a>    <span class="kw">pub</span> l2<span class="op">:</span> L2PageTable<span class="op">,</span></span>
+<span id="cb3-5"><a href="lec17.html#cb3-5"></a>    <span class="kw">pub</span> l3<span class="op">:</span> [L3PageTable<span class="op">;</span> <span class="dv">3</span>]<span class="op">,</span></span>
+<span id="cb3-6"><a href="lec17.html#cb3-6"></a><span class="op">}</span></span>
+<span id="cb3-7"><a href="lec17.html#cb3-7"></a></span>
+<span id="cb3-8"><a href="lec17.html#cb3-8"></a><span class="kw">pub</span> <span class="kw">struct</span> KernPageTable(<span class="dt">Box</span><span class="op">&lt;</span>PageTable<span class="op">&gt;</span>)<span class="op">;</span></span>
+<span id="cb3-9"><a href="lec17.html#cb3-9"></a><span class="kw">pub</span> <span class="kw">struct</span> UserPageTable(<span class="dt">Box</span><span class="op">&lt;</span>PageTable<span class="op">&gt;</span>)<span class="op">;</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="page-table-in-rustos-1"><div>
+<h1>Page Table in RustOS</h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb4-1"><a href="lec17.html#cb4-1"></a><span class="kw">impl</span> PageTable <span class="op">{</span></span>
+<span id="cb4-2"><a href="lec17.html#cb4-2"></a>    <span class="co">/// Returns a new `Box` containing `PageTable`.</span></span>
+<span id="cb4-3"><a href="lec17.html#cb4-3"></a>    <span class="co">/// Entries in L2PageTable should be initialized properly</span></span>
+<span id="cb4-4"><a href="lec17.html#cb4-4"></a>    <span class="co">/// before return.</span></span>
+<span id="cb4-5"><a href="lec17.html#cb4-5"></a>    <span class="kw">fn</span> new(perm<span class="op">:</span> <span class="dt">u64</span>) <span class="op">-&gt;</span> <span class="dt">Box</span><span class="op">&lt;</span>PageTable<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb4-6"><a href="lec17.html#cb4-6"></a>        <span class="co">// linking three l3 page tables to l2</span></span>
+<span id="cb4-7"><a href="lec17.html#cb4-7"></a>        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0</span><span class="op">..=</span><span class="dv">2</span> <span class="op">{</span></span>
+<span id="cb4-8"><a href="lec17.html#cb4-8"></a>            pt<span class="op">.</span>l2<span class="op">.</span>entries[i]</span>
+<span id="cb4-9"><a href="lec17.html#cb4-9"></a>                <span class="op">.</span>set_value(<span class="pp">EntryValid::</span>Valid<span class="op">,</span> <span class="pp">RawL2Entry::</span>VALID)</span>
+<span id="cb4-10"><a href="lec17.html#cb4-10"></a>                <span class="op">.</span>set_value(<span class="pp">EntryType::</span>Table<span class="op">,</span> <span class="pp">RawL2Entry::</span>TYPE)</span>
+<span id="cb4-11"><a href="lec17.html#cb4-11"></a>                <span class="op">.</span>set_value(perm<span class="op">,</span> <span class="pp">RawL2Entry::</span>AP)</span>
+<span id="cb4-12"><a href="lec17.html#cb4-12"></a>                <span class="op">.</span>set_value(<span class="pp">EntrySh::</span>ISh<span class="op">,</span> <span class="pp">RawL2Entry::</span>SH)</span>
+<span id="cb4-13"><a href="lec17.html#cb4-13"></a>                <span class="op">.</span>set_value(<span class="pp">EntryAttr::</span>Mem<span class="op">,</span> <span class="pp">RawL2Entry::</span>ATTR)</span>
+<span id="cb4-14"><a href="lec17.html#cb4-14"></a>                <span class="op">.</span>set_bit(<span class="pp">RawL2Entry::</span>AF)</span>
+<span id="cb4-15"><a href="lec17.html#cb4-15"></a>                <span class="op">.</span>set_masked(pt<span class="op">.</span>l3[i]<span class="op">.</span>as_ptr()<span class="op">.</span>as_u64()<span class="op">,</span> <span class="pp">RawL2Entry::</span>ADDR)<span class="op">;</span></span>
+<span id="cb4-16"><a href="lec17.html#cb4-16"></a>        <span class="op">}</span></span>
+<span id="cb4-17"><a href="lec17.html#cb4-17"></a><span class="op">...</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="kernel-page-table-in-rustos"><div>
+<h1>Kernel Page Table in RustOS</h1>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb5-1"><a href="lec17.html#cb5-1"></a><span class="kw">impl</span> KernPageTable <span class="op">{</span></span>
+<span id="cb5-2"><a href="lec17.html#cb5-2"></a>    <span class="kw">pub</span> <span class="kw">fn</span> new() <span class="op">-&gt;</span> KernPageTable <span class="op">{</span></span>
+<span id="cb5-3"><a href="lec17.html#cb5-3"></a>        <span class="kw">let</span> <span class="kw">mut</span> pt <span class="op">=</span> <span class="pp">PageTable::</span>new(<span class="pp">EntryPerm::</span>KERN_RW)<span class="op">;</span></span>
+<span id="cb5-4"><a href="lec17.html#cb5-4"></a></span>
+<span id="cb5-5"><a href="lec17.html#cb5-5"></a>        <span class="co">// normal memory</span></span>
+<span id="cb5-6"><a href="lec17.html#cb5-6"></a>        <span class="kw">let</span> <span class="kw">mut</span> l3entry <span class="op">=</span> <span class="pp">RawL3Entry::</span>new(<span class="dv">0</span>)<span class="op">;</span></span>
+<span id="cb5-7"><a href="lec17.html#cb5-7"></a>        l3entry</span>
+<span id="cb5-8"><a href="lec17.html#cb5-8"></a>            <span class="op">.</span>set_value(<span class="pp">EntryValid::</span>Valid<span class="op">,</span> <span class="pp">RawL3Entry::</span>VALID)</span>
+<span id="cb5-9"><a href="lec17.html#cb5-9"></a>            <span class="op">.</span>set_value(<span class="pp">PageType::</span>Page<span class="op">,</span> <span class="pp">RawL3Entry::</span>TYPE)</span>
+<span id="cb5-10"><a href="lec17.html#cb5-10"></a>            <span class="op">.</span>set_value(<span class="pp">EntryAttr::</span>Mem<span class="op">,</span> <span class="pp">RawL3Entry::</span>ATTR)</span>
+<span id="cb5-11"><a href="lec17.html#cb5-11"></a>            <span class="op">.</span>set_value(<span class="pp">EntryPerm::</span>KERN_RW<span class="op">,</span> <span class="pp">RawL3Entry::</span>AP)</span>
+<span id="cb5-12"><a href="lec17.html#cb5-12"></a>            <span class="op">.</span>set_value(<span class="pp">EntrySh::</span>ISh<span class="op">,</span> <span class="pp">RawL3Entry::</span>SH)</span>
+<span id="cb5-13"><a href="lec17.html#cb5-13"></a>            <span class="op">.</span>set_bit(<span class="pp">RawL3Entry::</span>AF)<span class="op">;</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="kernel-page-table-in-rustos-1"><div>
+<h1>Kernel Page Table in RustOS</h1>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb6-1"><a href="lec17.html#cb6-1"></a><span class="kw">impl</span> KernPageTable <span class="op">{</span></span>
+<span id="cb6-2"><a href="lec17.html#cb6-2"></a>    <span class="kw">pub</span> <span class="kw">fn</span> new() <span class="op">-&gt;</span> KernPageTable <span class="op">{</span></span>
+<span id="cb6-3"><a href="lec17.html#cb6-3"></a>        <span class="op">...</span></span>
+<span id="cb6-4"><a href="lec17.html#cb6-4"></a></span>
+<span id="cb6-5"><a href="lec17.html#cb6-5"></a>        <span class="co">// iomem</span></span>
+<span id="cb6-6"><a href="lec17.html#cb6-6"></a>        l3entry</span>
+<span id="cb6-7"><a href="lec17.html#cb6-7"></a>            <span class="op">.</span>set_value(<span class="pp">EntrySh::</span>OSh<span class="op">,</span> <span class="pp">RawL3Entry::</span>SH)</span>
+<span id="cb6-8"><a href="lec17.html#cb6-8"></a>            <span class="op">.</span>set_value(<span class="pp">EntryAttr::</span>Dev<span class="op">,</span> <span class="pp">RawL3Entry::</span>ATTR)<span class="op">;</span></span>
+<span id="cb6-9"><a href="lec17.html#cb6-9"></a></span>
+<span id="cb6-10"><a href="lec17.html#cb6-10"></a>        <span class="kw">let</span> <span class="kw">mut</span> addr <span class="op">=</span> IO_BASE<span class="op">;</span></span>
+<span id="cb6-11"><a href="lec17.html#cb6-11"></a>        <span class="kw">while</span> addr <span class="op">&lt;</span> IO_BASE_END <span class="op">{</span></span>
+<span id="cb6-12"><a href="lec17.html#cb6-12"></a>            l3entry<span class="op">.</span>set_masked(addr <span class="kw">as</span> <span class="dt">u64</span><span class="op">,</span> <span class="pp">RawL3Entry::</span>ADDR)<span class="op">;</span></span>
+<span id="cb6-13"><a href="lec17.html#cb6-13"></a>            pt<span class="op">.</span>set_entry(addr<span class="op">.</span>into()<span class="op">,</span> l3entry)<span class="op">;</span></span>
+<span id="cb6-14"><a href="lec17.html#cb6-14"></a>            addr <span class="op">+=</span> PAGE_SIZE<span class="op">;</span></span>
+<span id="cb6-15"><a href="lec17.html#cb6-15"></a>        <span class="op">}</span></span>
+<span id="cb6-16"><a href="lec17.html#cb6-16"></a>    <span class="op">}</span></span>
+<span id="cb6-17"><a href="lec17.html#cb6-17"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="translation-lookaside-buffer-tlb"><div>
+<h1>Translation Lookaside Buffer (TLB)</h1>
+<ul>
+<li>Cache of recent page translation: (virtual address → physical address)</li>
+<li>Should be <em>flushed</em> whenever the address space is modified (e.g., context switching)</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource asm numberLines"><code class="sourceCode fasm"><span id="cb7-1"><a href="lec17.html#cb7-1"></a>  dsb ishst            // ensure write has completed</span>
+<span id="cb7-2"><a href="lec17.html#cb7-2"></a>  tlbi alle1           // invalidate all TLB entries</span>
+<span id="cb7-3"><a href="lec17.html#cb7-3"></a>  dsb ish              // ensure completion of TLB invalidation</span>
+<span id="cb7-4"><a href="lec17.html#cb7-4"></a>  isb                  // synchronize context <span class="bu">and</span> ensure that no instructions are</span></code></pre></div>
+<p>Ref. <a href="https://developer.arm.com/docs/den0024/latest/the-memory-management-unit/the-translation-lookaside-buffer">Translation Lookaside Buffer</a></p>
+</div></section>
+<section class="slide level1" id="tlb-and-performance"><div>
+<h1>TLB and Performance</h1>
+<div data-align="center">
+<p><iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" frameborder="0" height="315" src="https://www.youtube.com/embed/IznEq2Uf2xk" width="560"></iframe></p>
+</div>
+<p>→ Please check this talk (a prep question)!</p>
+</div></section>
+<section class="slide level1" id="references"><div>
+<h1>References</h1>
+<ul>
+<li><a href="https://static.docs.arm.com/100940/0100/armv8_a_address%20translation_100940_0100_en.pdf">ARMv8-A Address Translation</a></li>
+<li><a href="https://os.phil-opp.com/async-await">Async/Await</a></li>
+<li><a href="http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-intro.pdf">The Abstraction: The Process</a></li>
+<li><a href="http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched.pdf">Scheduling: Introduction</a></li>
+<li><a href="http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-lottery.pdf">Scheduling: Proportional Share</a></li>
+</ul>
+</div></section>
+<div class="progress"><div></div></div>
+<script src="../shower/js/shower.js"></script>
+</body>
+</html>

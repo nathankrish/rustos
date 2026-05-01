@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Filesystem/Fat32</title>
+<meta charset="utf-8"/>
+<meta content="ie=edge" http-equiv="x-ua-compatible"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="../shower/styles/ribbon.css" rel="stylesheet"/>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+  position: relative; left: -1em; text-align: right; vertical-align: baseline;
+  border: none; display: inline-block;
+  -webkit-touch-callout: none; -webkit-user-select: none;
+  -khtml-user-select: none; -moz-user-select: none;
+  -ms-user-select: none; user-select: none;
+  padding: 0 4px; width: 4em;
+  color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+{   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style>
+section pre code {
+  line-height: 1.4 !important;
+  font-size: 20px !important;
+}
+.compact code {
+  line-height: 1.4 !important;
+  font-size: 16px !important;
+}
+ul.compact {
+  line-height: 1.5 !important;
+  font-size: 20px !important;
+}
+.writeup {
+    font-size: 20px !important;
+}
+a.sourceLine { background: none !important; }
+section.region { display: none !important; }
+pre.numberSource { margin-left: 2em; }
+div.sourceCode { overflow: hidden; }
+a.sourceLine::before { text-decoration: none; }
+
+pre > code.sourceCode > span > a:first-child::before { text-decoration: none !important; }
+</style>
+<script src="../shower/js/jquery-2.2.0.min.js"></script>
+</head>
+<body class="shower list">
+<header class="caption">
+<h1>CS3210 Design Operating Systems</h1>
+<p>Taesoo Kim</p>
+</header>
+<header class="caption">
+</header>
+<section class="slide" id="cover">
+<br/><br/><br/><br/>
+<h2>Filesystem/Fat32</h2>
+<p> Taesoo Kim</p>
+<style>
+ #cover h2 {
+   /* margin:180px 0 0; */
+   color: #666;
+   text-align:center;
+   font-size: 60px;
+   font-weight: bold;
+   margin-bottom: 0em;
+ }
+ #cover p {
+   margin:30px 0 0;
+   text-align:center;
+   font-style:italic;
+   font-size:40px;
+ }
+ </style>
+</section>
+
+<section class="slide level1" id="administrivia"><div>
+<h1>Administrivia</h1>
+<ul>
+<li>“Lab 3: FAT32 Filesystem” is out and due in 3 week (<mark>DUE: Mar 2</mark>)!</li>
+<li>Final project
+<ul>
+<li>Proposal Day is on Feb 27th (slides due on 26th)</li>
+<li>About 2-4 people per team (sole is fine!)</li>
+<li>Due: upload the proposal slides the day before the proposal day</li>
+<li>Check <a href="../../proj.html">our web site</a> for ideas</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="storage-trend"><div>
+<h1>Storage trend</h1>
+<p style="text-align:center;margin:0"><img src="img/storage-trend.jpg" style="width:80%"/></p>
+</div></section>
+<section class="slide level1" id="why-do-we-need-file-systems"><div>
+<h1>Why do we need file systems?</h1>
+</div></section>
+<section class="slide level1" id="why-do-we-need-file-systems-1"><div>
+<h1>Why do we need file systems?</h1>
+<ul>
+<li>Durability across restarts</li>
+<li>Naming and organization</li>
+<li>Sharing among programs and users</li>
+<li>Abstraction over various storage devices</li>
+</ul>
+</div></section>
+<section class="slide level1" id="why-interesting"><div>
+<h1>Why interesting?</h1>
+<ul>
+<li>Crash recovery</li>
+<li>Performance</li>
+<li>API design for sharing</li>
+<li>Security for sharing</li>
+</ul>
+</div></section>
+<section class="slide level1" id="common-api-example-in-unix-like-oses"><div>
+<h1>Common API example (in UNIX-like OSes)</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource c numberLines"><code class="sourceCode c"><span id="cb1-1"><a href="lec11.html#cb1-1"></a>fd = open(<span class="st">"x/y"</span>, <span class="dv">1</span>);</span>
+<span id="cb1-2"><a href="lec11.html#cb1-2"></a>write(fd, <span class="st">"abc"</span>, <span class="dv">3</span>);</span>
+<span id="cb1-3"><a href="lec11.html#cb1-3"></a>link(<span class="st">"x/y"</span>, <span class="st">"x/z"</span>);</span>
+<span id="cb1-4"><a href="lec11.html#cb1-4"></a>unlink(<span class="st">"x/y"</span>);</span></code></pre></div>
+<ul>
+<li>Note, Plan 9 OS (Bell labs)
+<ul>
+<li>Attempts to structure entire OS as a filesystem</li>
+<li>Ref. <a class="uri" href="http://plan9.bell-labs.com/plan9/">http://plan9.bell-labs.com/plan9/</a></li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="high-level-api-choices"><div>
+<h1>High-level API choices</h1>
+<ul>
+<li>Granularity
+<ul>
+<li>files, virtual disks, databases</li>
+</ul></li>
+<li>File content
+<ul>
+<li>byte array, records, b-tree (or key-value stores)</li>
+</ul></li>
+<li>Organization:
+<ul>
+<li>name hierarchy vs. flat names (object IDs)</li>
+</ul></li>
+<li>Synchronization
+<ul>
+<li>None vs locks, transaction rollbacks</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="thinking-of-interfaces"><div>
+<h1>Thinking of interfaces</h1>
+<ul>
+<li>DRAM gets as input an address and returns a cacheline</li>
+<li>Q. What about storage devices, like SSD, Disk, SD card, etc?
+<ul>
+<li>Q. Then, how they are different from DRAM?</li>
+</ul></li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/interface.svg" style="width:90%"/></p>
+</div></section>
+<section class="slide level1" id="disk-layout"><div>
+<h1>Disk Layout</h1>
+<ul>
+<li>Q. Any special locations on disks?</li>
+<li>Q. How to support more than one file systems (e.g., one for Windows and Linux)?</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/disk.svg" style="width:90%"/></p>
+</div></section>
+<section class="slide level1" id="introducing-mbr"><div>
+<h1>Introducing MBR</h1>
+<p style="text-align:center;margin:0"><img src="img/mbr-spec.png" style="width:70%"/></p>
+<ul>
+<li>Ref <a href="https://en.wikipedia.org/wiki/Master_boot_record">Wikipedia MBR</a></li>
+</ul>
+</div></section>
+<section class="slide level1" id="partition"><div>
+<h1>Partition</h1>
+<p style="text-align:center;margin:0"><img src="img/partition-spec.png" style="width:80%"/></p>
+<ul>
+<li>Ref <a href="https://en.wikipedia.org/wiki/Master_boot_record">Wikipedia MBR</a></li>
+</ul>
+</div></section>
+<section class="slide level1" id="demo"><div>
+<h1>DEMO</h1>
+<ul>
+<li>MBR on Rpi’s SD card</li>
+</ul>
+</div></section>
+<section class="slide level1" id="fat32-overview-disk-layout"><div>
+<h1>Fat32 Overview: Disk Layout</h1>
+<ul>
+<li>Starts with (extended) BIOS Parameter Block (E/BPB)</li>
+<li>Followed by <strong><em>FAT</em></strong> (File Allocation Table)</li>
+<li>Followed by <strong><em>Cluster</em></strong></li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/MBR.svg" style="width:90%"/></p>
+</div></section>
+<section class="slide level1 cover"><img height="100%" src="img/bpb.png" width="100%"/></section>
+<section class="slide level1" id="demo-1"><div>
+<h1>DEMO</h1>
+<ul>
+<li>EBPB/FAT/Cluster</li>
+</ul>
+</div></section>
+<section class="slide level1" id="about-fat"><div>
+<h1>About FAT</h1>
+<ul>
+<li>Entry 0: indicating ID (ok to ignore)</li>
+<li><strong><em>Entry 1</em></strong>: indicating a special maker for the end of cluster (EOC)</li>
+<li>Other special markers: e.g., 0x?FFFFFF7 for bad sectors</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/fat.svg" style="width:90%"/></p>
+</div></section>
+<section class="slide level1" id="example-fat"><div>
+<h1>Example FAT</h1>
+<p style="text-align:center;margin:0"><img src="img/ex-fat.png" style="width:90%"/></p>
+</div></section>
+<section class="slide level1" id="root-directory"><div>
+<h1>Root directory</h1>
+<ul>
+<li>Sector From EBPB (usually cluster 2)</li>
+<li>List of file entries</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/root.png" style="width:70%"/></p>
+</div></section>
+<section class="slide level1" id="file-entry"><div>
+<h1>File entry</h1>
+<ul>
+<li>Two types (structure)
+<ul>
+<li><strong>Regular directory entry</strong></li>
+<li><strong>Long file name (LFN) entry</strong> (11th == 0x0f)</li>
+</ul></li>
+<li>0x00/0xE5 in the first byte indicate last/deleted entries</li>
+</ul>
+<p>Ref. <a href="../../r/fat-structs.pdf">Fat structs</a></p>
+</div></section>
+<section class="slide level1 cover"><img height="100%" src="img/file1.png" width="100%"/></section>
+<section class="slide level1 cover"><img height="100%" src="img/file2.png" width="100%"/></section>
+<section class="slide level1" id="demo-2"><div>
+<h1>DEMO</h1>
+<ul>
+<li>Locating file contents</li>
+</ul>
+</div></section>
+<section class="slide level1" id="interfaces-for-filesystem-traits"><div>
+<h1>Interfaces for filesystem: Traits</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb2-1"><a href="lec11.html#cb2-1"></a><span class="kw">pub</span> <span class="kw">trait</span> FileSystem<span class="op">:</span> <span class="bu">Sized</span> <span class="op">{</span></span>
+<span id="cb2-2"><a href="lec11.html#cb2-2"></a>    <span class="co">/// The type of files in this file system.</span></span>
+<span id="cb2-3"><a href="lec11.html#cb2-3"></a>    <span class="kw">type</span> File: File<span class="op">;</span></span>
+<span id="cb2-4"><a href="lec11.html#cb2-4"></a></span>
+<span id="cb2-5"><a href="lec11.html#cb2-5"></a>    <span class="co">/// The type of directories in this file system.</span></span>
+<span id="cb2-6"><a href="lec11.html#cb2-6"></a>    <span class="kw">type</span> Dir: Dir<span class="op">&lt;</span>Entry <span class="op">=</span> <span class="dt">Self</span><span class="pp">::</span>Entry<span class="op">&gt;;</span></span>
+<span id="cb2-7"><a href="lec11.html#cb2-7"></a></span>
+<span id="cb2-8"><a href="lec11.html#cb2-8"></a>    <span class="co">/// The type of directory entries in this file system.</span></span>
+<span id="cb2-9"><a href="lec11.html#cb2-9"></a>    <span class="kw">type</span> Entry: Entry<span class="op">&lt;</span>File <span class="op">=</span> <span class="dt">Self</span><span class="pp">::</span>File<span class="op">,</span> Dir <span class="op">=</span> <span class="dt">Self</span><span class="pp">::</span>Dir<span class="op">&gt;;</span></span>
+<span id="cb2-10"><a href="lec11.html#cb2-10"></a></span>
+<span id="cb2-11"><a href="lec11.html#cb2-11"></a>    <span class="co">/// Opens the entry at `path`. `path` must be absolute.</span></span>
+<span id="cb2-12"><a href="lec11.html#cb2-12"></a>    <span class="kw">fn</span> open<span class="op">&lt;</span>P<span class="op">:</span> <span class="bu">AsRef</span><span class="op">&lt;</span><span class="dt">Path</span><span class="op">&gt;&gt;</span>(<span class="kw">self</span><span class="op">,</span> path<span class="op">:</span> P) <span class="op">-&gt;</span> <span class="pp">io::</span><span class="dt">Result</span><span class="op">&lt;</span><span class="dt">Self</span><span class="pp">::</span>Entry<span class="op">&gt;;</span></span>
+<span id="cb2-13"><a href="lec11.html#cb2-13"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="trait-file"><div>
+<h1>Trait: File</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb3-1"><a href="lec11.html#cb3-1"></a><span class="kw">pub</span> <span class="kw">trait</span> File<span class="op">:</span> <span class="pp">io::</span><span class="bu">Read</span> <span class="op">+</span> <span class="pp">io::</span><span class="bu">Write</span> <span class="op">+</span> <span class="pp">io::</span><span class="bu">Seek</span> <span class="op">+</span> <span class="bu">Sized</span> <span class="op">{</span></span>
+<span id="cb3-2"><a href="lec11.html#cb3-2"></a>    <span class="co">/// Writes any buffered data to disk.</span></span>
+<span id="cb3-3"><a href="lec11.html#cb3-3"></a>    <span class="kw">fn</span> sync(<span class="op">&amp;</span><span class="kw">mut</span> <span class="kw">self</span>) <span class="op">-&gt;</span> <span class="pp">io::</span><span class="dt">Result</span><span class="op">&lt;</span>()<span class="op">&gt;;</span></span>
+<span id="cb3-4"><a href="lec11.html#cb3-4"></a></span>
+<span id="cb3-5"><a href="lec11.html#cb3-5"></a>    <span class="co">/// Returns the size of the file in bytes.</span></span>
+<span id="cb3-6"><a href="lec11.html#cb3-6"></a>    <span class="kw">fn</span> size(<span class="op">&amp;</span><span class="kw">self</span>) <span class="op">-&gt;</span> <span class="dt">u64</span><span class="op">;</span></span>
+<span id="cb3-7"><a href="lec11.html#cb3-7"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="trait-dir"><div>
+<h1>Trait: Dir</h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb4-1"><a href="lec11.html#cb4-1"></a><span class="co">/// Trait implemented by directories in a file system.</span></span>
+<span id="cb4-2"><a href="lec11.html#cb4-2"></a><span class="kw">pub</span> <span class="kw">trait</span> Dir<span class="op">:</span> <span class="bu">Sized</span> <span class="op">{</span></span>
+<span id="cb4-3"><a href="lec11.html#cb4-3"></a>    <span class="co">/// The type of entry stored in this directory.</span></span>
+<span id="cb4-4"><a href="lec11.html#cb4-4"></a>    <span class="kw">type</span> Entry: Entry<span class="op">;</span></span>
+<span id="cb4-5"><a href="lec11.html#cb4-5"></a></span>
+<span id="cb4-6"><a href="lec11.html#cb4-6"></a>    <span class="co">/// An type that is an iterator over the entries in this directory.</span></span>
+<span id="cb4-7"><a href="lec11.html#cb4-7"></a>    <span class="kw">type</span> Iter: Iterator<span class="op">&lt;</span>Item <span class="op">=</span> <span class="dt">Self</span><span class="pp">::</span>Entry<span class="op">&gt;;</span></span>
+<span id="cb4-8"><a href="lec11.html#cb4-8"></a></span>
+<span id="cb4-9"><a href="lec11.html#cb4-9"></a>    <span class="co">/// Returns an interator over the entries in this directory.</span></span>
+<span id="cb4-10"><a href="lec11.html#cb4-10"></a>    <span class="kw">fn</span> entries(<span class="op">&amp;</span><span class="kw">self</span>) <span class="op">-&gt;</span> <span class="pp">io::</span><span class="dt">Result</span><span class="op">&lt;</span><span class="dt">Self</span><span class="pp">::</span>Iter<span class="op">&gt;;</span></span>
+<span id="cb4-11"><a href="lec11.html#cb4-11"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="trait-entry"><div>
+<h1>Trait: Entry</h1>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb5-1"><a href="lec11.html#cb5-1"></a><span class="co">/// An entry is either a `File` or a `Directory`</span></span>
+<span id="cb5-2"><a href="lec11.html#cb5-2"></a><span class="kw">pub</span> <span class="kw">trait</span> Entry<span class="op">:</span> <span class="bu">Sized</span> <span class="op">{</span></span>
+<span id="cb5-3"><a href="lec11.html#cb5-3"></a>    <span class="kw">type</span> File: File<span class="op">;</span> <span class="kw">type</span> Dir: Dir<span class="op">;</span> <span class="kw">type</span> Metadata: Metadata<span class="op">;</span></span>
+<span id="cb5-4"><a href="lec11.html#cb5-4"></a></span>
+<span id="cb5-5"><a href="lec11.html#cb5-5"></a>    <span class="co">/// The name of the file or directory corresponding to this entry.</span></span>
+<span id="cb5-6"><a href="lec11.html#cb5-6"></a>    <span class="kw">fn</span> name(<span class="op">&amp;</span><span class="kw">self</span>) <span class="op">-&gt;</span> <span class="op">&amp;</span><span class="dt">str</span><span class="op">;</span></span>
+<span id="cb5-7"><a href="lec11.html#cb5-7"></a></span>
+<span id="cb5-8"><a href="lec11.html#cb5-8"></a>    <span class="co">/// The metadata associated with the entry.</span></span>
+<span id="cb5-9"><a href="lec11.html#cb5-9"></a>    <span class="kw">fn</span> metadata(<span class="op">&amp;</span><span class="kw">self</span>) <span class="op">-&gt;</span> <span class="op">&amp;</span><span class="dt">Self</span><span class="pp">::</span>Metadata<span class="op">;</span></span>
+<span id="cb5-10"><a href="lec11.html#cb5-10"></a></span>
+<span id="cb5-11"><a href="lec11.html#cb5-11"></a>    <span class="co">/// If `self` is a file, returns `Some` of the file. Otherwise returns</span></span>
+<span id="cb5-12"><a href="lec11.html#cb5-12"></a>    <span class="co">/// `None`.</span></span>
+<span id="cb5-13"><a href="lec11.html#cb5-13"></a>    <span class="kw">fn</span> into_file(<span class="kw">self</span>) <span class="op">-&gt;</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="dt">Self</span><span class="pp">::</span>File<span class="op">&gt;;</span></span>
+<span id="cb5-14"><a href="lec11.html#cb5-14"></a></span>
+<span id="cb5-15"><a href="lec11.html#cb5-15"></a>    <span class="co">/// If `self` is a directory, returns `Some` of the directory. Otherwise</span></span>
+<span id="cb5-16"><a href="lec11.html#cb5-16"></a>    <span class="co">/// returns `None`.</span></span>
+<span id="cb5-17"><a href="lec11.html#cb5-17"></a>    <span class="kw">fn</span> into_dir(<span class="kw">self</span>) <span class="op">-&gt;</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="dt">Self</span><span class="pp">::</span>Dir<span class="op">&gt;;</span></span>
+<span id="cb5-18"><a href="lec11.html#cb5-18"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="trait-blockdevice"><div>
+<h1>Trait: BlockDevice</h1>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb6-1"><a href="lec11.html#cb6-1"></a><span class="co">/// Trait implemented by devices that can be read/written in sector</span></span>
+<span id="cb6-2"><a href="lec11.html#cb6-2"></a><span class="co">/// granularities.</span></span>
+<span id="cb6-3"><a href="lec11.html#cb6-3"></a><span class="kw">pub</span> <span class="kw">trait</span> BlockDevice<span class="op">:</span> <span class="bu">Send</span> <span class="op">{</span></span>
+<span id="cb6-4"><a href="lec11.html#cb6-4"></a>    <span class="co">/// Read sector number `n` into `buf`.</span></span>
+<span id="cb6-5"><a href="lec11.html#cb6-5"></a>    <span class="kw">fn</span> read_sector(<span class="op">&amp;</span><span class="kw">mut</span> <span class="kw">self</span><span class="op">,</span> n<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span> buf<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> [<span class="dt">u8</span>]) <span class="op">-&gt;</span> <span class="pp">io::</span><span class="dt">Result</span><span class="op">&lt;</span><span class="dt">usize</span><span class="op">&gt;;</span></span>
+<span id="cb6-6"><a href="lec11.html#cb6-6"></a></span>
+<span id="cb6-7"><a href="lec11.html#cb6-7"></a>    <span class="co">/// Overwrites sector `n` with the contents of `buf`.</span></span>
+<span id="cb6-8"><a href="lec11.html#cb6-8"></a>    <span class="kw">fn</span> write_sector(<span class="op">&amp;</span><span class="kw">mut</span> <span class="kw">self</span><span class="op">,</span> n<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span> buf<span class="op">:</span> <span class="op">&amp;</span>[<span class="dt">u8</span>]) <span class="op">-&gt;</span> <span class="pp">io::</span><span class="dt">Result</span><span class="op">&lt;</span><span class="dt">usize</span><span class="op">&gt;;</span></span>
+<span id="cb6-9"><a href="lec11.html#cb6-9"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="references"><div>
+<h1>References</h1>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Master_boot_record">Wikipedia: MBR</a></li>
+<li><a href="https://en.wikipedia.org/wiki/File_Allocation_Table">Wikipedia: FAT</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Design_of_the_FAT_file_system">Wikipedia: Design of the FAT file system</a></li>
+</ul>
+</div></section>
+<div class="progress"><div></div></div>
+<script src="../shower/js/shower.js"></script>
+</body>
+</html>

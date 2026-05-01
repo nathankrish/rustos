@@ -1,0 +1,1909 @@
+
+
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Lab 5: Multicore and Networking &mdash; CS-3210, Spring 2020 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Final Project" href="../proj.html" />
+    <link rel="prev" title="Lab 4: Preemptive Multitasking" href="lab4.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> CS-3210, Spring 2020
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../info.html">General Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cal.html">Schedule</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../lab.html">Lab</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tools.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab0.html">Lab 0: Rustlings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab1.html">Lab 1: Bootstrapping Raspberry Pi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab2.html">Lab 2: Shell and Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab3.html">Lab 3: FAT32 Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab4.html">Lab 4: Preemptive Multitasking</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="lab5.html#">Lab 5: Multicore and Networking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="lab5.html#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lab5.html#phase-0-getting-started">Phase 0: Getting Started</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lab5.html#phase-1-enabling-multicore">Phase 1: Enabling Multicore</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lab5.html#phase-2-tcp-networking">Phase 2: TCP Networking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lab5.html#phase-3-echo-server">Phase 3: Echo Server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lab5.html#submission">Submission</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proj.html">Final Project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refs.html">Reference Materials</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CS-3210, Spring 2020</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../lab.html">Lab</a> &raquo;</li>
+        
+      <li>Lab 5: Multicore and Networking</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/lab/lab5.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="lab-5-multicore-and-networking">
+<h1>Lab 5: Multicore and Networking<a class="headerlink" href="lab5.html#lab-5-multicore-and-networking" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><strong>Handed out:</strong> Tuesday, April 14, 2020</p></li>
+<li><p><strong>Due:</strong> Friday, May 1, 2020</p></li>
+</ul>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="lab5.html#introduction" title="Permalink to this headline">¶</a></h2>
+<p>So far, our kernel has utilized only one core among four cores on a RPi board.
+In this assignment, you will enable the other three cores and adjust the existing
+components to correctly run programs in parallel.
+After that, you will integrate an existing Ethernet implementation for RPi
+(USPi) and a minimal TCP stack (smoltcp) to our kernel, so that our host computer
+and the Raspberry Pi board can communicate via an Ethernet cable.
+Finally, you will write an echo server as a user program on our kernel and
+interact with that server from your host computer with netcat command.</p>
+</div>
+<div class="section" id="phase-0-getting-started">
+<h2>Phase 0: Getting Started<a class="headerlink" href="lab5.html#phase-0-getting-started" title="Permalink to this headline">¶</a></h2>
+<p>Fetch the update for lab 5 from our git repository
+to your development machine.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ git fetch skeleton
+$ git merge skeleton/lab5
+</pre></div>
+</div>
+<p>This is the directory structure of our repository.
+The directories you will be working on this assignment are
+marked with <cite>*</cite>.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>.
+├── bin : common binaries/utilities
+├── doc : reference documents
+├── ext : external files (e.g., resources for testing)
+├── tut : tutorial/practices
+│    ├── 0-rustlings
+│    ├── 1-blinky
+│    ├── 2-shell
+│    ├── 3-fs
+│    ├── 4-spawn
+│    └── 5-multicore : questions for lab5 *
+├── boot : bootloader
+├── kern : the main os kernel *
+├── lib  : required libraries
+│     ├── aarch *
+│     ├── kernel_api *
+│     ├── fat32
+│     ├── pi *
+│     ├── shim
+│     ├── stack-vec
+│     ├── ttywrite
+│     ├── volatile
+│     └── xmodem
+└── user : user level program *
+      ├── fib
+      ├── sleep
+      └── socket *
+</pre></div>
+</div>
+<div class="section" id="merge-guideline">
+<h3>Merge Guideline<a class="headerlink" href="lab5.html#merge-guideline" title="Permalink to this headline">¶</a></h3>
+<p>You may need to resolve conflicts before continuing. For example,
+if you see a message that looks like:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>Auto-merging kern/src/main.rs
+CONFLICT <span class="o">(</span>content<span class="o">)</span>: Merge conflict in kern/src/main.rs
+Automatic merge failed<span class="p">;</span> fix conflicts and <span class="k">then</span> commit the result.
+</pre></div>
+</div>
+<p>You will need to manually modify the <code class="docutils literal notranslate"><span class="pre">main.rs</span></code> file to resolve
+the conflict. Ensure you keep all of your changes from lab 4.
+Once all conflicts are resolved, add the resolved files with
+<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span></code> and commit. For more information on resolving merge
+conflicts, <a class="reference external" href="https://githowto.com/resolving_conflicts">see this tutorial on
+githowto.com</a>.</p>
+<p>Various design has been changed from lab 4.
+See the following summary of change for a merge guideline.</p>
+<ul>
+<li><p><strong>Safe / Unsafe changes</strong></p>
+<p>Several safe / unsafe definitions have been changed to conform
+better with Rust’s safety guarantee.
+If there is a merge conflict in this regard,
+follow the updated definition.</p>
+</li>
+<li><p><strong>Scheduler</strong></p>
+<ul class="simple">
+<li><p>GlobalScheduler now uses <code class="docutils literal notranslate"><span class="pre">Box</span></code> in the definition.
+Update <code class="docutils literal notranslate"><span class="pre">Scheduler::new()</span></code> function accordingly.</p></li>
+<li><p>Move timer manipulation from <code class="docutils literal notranslate"><span class="pre">start()</span></code> to
+<code class="docutils literal notranslate"><span class="pre">initialize_global_timer_interrupt()</span></code> method.
+Call this function in <code class="docutils literal notranslate"><span class="pre">GlobalScheduler::start()</span></code>.</p></li>
+</ul>
+</li>
+<li><p><strong>PageTable</strong></p>
+<p>The value of <code class="docutils literal notranslate"><span class="pre">IO_BASE_END</span></code> has been increased to allow the kernel to
+access the local timer address.
+To support that, the kernel page table now uses three L3 entries instead of two.
+Adjust related functions in <code class="docutils literal notranslate"><span class="pre">kern/src/vm/pagetable.rs</span></code>.</p>
+</li>
+<li><p><strong>VMM</strong></p>
+<p>VMM includes more fields than before.
+Calculate the base address of the kernel table in <code class="docutils literal notranslate"><span class="pre">initialize()</span></code>,
+and save it to <code class="docutils literal notranslate"><span class="pre">kern_pt_addr</span></code> field with
+<code class="docutils literal notranslate"><span class="pre">self.kern_pt_addr.store(kern_pt_addr,</span> <span class="pre">Ordering::Relaxed);</span></code>.
+You will learn what this line means throughout this lab.</p>
+<p>In addition, <code class="docutils literal notranslate"><span class="pre">setup()</span></code> is not called automatically in <code class="docutils literal notranslate"><span class="pre">initialize()</span></code> anymore.
+This is to separate the behavior of initializing the virtual memory manager
+and setting up the MMU for the current core,
+so that they can be invoked independently with multiple cores.
+You have to add <code class="docutils literal notranslate"><span class="pre">VMM.setup()</span></code> call in <code class="docutils literal notranslate"><span class="pre">kmain()</span></code>, right after <code class="docutils literal notranslate"><span class="pre">VMM.initialize()</span></code>.</p>
+</li>
+<li><p><strong>IRQ / Traps</strong></p>
+<p>IRQ has been redesigned to use trait-based logic.
+Read the change in <code class="docutils literal notranslate"><span class="pre">kern/src/traps/irq.rs</span></code>.
+Update the <code class="docutils literal notranslate"><span class="pre">register()</span></code> and <code class="docutils literal notranslate"><span class="pre">invoke()</span></code> function,
+and also <code class="docutils literal notranslate"><span class="pre">handle_exception()</span></code> as necessary.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">write_str</span></code> <strong>syscall</strong></p>
+<p>In the previous lab,
+there was only a <code class="docutils literal notranslate"><span class="pre">write()</span></code> syscall which prints a single byte to the serial.
+We have added <code class="docutils literal notranslate"><span class="pre">write_str()</span></code> syscall,
+which takes a slice from the user and prints it atomically.
+<code class="docutils literal notranslate"><span class="pre">kernel_api</span></code> library has been updated to use this;
+Recompile your user programs and copy them to the SD card.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="logging-infrastructure">
+<h3>Logging infrastructure<a class="headerlink" href="lab5.html#logging-infrastructure" title="Permalink to this headline">¶</a></h3>
+<p>Our kernel code now uses Rust’s <code class="docutils literal notranslate"><span class="pre">log</span></code> crate instead of <code class="docutils literal notranslate"><span class="pre">kprintln!</span></code> for message logging.
+It enables five logging macros <code class="docutils literal notranslate"><span class="pre">trace!</span></code>, <code class="docutils literal notranslate"><span class="pre">debug!</span></code>, <code class="docutils literal notranslate"><span class="pre">info!</span></code>, <code class="docutils literal notranslate"><span class="pre">warn!</span></code>, and <code class="docutils literal notranslate"><span class="pre">error!</span></code>.</p>
+<p>The logging code is defined in <code class="docutils literal notranslate"><span class="pre">kern/src/logger.rs</span></code>.
+If <code class="docutils literal notranslate"><span class="pre">VERBOSE_BUILD</span></code> environment variable is set during the build
+(e.g., <code class="docutils literal notranslate"><span class="pre">VERBOSE_BUILD=1</span> <span class="pre">make</span></code>),
+all logs will be enabled.
+Otherwise, trace level logs will not be displayed.
+There is no specific requirement for what level of log you should use in each circumstance,
+but here is a brief guideline:</p>
+<ul>
+<li><p><strong>Trace</strong>: A piece of information that will help debugging the kernel,
+but too verbose to be enabled by default</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Scheduler switch log</p></li>
+<li><p>IRQ interrupt log</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Debug</strong>: A piece of information that developers might be interested</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Page table address</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Info</strong>: A piece of information that the user of the kernel might be interested</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Amount of memory in the system</p></li>
+<li><p>Kernel initialization status</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Warn</strong>: An indication of exceptional erroneous situation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Out of memory</p></li>
+<li><p>Unknown exception from a user program</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Error</strong>: An indication of an event that should never happen during the
+normal execution of the kernel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Debug assertion violations</p></li>
+<li><p>Unknown exception inside a kernel</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="arm-documentation">
+<h3>ARM Documentation<a class="headerlink" href="lab5.html#arm-documentation" title="Permalink to this headline">¶</a></h3>
+<p>Along with three documents that we referred in lab 4,</p>
+<ul>
+<li><p><a class="reference external" href="../r/ARMv8-Reference-Manual.pdf">ARMv8 Reference Manual</a></p>
+<blockquote>
+<div><p>This is the official reference manual for the ARMv8
+architecture. This is a wholistic manual covering the entire
+architecture in a general manner. For the specific
+implementation of the architecture for the Raspberry Pi 3, see
+the ARM Cortex-A53 Manual. We will be referring to sections
+from this manual with notes of the form
+(<a class="reference external" href="../r/ARMv8-Reference-Manual.pdf">ref</a>:
+C5.2) which indicates that you should refer to section C5.2 of
+the <a class="reference external" href="../r/ARMv8-Reference-Manual.pdf">ARMv8 Reference
+Manual</a>.</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="../r/ARM-Cortex-A53-Manual.pdf">ARM Cortex-A53 Manual</a></p>
+<blockquote>
+<div><p>Manual for the specific implementation of the ARMv8 (v8.0-A)
+architecture as used by the Raspberry Pi 3. We will be
+referring to sections from this manual with notes of the form
+(<a class="reference external" href="../r/ARM-Cortex-A53-Manual.pdf">A53</a>:
+4.3.30) which indicates that you should refer to section 4.3.30
+of the <a class="reference external" href="../r/ARM-Cortex-A53-Manual.pdf">ARM Cortex-A53
+Manual</a>.</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="../r/ARMv8-A-Programmer-Guide.pdf">ARMv8-A Programmer Guide</a></p>
+<blockquote>
+<div><p>A high-level guide on how to program an ARMv8-A process. We
+will be referring to sections from this manual with notes of
+the form
+(<a class="reference external" href="../r/ARMv8-A-Programmer-Guide.pdf">guide</a>:
+10.1) which indicates that you should refer to section 10.1 of
+the <a class="reference external" href="../r/ARMv8-A-Programmer-Guide.pdf">ARMv8-A Programmer
+Guide</a>.</p>
+</div></blockquote>
+</li>
+</ul>
+<p>We will use two additional document in lab 5.</p>
+<ul>
+<li><p><a class="reference external" href="../r/aarch64-generic-timer.pdf">AArch64 Programmer’s Guides: Generic Timer</a></p>
+<blockquote>
+<div><p>A guide for the generic timer in ARM architecture.
+We will be refering to sections from this manual with notes of the form
+(<a class="reference external" href="../r/aarch64-generic-timer.pdf">timer</a>: 3.2)
+which indicates that you should refer to section 3.2 of the
+<a class="reference external" href="../r/aarch64-generic-timer.pdf">AArch64 Programmer’s Guides: Generic Timer</a>.</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="../r/QA7_rev3.4.pdf">Quad-A7 Control</a></p>
+<blockquote>
+<div><p>A guide for Quad-A7 core control, which includes descriptions for per-core
+timer and interrupt handling.
+We will be refering to sections from this manual with notes of the form
+(<a class="reference external" href="../r/QA7_rev3.4.pdf">QA7</a>: 4.10)
+which indicates that you should refer to section 4.10 of the
+<a class="reference external" href="../r/QA7_rev3.4.pdf">Quad-A7 Control</a>.</p>
+</div></blockquote>
+</li>
+</ul>
+<p>You can find all those five documents under <code class="docutils literal notranslate"><span class="pre">doc/</span></code> subdirectory of our lab repo.
+We recommend that you download these five documents now and maintain them within easy reach.</p>
+</div>
+</div>
+<div class="section" id="phase-1-enabling-multicore">
+<h2>Phase 1: Enabling Multicore<a class="headerlink" href="lab5.html#phase-1-enabling-multicore" title="Permalink to this headline">¶</a></h2>
+<p>Lab 4 covered preemptive scheduling, which allowed multiple user programs to
+run inside a single kernel at the same time by means of context switching.
+Note that although multiple programs were running on our kernel <em>concurrently</em>,
+only one user program occupied the core at a time.
+In this phase, you will enable the other three cores of RPi board and support
+running user programs <em>in parallel</em>.
+Parallel programming involves many indigenous problems that do not exist in
+single-thread programming.
+To fix this, you’ll revisit the design of mutex, IRQ handler,
+and scheduler and adjust them accordingly to multicore environment.</p>
+<div class="section" id="subphase-a-waking-up-other-cores">
+<h3>Subphase A: Waking Up Other Cores<a class="headerlink" href="lab5.html#subphase-a-waking-up-other-cores" title="Permalink to this headline">¶</a></h3>
+<p>In this subphase, you’ll enable the three other cores of BCM2837
+using the spin table mechanism.</p>
+<div class="section" id="spin-table">
+<h4>Spin Table<a class="headerlink" href="lab5.html#spin-table" title="Permalink to this headline">¶</a></h4>
+<p>All cores in a CPU share the main memory (RAM),
+thus it can be used as a communication medium among cores.
+<em>Spin table</em> is a booting mechanism that utilizes this characteristics of RAM.
+When you power on your RPi, the first core, core 0, will jump to <code class="docutils literal notranslate"><span class="pre">_start</span></code> function
+defined in <code class="docutils literal notranslate"><span class="pre">kern/src/init.rs</span></code>.
+All the other cores are spinning outside of the kernel, polling their spinning address.</p>
+<p>This code from <a class="reference external" href="https://github.com/raspberrypi/tools/blob/b0c869bc929587a7e1d20a98e2dc828a24ca396a/armstubs/armstub8.S#L132-L154">RPi firmware</a>
+implements the spin table mechanism.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>in_el2:
+    mrs x6, MPIDR_EL1
+    and x6, x6, #0x3
+    cbz x6, primary_cpu
+
+    adr x5, spin_cpu0
+
+secondary_spin:
+    wfe
+    ldr x4, [x5, x6, lsl #3]
+    cbz x4, secondary_spin
+    mov x0, #0
+    b boot_kernel
+
+primary_cpu:
+    ldr w4, kernel_entry32
+    ldr w0, dtb_ptr32
+
+boot_kernel:
+    mov x1, #0
+    mov x2, #0
+    mov x3, #0
+    br x4
+</pre></div>
+</div>
+<p>When RPi boots,
+core 0 loads the kernel address from symbol <code class="docutils literal notranslate"><span class="pre">kernel_entry32</span></code> and branch to that address.
+The RPi firmware will fill <code class="docutils literal notranslate"><span class="pre">kernel_entry32</span></code> with <code class="docutils literal notranslate"><span class="pre">kernel_address</span></code> value
+specified in <code class="docutils literal notranslate"><span class="pre">config.txt</span></code> before this routine.
+All the other cores spin inside <code class="docutils literal notranslate"><span class="pre">secondary_spin</span></code> loop with <code class="docutils literal notranslate"><span class="pre">wfe</span></code>.
+While looping, they load 8 bytes address from <code class="docutils literal notranslate"><span class="pre">spin_cpu0</span> <span class="pre">+</span> <span class="pre">8</span> <span class="pre">*</span> <span class="pre">core_idx</span></code>,
+and branch to that address if it is non-zero.
+Therefore, in order to wake up other cores, core 0 needs to write the starting address
+to their spinning address and send events with <code class="docutils literal notranslate"><span class="pre">sev</span></code> instruction.
+You’ll use <code class="docutils literal notranslate"><span class="pre">init::start2</span></code> as an entrypoint for other cores.</p>
+<p>Each core should use its own stack pointer to not interfere with the other cores.
+Function <code class="docutils literal notranslate"><span class="pre">_start</span></code> assigns <code class="docutils literal notranslate"><span class="pre">KERN_STACK_BASE</span></code> as the stack register for core 0.
+In our kernel design, core <code class="docutils literal notranslate"><span class="pre">i+1</span></code> will use the stack right below the stack of core <code class="docutils literal notranslate"><span class="pre">i</span></code>.
+That is, <code class="docutils literal notranslate"><span class="pre">KERN_STACK_BASE</span> <span class="pre">-</span> <span class="pre">KERN_STACK_SIZE</span> <span class="pre">*</span> <span class="pre">i</span></code> for core <code class="docutils literal notranslate"><span class="pre">i</span></code>.</p>
+</div>
+<div class="section" id="implementation">
+<h4>Implementation<a class="headerlink" href="lab5.html#implementation" title="Permalink to this headline">¶</a></h4>
+<p>Now you’re ready to implement the core initialization routine.
+You’ll write <code class="docutils literal notranslate"><span class="pre">kmain()</span></code> in <code class="docutils literal notranslate"><span class="pre">kern/src/main.rs</span></code> and
+<code class="docutils literal notranslate"><span class="pre">initialize_app_cores()</span></code>, <code class="docutils literal notranslate"><span class="pre">start2()</span></code>, and <code class="docutils literal notranslate"><span class="pre">kmain2()</span></code> in <code class="docutils literal notranslate"><span class="pre">kern/src/init.rs</span></code>.</p>
+<p>You can implement these functions in any order you wish:</p>
+<ul>
+<li><p><strong>In</strong> <code class="docutils literal notranslate"><span class="pre">initialize_app_cores()</span></code> <strong>, write the address of</strong> <code class="docutils literal notranslate"><span class="pre">start2()</span></code> <strong>to each core’s spinning address.</strong></p>
+<blockquote>
+<div><p>The spinning base, <code class="docutils literal notranslate"><span class="pre">spin_cpu0</span></code>, is defined as a constant <code class="docutils literal notranslate"><span class="pre">SPINNING_BASE</span></code> in <code class="docutils literal notranslate"><span class="pre">pi/src/common.rs</span></code>.
+Core 0 should calculate each core’s spinning address,
+write the address of <code class="docutils literal notranslate"><span class="pre">start2()</span></code> to those addresses, invoke <code class="docutils literal notranslate"><span class="pre">sev()</span></code>,
+and wait for each core’s acknowledgement.
+Other cores should write 0 to their spinning address in <code class="docutils literal notranslate"><span class="pre">kmain2()</span></code> when they are fully awoken.
+Core 0 should check that all cores’ spinning address has been overwritten with 0
+before returning from <code class="docutils literal notranslate"><span class="pre">initialize_app_cores()</span></code>.</p>
+</div></blockquote>
+</li>
+<li><p><strong>In</strong> <code class="docutils literal notranslate"><span class="pre">start2()</span></code> <strong>, setup the stack pointer and branch to</strong> <code class="docutils literal notranslate"><span class="pre">kinit2()</span></code> <strong>.</strong></p>
+<blockquote>
+<div><p>Set the stack pointer as described above.
+Recall that you can extract the core index from <code class="docutils literal notranslate"><span class="pre">MPIDR_EL1</span></code>.
+Then, branch to <code class="docutils literal notranslate"><span class="pre">kinit2</span></code> after setting up the stack register.
+Be careful not to use any stack variable in <code class="docutils literal notranslate"><span class="pre">start2()</span></code>,
+since we are changing the stack pointer.</p>
+<div class="warning admonition">
+<p class="admonition-title"><code class="docutils literal notranslate"><span class="pre">aarch64::affinity()</span></code> might not work</p>
+<p><code class="docutils literal notranslate"><span class="pre">aarch64::affinity()</span></code> is not guaranteed to be inlined,
+and it might use the stack space to call the function.
+Because we don’t set the stack pointer yet,
+you may not be able to use <code class="docutils literal notranslate"><span class="pre">aarch64::affinity()</span></code>.
+Try to access <code class="docutils literal notranslate"><span class="pre">MPIDR_EL1</span></code> register directly.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>In</strong> <code class="docutils literal notranslate"><span class="pre">kmain2()</span></code> <strong>, print a message and acknowledge that the core is available.</strong></p>
+<blockquote>
+<div><p>If the initialization is successful, each core will reach <code class="docutils literal notranslate"><span class="pre">kmain2()</span></code> and
+start executing it in EL1.
+In <code class="docutils literal notranslate"><span class="pre">kmain2()</span></code>, write 0 to the core’s spinning address to notify core 0.
+Then print any message to the console and loop indefinitely.
+You’re welcome to use the newly added logging macros.</p>
+</div></blockquote>
+</li>
+</ul>
+<p>When you finish writing the code, change your <code class="docutils literal notranslate"><span class="pre">kmain()</span></code> like this:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">unsafe</span><span class="w"> </span><span class="k">fn</span> <span class="nf">kmain</span><span class="p">()</span><span class="w"> </span>-&gt; <span class="o">!</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">ALLOCATOR</span><span class="p">.</span><span class="n">initialize</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">FILESYSTEM</span><span class="p">.</span><span class="n">initialize</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">VMM</span><span class="p">.</span><span class="n">initialize</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">SCHEDULER</span><span class="p">.</span><span class="n">initialize</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">init</span>::<span class="n">initialize_app_cores</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">VMM</span><span class="p">.</span><span class="n">setup</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">SCHEDULER</span><span class="p">.</span><span class="n">start</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>If you run the kernel on RPi board, you should see initialization message from each core.
+However, these new cores are not doing any useful works yet,
+because some components in our kernel are not parallel-ready.
+The next step is to fix those outdated designs!</p>
+<div class="warning admonition">
+<p class="admonition-title">Beware of unsound Mutex!</p>
+<p>Note that our mutex is unsound, so <code class="docutils literal notranslate"><span class="pre">kprintln!()</span></code> and logging macros,
+which internally uses mutex,
+may deadlock or even trigger a data race when accessed by multiple cores.
+This should be a rare case, and if you retry enough time,
+you should see a successful case.
+We are going to fix this soon.</p>
+</div>
+<div class="question admonition">
+<p class="admonition-title">How to detect spinning base without hard coding the address? (spin-address)</p>
+<p>We have hardcoded the spin address of Raspberry Pi to our kernel,
+so the kernel won’t run on another hardware if they use different spin
+address.
+How does Linux kernel solve this problem?</p>
+</div>
+</div>
+</div>
+<div class="section" id="subphase-b-mutex-revisited">
+<h3>Subphase B: Mutex, Revisited<a class="headerlink" href="lab5.html#subphase-b-mutex-revisited" title="Permalink to this headline">¶</a></h3>
+<p>The mutex code in our skeleton code doesn’t provide an actual thread safety
+and lies to Rust compiler by unsafely implementing Send and Sync trait.
+We did this because atomic memory operations required for
+thread-safe mutex implementation is only available when MMU is initialized
+in AArch64 architecture, which was merely added in lab 4.
+We justified our design with the fact that there is only one core available in the system,
+but since we have both MMU and multiple cores enabled now,
+it is the time to correct that lie.
+In this subphase, you’ll fix the mutex design so that multiple cores can use mutex in a sound manner.
+You will be working in <code class="docutils literal notranslate"><span class="pre">kern/src/mutex.rs</span></code>.</p>
+<div class="section" id="per-core-data-management">
+<h4>Per-core Data Management<a class="headerlink" href="lab5.html#per-core-data-management" title="Permalink to this headline">¶</a></h4>
+<p>When multiple cores are active in a kernel,
+the kernel must distinguish per-kernel resource initialization and per-core resource initialization.
+Per-kernel resource needs to be initialized only once per startup.
+In our kernel, per-kernel resources are defined in <code class="docutils literal notranslate"><span class="pre">main.rs</span></code>.
+Static structs such as <code class="docutils literal notranslate"><span class="pre">ALLOCATOR</span></code>, <code class="docutils literal notranslate"><span class="pre">FILESYSTEM</span></code>, and <code class="docutils literal notranslate"><span class="pre">SCHEDULER</span></code> are per-kernel resources.
+Core 0 should initialize per-kernel resources before waking up other cores.
+On the other hand, per-core resource must be initialized for each core in <code class="docutils literal notranslate"><span class="pre">kmain()</span></code> and <code class="docutils literal notranslate"><span class="pre">kmain2()</span></code>.</p>
+<p>Now go ahead and read per-core resource definitions in <code class="docutils literal notranslate"><span class="pre">kern/src/percore.rs</span></code>.
+Each <code class="docutils literal notranslate"><span class="pre">PerCore</span></code> struct has three data fields:
+<code class="docutils literal notranslate"><span class="pre">preemption</span></code>, <code class="docutils literal notranslate"><span class="pre">mmu_ready</span></code>, and <code class="docutils literal notranslate"><span class="pre">local_irq</span></code>.
+<code class="docutils literal notranslate"><span class="pre">preemption</span></code> counts the number of lock held by the core, <code class="docutils literal notranslate"><span class="pre">mmu_ready</span></code> flag
+saves whether MMU is set for each core, and finally <code class="docutils literal notranslate"><span class="pre">local_irq</span></code> saves
+IRQ handler for each local interrupt.</p>
+<p>You may notice atomic types used in the definition of <code class="docutils literal notranslate"><span class="pre">PerCore</span></code> struct.
+For now, think of them as a plain type with internal mutability.
+We will discuss about atomic types in detail later.</p>
+<p>Then, start reading code in <code class="docutils literal notranslate"><span class="pre">kern/src/vm.rs</span></code>.
+In lab 4, <code class="docutils literal notranslate"><span class="pre">setup()</span></code> was called directly in <code class="docutils literal notranslate"><span class="pre">initialize()</span></code>,
+and core 0 immediately initialized its MMU after initializing the virtual memory manager.
+However, in lab 5, the role of them are separated.
+Core 0 initializes the virtual memory manager during the global initialization routine,
+and each core, including core 0, sets up its MMU after the core initialization is done.</p>
+<p>We have provided a partial implementation of <code class="docutils literal notranslate"><span class="pre">wait()</span></code>.
+See how it calls <code class="docutils literal notranslate"><span class="pre">setup()</span></code> and, how <code class="docutils literal notranslate"><span class="pre">set_mmu_ready()</span></code> and <code class="docutils literal notranslate"><span class="pre">is_mmu_ready()</span></code>
+is used to track per-core MMU initialization information.
+Later you’ll fill the rest of the code so that each core loops and waits until
+the MMU initialization of all cores finishes
+and returns together.</p>
+</div>
+<div class="section" id="memory-consistency-model">
+<h4>Memory Consistency Model<a class="headerlink" href="lab5.html#memory-consistency-model" title="Permalink to this headline">¶</a></h4>
+<p>Recall that RAM is shared among all cores.
+When multiple cores are reading to and writing from a same address,
+in which order they would read and write a value?
+What can be the observable output from a program?
+Can the same program behave differently on x86-64 and AArch64?
+Architectures’ <em>memory consistency model</em> specifies the answer to these questions.</p>
+<p>Let’s look at a classic example of memory ordering,
+where two threads are mutating values and printing them.
+Rust’s type system prevents this example to compile without an unsafe block,
+but let’s assume that this code was written in a racy variant of Rust
+for the perpose of demonstration.
+Assume A and B are both initialized to 0.</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="cm">/* Thread 1 */</span><span class="w"></span>
+<span class="n">A</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="c1">// (1)</span>
+<span class="n">print</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">B</span><span class="p">);</span><span class="w"> </span><span class="c1">// (2)</span>
+
+<span class="cm">/* Thread 2 */</span><span class="w"></span>
+<span class="n">B</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="c1">// (3)</span>
+<span class="n">print</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">A</span><span class="p">);</span><span class="w"> </span><span class="c1">// (4)</span>
+</pre></div>
+</div>
+<p>One of the most intuitive memory consistency model is <strong>sequential consistency (SC)</strong>.
+It assumes two things:
+(1) there is a <em>global</em> order of all reads and writes, and
+(2) the interleaving preserves the order of instructions from the same thread
+(program order).
+In sequential consistency, one of possible output of the above program is <code class="docutils literal notranslate"><span class="pre">01</span></code>,
+where one thread completes the execution before the other thread start the execution.
+The order of the program that prints this result 1-2-3-4 or 3-4-1-2.
+<code class="docutils literal notranslate"><span class="pre">11</span></code> is slightly less obvious output, where the execution of two threads are
+interleaved, for example like 1-3-2-4 or 3-1-2-4.
+In this model, <code class="docutils literal notranslate"><span class="pre">00</span></code> is not a valid output of the above program.</p>
+<div class="note admonition">
+<p class="admonition-title">Multithread vs Multicore</p>
+<p>Strictly speaking, multithread and multicore are different concepts.
+If multiple threads are running on a single core,
+there is no memory consistency problem.
+However, almost every CPU has multiple cores these days,
+and two terms are used somewhat interchangably.
+When you see a term “multiple threads” in this lab document,
+you can assume that it implies multiple threads running on a multicore CPU
+if not stated otherwise.</p>
+</div>
+<p>Modern CPUs leverage numerous optimizations such as out-of-order execution, per-core caches,
+and load/store optimization which significantly improves the execution performance.
+Unfortunately, SC is too strict to permit these optimizations.
+SC requires a global ordering of every memory operation running in multiple cores,
+which is essentially requiring single threaded behavior for multicore architecture.
+In result, modern architectures adopt weaker memory consistency model than SC.</p>
+<div class="figure align-center" id="id8">
+<a class="reference internal image-reference" href="../_images/a53-diagram.jpg"><img alt="../_images/a53-diagram.jpg" src="../_images/a53-diagram.jpg" style="width: 500px;" /></a>
+<p class="caption"><span class="caption-text">Each core in Cortex-A53 has its own instruction and data cache</span><a class="headerlink" href="lab5.html#id8" title="Permalink to this image">¶</a></p>
+</div>
+<p><strong>Total store ordering (TSO)</strong> is slightly weaker consistency model than SC.
+It allows store buffering, which may delay the propagation of write operations to other cores.
+This weakening allows significant performance improvement over the SC model,
+and x86 and x86-64 specifies a memory consistency that is very similar to TSO.</p>
+<p>TSO upholds many guarantees of SC, but it allows a behavior that is ruled out by SC.
+Let’s look at the example code again:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="cm">/* Thread 1 */</span><span class="w"></span>
+<span class="n">A</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="c1">// (1)</span>
+<span class="n">print</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">B</span><span class="p">);</span><span class="w"> </span><span class="c1">// (2)</span>
+
+<span class="cm">/* Thread 2 */</span><span class="w"></span>
+<span class="n">B</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="c1">// (3)</span>
+<span class="n">print</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">A</span><span class="p">);</span><span class="w"> </span><span class="c1">// (4)</span>
+</pre></div>
+</div>
+<p>Under TSO model, it is possible to observe the result <code class="docutils literal notranslate"><span class="pre">00</span></code> from this program.
+If <code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">=</span> <span class="pre">1</span></code> is stored in thread 1’s cache and <code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">=</span> <span class="pre">1</span></code> is stored in thread 2’s cache,
+and each thread continues the execution before the write propagates to each other,
+they may both print 0 as the result.
+This is not an allowed behavior under SC.</p>
+<p>ARM architecture specifies even weaker memory model.
+Consider the following program:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="cm">/* Thread 1 */</span><span class="w"></span>
+<span class="n">B</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="c1">// (1)</span>
+<span class="n">A</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="c1">// (2)</span>
+
+<span class="cm">/* Thread 2 */</span><span class="w"></span>
+<span class="n">print</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">A</span><span class="p">);</span><span class="w"> </span><span class="c1">// (3)</span>
+<span class="n">print</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">B</span><span class="p">);</span><span class="w"> </span><span class="c1">// (4)</span>
+</pre></div>
+</div>
+<p>In ARM consistency model, surprisingly the program can print <code class="docutils literal notranslate"><span class="pre">10</span></code> as a result.
+Which means, thread 2 may observe the writes from thread 1 in different order
+from the order that they are written in thread 1.
+Under TSO, this is not allowed because subsequent writes become visible to other cores in
+the order that they have written
+(hence the name, “total store ordering”).</p>
+<p>ARM architecture said to have “weak memory ordering with data dependency”.
+In weak memory ordering model, in general,
+there is no consistency guarantee between two different memory locations
+regardless of the program order.
+However, if a value in one memory location depends on a value in another memory
+location, there is a data dependency guarantee.</p>
+<p>Consider the following two examples:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="cm">/* Program 1 */</span><span class="w"></span>
+<span class="n">A</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="c1">// (1)</span>
+<span class="n">B</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="c1">// (2)</span>
+
+<span class="cm">/* Program 2 */</span><span class="w"></span>
+<span class="n">C</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="c1">// (3)</span>
+<span class="n">D</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">C</span><span class="p">;</span><span class="w"> </span><span class="c1">// (4)</span>
+</pre></div>
+</div>
+<p>In program 1, A and B are independent memory locations, so other threads
+may observe (2) before (1).
+However, in program 2, the value of D depends on the value of C,
+so if other threads observe 1 at memory location D,
+they are guaranteed to observe 1 at memory location C.</p>
+<div class="question admonition">
+<p class="admonition-title">Memory consistency example (consistency-handson)</p>
+<p>Using two threads, write an example that will print different set of results
+on SC, TSO, and ARM hardware. Specify what can be printed on each memory
+consistency model.</p>
+</div>
+<p>Moreover, not only hardware, but also a language defines its memory consistency model.
+When a compiler optimizes program code,
+it might reorder or even completely remove certain statements based on the language specification.</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="cm">/* program 1 */</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">0</span><span class="p">..</span><span class="mi">1000</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">x</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="cm">/* program 2 */</span><span class="w"></span>
+<span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">0</span><span class="p">..</span><span class="mi">1000</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>In the above code snippet,
+program 1 and 2 are equivalent if there is no other thread
+modifying the variable <code class="docutils literal notranslate"><span class="pre">x</span></code> during the loop.
+Is it valid for Rust compiler to optimize program 1 to program 2?
+Recall that Rust’s mutable reference implies the exclusive access to the underlying value.
+Thus, the answer is yes in Rust;
+The compiler can optimize program 1 to program 2
+based on the assumption that <code class="docutils literal notranslate"><span class="pre">x</span></code> is a unique access to the underlying memory location.
+To tell the compiler that <code class="docutils literal notranslate"><span class="pre">x</span></code> might be modified by other threads,
+a raw pointer or an <code class="docutils literal notranslate"><span class="pre">UnsafeCell</span></code> must be used instead of a mutable reference <code class="docutils literal notranslate"><span class="pre">&amp;mut</span></code>.</p>
+</div>
+<div class="section" id="memory-barrier-and-atomic-instruction">
+<h4>Memory Barrier and Atomic Instruction<a class="headerlink" href="lab5.html#memory-barrier-and-atomic-instruction" title="Permalink to this headline">¶</a></h4>
+<p>As you should have felt at this point, writing a correct parallel program is
+substantially harder than writing a correct single-threaded program.
+Parallel programming involves numerous cognitive pitfalls,
+and AArch64’s weak memory consistency model further complicates the reasoning
+of a parallel program.</p>
+<p>Memory barriers and atomic instructions are tools that an architecture provide
+to tame the complexity of memory ordering.
+They allow programmers to manually introduce stronger memory ordering guarantee
+in localized, controlled manner.
+At language level, they also provide a way to write a portable code
+that can be compiled to several architectures with different memory consistency guarantee.</p>
+<p><strong>Memory barrier</strong> ensures the dependency between the instructions before and after the barrier.
+With memory barrier, it is possible to explicitly specify the dependency between
+instructions before and after the barrier
+when strong memory ordering guarantee is required for program correctness.</p>
+<p>In ARM architecture, there are three kinds of memory barrier instructions (ref: B2.3.5).
+By default, they act as a full system barrier operation,
+which fully synchronizes the instructions before and after the barrier
+(according to their instruction type).
+You can adjust the behavior with option parameter, such that they only wait for
+specific instruction types.
+For instance, it is possible to make them wait only for stores, not for load.</p>
+<ul>
+<li><p><strong>DMB</strong>, Data Memory Barrier</p>
+<blockquote>
+<div><p>Data memory barrier acts as a memory barrier. It ensures that all explicit memory
+access that appear in program order before the DMB instruction are observed before
+any explicit memory access that appear in program order after the DMB instruction.</p>
+</div></blockquote>
+</li>
+<li><p><strong>DSB</strong>, Data Synchronization Barrier</p>
+<blockquote>
+<div><p>Data Synchronization Barrier acts as a special kind of memory barrier.
+No instruction in program order after this instruction executes until this instruction completes.</p>
+</div></blockquote>
+</li>
+<li><p><strong>ISB</strong>, Instruction Synchronization Barrier</p>
+<blockquote>
+<div><p>Instruction Synchronization Barrier flushes the pipeline in the processor,
+so that all instructions following the ISB are fetched from cache or memory,
+after the instruction has been completed.</p>
+</div></blockquote>
+</li>
+</ul>
+<div class="question admonition">
+<p class="admonition-title">Barriers in <code class="docutils literal notranslate"><span class="pre">context_restore</span></code> (context-restore-barrier)</p>
+<p>Recall these four instructions that we put after overwriting TTBR registers in lab 4.
+Explain what do these lines mean, and why they are needed when updating a page table.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dsb     ishst
+tlbi    vmalle1
+dsb     ish
+isb
+</pre></div>
+</div>
+</div>
+<p><strong>Atomic instruction</strong> is another tool that architectures provide to facilitate parallel programming.
+Atomic instructions guarantee that it is not possible to partially perform certain actions.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>/* thread 1 */
+mov x0, #0
+mov x1, addr of counter
+loop:
+    ldr x2, [x1]
+    add x2, x2, #1
+    str x2, [x1]
+    add x0, x0, #1
+    cmp x0, #1000
+    ble loop
+
+/* program 2 */
+mov x0, #0
+mov x1, addr of counter
+loop:
+    ldr x2, [x1]
+    add x2, x2, #1
+    str x2, [x1]
+    add x0, x0, #1
+    cmp x0, #1000
+    ble loop
+</pre></div>
+</div>
+<p>Consider the above program, where two threads are incrementing the same memory address.
+They both loop 1000 times, so ideally the counter should contain 2000 when the threads
+finish the execution.
+Sadly, the increment is not performed in an atomic manner, so each thread can
+read the “intermediate” value of each other. The program does not prevent
+thread 2 to load the value of the counter between the time frame of thread 1’s
+load and store.
+When it happens, both thread 1 and 2 write the same value to the counter,
+resulting in the counter to be only incremented by one instead of two.</p>
+<p>Atomic instructions help resolving this problem by either performing an action
+in non-preemptive manner (single instruction to perform fetch and add) or provide
+a mechanism to detect the data contention so that the operation can be retried.
+They are building blocks for higher level synchronization primitives such as mutex.
+Check ARMv8-A Architecture Reference Manual C3.2.12-14 and
+ARMv8-A Synchronization Primitives document to read more about
+AArch64’s atomic instructions.</p>
+<div class="question admonition">
+<p class="admonition-title">Writing atomic assembly code (atomic-handson)</p>
+<p>Rewrite the above program with atomic instructions,
+so that the answer is always correct.</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Check your architecture version</p>
+<p>You should check the architecture version when writing an atomic instruction.
+For instance, CAS, compare and swap instruction is only available after
+ARMv8.1 and cannot be used in ARMv8.
+If you are using Rust, the LLVM backend will automatically handle this.</p>
+</div>
+<p>Except the case when you work at low-level inline assembly level,
+you should use atomic data types such as
+<a class="reference external" href="https://doc.rust-lang.org/core/sync/atomic/struct.AtomicBool.html">AtomicBool</a>
+and
+<a class="reference external" href="https://doc.rust-lang.org/core/sync/atomic/struct.AtomicUsize.html">AtomicUsize</a>
+provided by Rust’s standard library.
+They provide high-level atomic operations such as <code class="docutils literal notranslate"><span class="pre">fetch_and()</span></code> and <code class="docutils literal notranslate"><span class="pre">compare_and_swap()</span></code>.
+Even if the architecture does not support them as a single operation,
+the compiler will preserve the semantics and implement them with
+several smaller atomic operations.</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">impl</span><span class="w"> </span><span class="n">AtomicBool</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">fetch_and</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">val</span>: <span class="kt">bool</span><span class="p">,</span><span class="w"> </span><span class="n">order</span>: <span class="nc">Ordering</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">bool</span> <span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">impl</span><span class="w"> </span><span class="n">AtomicUsize</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">compare_and_swap</span><span class="p">(</span><span class="w"></span>
+<span class="w">        </span><span class="o">&amp;</span><span class="bp">self</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">current</span>: <span class="kt">usize</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">new</span>: <span class="kt">usize</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">order</span>: <span class="nc">Ordering</span><span class="w"></span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">usize</span> <span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Note the <code class="docutils literal notranslate"><span class="pre">&amp;self</span></code> requirement in those operations.
+A non-mutable reference in Rust implies that the access to the value is shared.
+Although multiple code accesses the value at the same time,
+atomic operations guarantee that there will be no data race.
+Thus, it is valid to use <code class="docutils literal notranslate"><span class="pre">&amp;self</span></code> instead of <code class="docutils literal notranslate"><span class="pre">&amp;mut</span> <span class="pre">self</span></code> in these operations.</p>
+<div class="figure align-center" id="id9">
+<a class="reference internal image-reference" href="../_images/acq-rel.svg"><img alt="../_images/acq-rel.svg" src="../_images/acq-rel.svg" width="800px" /></a>
+<p class="caption"><span class="caption-text">A visualization of acquire and release semantics</span><a class="headerlink" href="lab5.html#id9" title="Permalink to this image">¶</a></p>
+</div>
+<p>These atomic instructions accept an <code class="docutils literal notranslate"><span class="pre">Ordering</span></code> parameter.
+Rust provides <a class="reference external" href="https://doc.rust-lang.org/core/sync/atomic/enum.Ordering.html">five memory orderings</a>,
+which are the same as <a class="reference external" href="https://en.cppreference.com/w/cpp/atomic/memory_order">those of C++20</a>.
+<em>Relaxed</em> ordering provides atomic operation without ordering guarantee.
+<em>Acquire</em> and <em>release</em> orderings are used in pair;
+A load with acquire ordering prevents instructions after load to be reordered before it,
+and a store with release ordering prevents instructions before store to be reordered after it.
+In result, an acquire-release pair of an address creates a critical region that
+prevents instructions between them from being reordered to outside of the critical region.
+In addition, if thread A writes to a variable with release ordering and thread B
+reads the same variable with acquire ordering, all subsequent loads in thread B
+can see stores from thread B before the write with release ordering.
+<em>AcqRel</em> is <em>Acquire</em> plus <em>Release</em> for atomic instructions that perform both load and store.
+<em>SeqCst</em> is <em>AcqRel</em> with the additional guarantee that all threads see sequentially
+consistent operations in the same order.</p>
+<div class="note admonition">
+<p class="admonition-title">Further reading</p>
+<p><a class="reference external" href="https://doc.rust-lang.org/nomicon/concurrency.html">Chapter 8 of Rustonomicon</a>
+contains a summary of what we have covered.</p>
+</div>
+</div>
+<div class="section" id="id1">
+<h4>Implementation<a class="headerlink" href="lab5.html#id1" title="Permalink to this headline">¶</a></h4>
+<p>Now you have enough knowledge to fix the mutex code.
+You will primarily working in <code class="docutils literal notranslate"><span class="pre">kern/src/mutex.rs</span></code>, while fixing other functions
+in <code class="docutils literal notranslate"><span class="pre">kern/src/vm.rs</span></code>, <code class="docutils literal notranslate"><span class="pre">kern/src/main.rs</span></code>, and <code class="docutils literal notranslate"><span class="pre">kern/src/init.rs</span></code>.</p>
+<p>First, start with per-core MMU initialization.
+Add <code class="docutils literal notranslate"><span class="pre">VMM.wait()</span></code> to <code class="docutils literal notranslate"><span class="pre">kmain()</span></code> like below:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">unsafe</span><span class="w"> </span><span class="k">fn</span> <span class="nf">kmain</span><span class="p">()</span><span class="w"> </span>-&gt; <span class="o">!</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">ALLOCATOR</span><span class="p">.</span><span class="n">initialize</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">FILESYSTEM</span><span class="p">.</span><span class="n">initialize</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">VMM</span><span class="p">.</span><span class="n">initialize</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">SCHEDULER</span><span class="p">.</span><span class="n">initialize</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">init</span>::<span class="n">initialize_app_cores</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">VMM</span><span class="p">.</span><span class="n">wait</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">SCHEDULER</span><span class="p">.</span><span class="n">start</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Then, modify <code class="docutils literal notranslate"><span class="pre">kmain2()</span></code> in <code class="docutils literal notranslate"><span class="pre">kern/src/init.rs</span></code> so that it calls
+<code class="docutils literal notranslate"><span class="pre">VMM.wait()</span></code> after writing 0 to its spinning address to acknowledge
+the core boot sequence.
+Once you are finished, print any message inside an infinite loop in the next line.</p>
+<p>Next, finish the implementation of <code class="docutils literal notranslate"><span class="pre">wait()</span></code> in <code class="docutils literal notranslate"><span class="pre">kern/src/vm.rs</span></code>.
+Specifically, after each core setup its MMU by calling <code class="docutils literal notranslate"><span class="pre">setup()</span></code>
+(which is included in the skeleton code),
+increment the <code class="docutils literal notranslate"><span class="pre">ready_core_cnt</span></code> by one
+and loop until the count reaches the number of core, <code class="docutils literal notranslate"><span class="pre">pi::common::NCORES</span></code>.
+Think about which atomic ordering should be used here.</p>
+<p>The provided mutex code used relaxed load and store,
+which do not synchronize among cores.
+Therefore, if you test your code at this point,
+the printing result from cores can be mixed together
+or sometimes the kernel even deadlocks and stops making progress.</p>
+<p>Now, fix <code class="docutils literal notranslate"><span class="pre">try_lock()</span></code> and <code class="docutils literal notranslate"><span class="pre">unlock()</span></code> in <code class="docutils literal notranslate"><span class="pre">kern/src/mutex.rs</span></code>.
+You need to use atomic operations as well as APIs in <code class="docutils literal notranslate"><span class="pre">kern/src/percore.rs</span></code>
+to properly implement the mutex.
+Specifically,
+use <code class="docutils literal notranslate"><span class="pre">is_mmu_ready()</span></code> to check whether MMU is enabled or disabled,
+<code class="docutils literal notranslate"><span class="pre">getcpu()</span></code> to increment core’s preemption counter when you lock a mutex,
+and <code class="docutils literal notranslate"><span class="pre">putcpu()</span></code> to decrement core’s preemption counter when you unlock a mutex.</p>
+<p>Here is the description of how mutex should behave when MMU is enabled and disabled:</p>
+<dl>
+<dt><strong>When MMU is disabled</strong></dt><dd><p>A mutex in this state is used when core 0 is initializing per-kernel resources.
+If MMU is disabled, general atomic operations are not available except
+relaxed load and store.
+As such, we will only allow core 0 to use mutex when MMU is disabled.
+If only one core is accessing the mutex, these operations are sufficient
+to implement a mutex.
+In fact, it can be thought as a mutable-only version of <code class="docutils literal notranslate"><span class="pre">RefCell</span></code>.</p>
+<p>You can reuse most of the current mutex code to implement this.
+Add the necessary checks to make sure your mutex follows
+Rust’s safety requirement.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>The original mutex code supported reentrancy, which allows the owner of
+a mutex to lock it more than once.
+However, this design is not compatible with Rust’s one mutable owner
+model in general.
+You don’t have to implement this when you fix the mutex design.</p>
+</div>
+</dd>
+<dt><strong>When MMU is enabled</strong></dt><dd><p>When MMU is enabled,
+perform correct locking and unlocking with atomic operations.
+The overall code structure will look similar with the MMU-disabled state,
+but instead of relaxed load and store,
+atomic operations such as <code class="docutils literal notranslate"><span class="pre">compare_and_swap</span></code> or <code class="docutils literal notranslate"><span class="pre">swap</span></code> should be used
+with correct ordering parameter.
+Check APIs of <a class="reference external" href="https://doc.rust-lang.org/core/sync/atomic/struct.AtomicBool.html">AtomicBool</a>
+and choose whatever atomic operation you want.</p>
+</dd>
+</dl>
+<p>When you are done, messages from each core should be printed line by line
+without any overlap or deadlock.
+Double check your implementation even if you get the expected behavior.
+Parallel code is indeterministic in nature,
+which makes bugs in them very hard to be reproduced and fixed.
+It’s much better to take time now and prevent those bugs
+than be puzzled with inscrutable behaviors later.
+If you feel confident of your design, continue to the next subphase.</p>
+<div class="warning admonition">
+<p class="admonition-title">Be careful not to use mutex before MMU initialization</p>
+<p>If you have followed the instruction correctly,
+<code class="docutils literal notranslate"><span class="pre">Mutex</span></code> will assert that the core number is equal to 0
+when MMU is not initialized for the current core.
+If other core tries to use mutex before MMU initialization,
+it will halt the core with infinite recursion,
+because <code class="docutils literal notranslate"><span class="pre">assert!()</span></code> calls <code class="docutils literal notranslate"><span class="pre">kprintln!()</span></code>, <code class="docutils literal notranslate"><span class="pre">kprintln!()</span></code>
+calls <code class="docutils literal notranslate"><span class="pre">Mutex::lock()</span></code>, and <code class="docutils literal notranslate"><span class="pre">Mutex::lock()</span></code> calls <code class="docutils literal notranslate"><span class="pre">assert!()</span></code>.</p>
+<p>When this happens,
+the kernel becomes unresponsive without printing anything to the console.
+If you find your kernel behave in this way,
+try to find a lock usage before MMU.
+Note that <code class="docutils literal notranslate"><span class="pre">kprintln!()</span></code> and logging macros use console lock internally.</p>
+</div>
+<div class="warning admonition">
+<p class="admonition-title"><code class="docutils literal notranslate"><span class="pre">Send</span></code> and <code class="docutils literal notranslate"><span class="pre">Sync</span></code> variance is hard</p>
+<p>A trait implementation of a wrapper type sometimes depends on a trait
+implementation of an inner type.
+This is called “variance”.</p>
+<p>Containers like <code class="docutils literal notranslate"><span class="pre">Vec&lt;T&gt;</span></code> implements <code class="docutils literal notranslate"><span class="pre">Send</span></code> if <code class="docutils literal notranslate"><span class="pre">T</span></code> is <code class="docutils literal notranslate"><span class="pre">Send</span></code>
+and <code class="docutils literal notranslate"><span class="pre">Sync</span></code> if <code class="docutils literal notranslate"><span class="pre">T</span></code> is <code class="docutils literal notranslate"><span class="pre">Sync</span></code>.
+<code class="docutils literal notranslate"><span class="pre">Mutex</span></code> implements <code class="docutils literal notranslate"><span class="pre">Send</span></code> if <code class="docutils literal notranslate"><span class="pre">T</span></code> is <code class="docutils literal notranslate"><span class="pre">Send</span></code>
+and <code class="docutils literal notranslate"><span class="pre">Sync</span></code> if <code class="docutils literal notranslate"><span class="pre">T</span></code> is <code class="docutils literal notranslate"><span class="pre">Send</span></code>.
+The variance rule for <code class="docutils literal notranslate"><span class="pre">Sync</span></code> and <code class="docutils literal notranslate"><span class="pre">Send</span></code> trait is tricky and hard to reason about.
+When you are in doubt,
+check the closest type in Rust standard library and follow the design.</p>
+</div>
+<div class="question admonition">
+<p class="admonition-title">Explain your mutex design (mutex-design)</p>
+<p>Why did you choose such ordering requirement?
+Why does this design guarantee the soundness?
+Explain with brevity.</p>
+</div>
+<div class="question admonition">
+<p class="admonition-title">State transition of Mutex (mutex-bad-state)</p>
+<p>What can go wrong if a thread calls lock(), initialize MMU, and unlock()?
+If you think this should be prevented,
+describe why it can be a problem and how to prevent it.
+You may add additional checks in <code class="docutils literal notranslate"><span class="pre">VMManager::wait()</span></code>.
+If you think it is okay to allow such behavior,
+justify your thought.
+Either answer can be correct depends on how you implemented mutex.</p>
+</div>
+</div>
+</div>
+<div class="section" id="subphase-c-multicore-scheduling">
+<h3>Subphase C: Multicore Scheduling<a class="headerlink" href="lab5.html#subphase-c-multicore-scheduling" title="Permalink to this headline">¶</a></h3>
+<p>Right now, only core 0 is scheduling user programs.
+In this subphase, you will make other cores participate in scheduling.
+As a result, our kernel will have around four times more throughput
+to run processes compared to the single-core version.</p>
+<div class="section" id="per-core-irq-handling">
+<h4>Per-Core IRQ Handling<a class="headerlink" href="lab5.html#per-core-irq-handling" title="Permalink to this headline">¶</a></h4>
+<p>In this section, you’ll enable per-core IRQ handling.
+We have used timer register at <code class="docutils literal notranslate"><span class="pre">IO_BASE</span> <span class="pre">+</span> <span class="pre">0x3000</span></code>,
+but the interrupt from this timer only propagates to core 0.
+In order to make other cores participate in scheduling,
+we’ll switch to another timer interrupt named <code class="docutils literal notranslate"><span class="pre">CNTPNSIRQ</span></code>,
+which stands for Counter Physical Non-Secure IRQ.</p>
+<p>You’ll mainly work in <code class="docutils literal notranslate"><span class="pre">pi/src/local_interrupt.rs</span></code>.
+The overall structure is mostly similar to
+<code class="docutils literal notranslate"><span class="pre">pi/src/timer.rs</span></code> and <code class="docutils literal notranslate"><span class="pre">pi/src/interrupt.rs</span></code>.
+You will also read “AArch64 Programmer’s Guides: Generic Timer” (timer) and
+“Quad-A7 Control” (QA7) as references while working on per-core IRQ handling.
+“AArch64 Programmer’s Guides: Generic Timer” describes how generic timer works
+in AArch64 architecture,
+and “Quad-A7 Control” describes how to propagate interrupts from generic timer
+to each core.</p>
+<p>First, fill in the definition of <code class="docutils literal notranslate"><span class="pre">Registers</span></code>.
+See QA7 chapter 4 for register definition.
+You only need to define registers up to “Core3 FIQ Source”.
+Then, fill the definition of <code class="docutils literal notranslate"><span class="pre">LocalInterrupt</span></code>
+and implement <code class="docutils literal notranslate"><span class="pre">From&lt;usize&gt;</span></code> for <code class="docutils literal notranslate"><span class="pre">LocalInterrupt</span></code>.
+See QA7: 4.10 for the definition.</p>
+<p>Next, implement the following functions of <code class="docutils literal notranslate"><span class="pre">LocalController</span></code>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">enable_local_timer()</span></code></p>
+<blockquote>
+<div><p>Enable CNTP timer by setting appropriate bits to <code class="docutils literal notranslate"><span class="pre">CNTP_CTL_EL0</span></code> register
+(ref: D7.5.10).
+Now enable per-core CNTPNS IRQ by writing values to Core X timers interrupt
+control register (QA7: 4.6).
+Use register definition in <code class="docutils literal notranslate"><span class="pre">lib/aarch64/src/regs.rs</span></code> whenever possible
+instead of writing an inline assembly.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is_pending()</span></code></p>
+<blockquote>
+<div><p>Read corresponding bits from Core X interrupt source register (QA7: 4.10)
+and convert it to a boolean value.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tick_in()</span></code></p>
+<blockquote>
+<div><p>Finally, implement <code class="docutils literal notranslate"><span class="pre">tick_in()</span></code> method for generic timer as we did in lab 4.
+See timer: 3.1 to 3.3 to determine which register you should use.
+You’ll need to convert <code class="docutils literal notranslate"><span class="pre">Duration</span></code> to counter tick value
+using the frequency of the timer.
+Again, prefer using register definition in <code class="docutils literal notranslate"><span class="pre">lib/aarch64/src/regs.rs</span></code> over
+writing an inline assembly.</p>
+</div></blockquote>
+</li>
+</ul>
+<div class="question admonition">
+<p class="admonition-title">How de we clear CNTPNS IRQ bit? (cntpns-clear)</p>
+<p>When local timer passes the specified time, CNTPNS IRQ bit is set and the
+core will receive an IRQ interrupt.
+When using the global timer, we wrote to CS register to clear the interrupt bit.
+Then, how do we clear CNTPNS IRQ bit?</p>
+</div>
+</div>
+<div class="section" id="fixing-the-scheduler">
+<h4>Fixing the Scheduler<a class="headerlink" href="lab5.html#fixing-the-scheduler" title="Permalink to this headline">¶</a></h4>
+<p>The next step is to use this per-core timer interupt in the scheduler to
+enable multicore scheduling.
+Follow these instructions step by step:</p>
+<ul>
+<li><p><strong>Make the scheduler use per-core local timer interrupt</strong></p>
+<blockquote>
+<div><p>Open <code class="docutils literal notranslate"><span class="pre">kern/src/scheduler.rs</span></code>.
+You should have <code class="docutils literal notranslate"><span class="pre">initialize_global_timer_interrupt()</span></code> in
+<code class="docutils literal notranslate"><span class="pre">GlobalScheduler::start()</span></code> if you followed the merge guideline
+at the beginning of the lab.
+Add the core number check around <code class="docutils literal notranslate"><span class="pre">initialize_global_timer_interrupt()</span></code>,
+so that only core 0 invokes that function.
+Then, call <code class="docutils literal notranslate"><span class="pre">initialize_local_timer_interrupt()</span></code> in the next line
+(for all cores).</p>
+<p>Next, erase what you have in <code class="docutils literal notranslate"><span class="pre">initialize_global_timer_interrupt</span></code>
+and implement the same logic in <code class="docutils literal notranslate"><span class="pre">initialize_local_timer_interrupt</span></code>
+with local interrupt controller.
+Leave the content of <code class="docutils literal notranslate"><span class="pre">initialize_global_timer_interrupt</span></code> empty for now,
+but do not erase the call to this function in <code class="docutils literal notranslate"><span class="pre">start()</span></code>.
+We will use this function in the later part of the lab.</p>
+</div></blockquote>
+</li>
+<li><p><strong>Support local timer interrupt handling</strong></p>
+<blockquote>
+<div><p>Implement <code class="docutils literal notranslate"><span class="pre">Index&lt;LocalInterrupt&gt;</span></code> for <code class="docutils literal notranslate"><span class="pre">LocalIrq</span></code> in <code class="docutils literal notranslate"><span class="pre">kern/src/traps/irq.rs</span></code>.
+Then, add local timer interrupt handling logic in <code class="docutils literal notranslate"><span class="pre">kern/src/traps.rs</span></code>.
+Global interrupt should be handled only by core 0,
+and all cores should handle their local interrupts.</p>
+</div></blockquote>
+</li>
+<li><p><strong>Fix the scheduler logic for multicore environment</strong></p>
+<blockquote>
+<div><p>Switching to multicore environment breaks a few characteristics of the scheduler.</p>
+<ul>
+<li><p>It is no more guaranteed that the first process in the queue matches
+the current running process on the core.
+If your scheduler logic relies on this assumption, fix that now.</p></li>
+<li><p>It is not guaranteed that the process found with <code class="docutils literal notranslate"><span class="pre">switch_to()</span></code>
+call in <code class="docutils literal notranslate"><span class="pre">start()</span></code> is in its initial state.
+This can happen if the number of process is smaller than the number of cores.
+In result, we can no longer assume that all registers are zero in the process’s context,
+and it is invalid to overwrite any register used by the user process
+after returning from <code class="docutils literal notranslate"><span class="pre">context_restore</span></code>.</p>
+<p>There are many ways to fix this.
+One naive way is giving up the stack adjustment and set <code class="docutils literal notranslate"><span class="pre">SP</span></code>
+to the address of the copied trap frame in the kernel stack.
+This solution wastes about 300 bytes plus the size of the trap frame.
+Another way to fix it is to copy the content of <code class="docutils literal notranslate"><span class="pre">tf</span></code> to the top of the kernel stack,
+and rewind <code class="docutils literal notranslate"><span class="pre">SP</span></code> back before calling <code class="docutils literal notranslate"><span class="pre">context_restore</span></code>.
+This involves more unsafe code, but it only wastes the size of the trap frame.
+You can also save the value of general registers to the memory after
+<code class="docutils literal notranslate"><span class="pre">context_restore</span></code>, use them as temporary regsiters and adjust <code class="docutils literal notranslate"><span class="pre">SP</span></code>,
+and restore them back before <code class="docutils literal notranslate"><span class="pre">eret</span></code>.</p>
+</li>
+<li><p>You may need to insert <code class="docutils literal notranslate"><span class="pre">sev()</span></code> in <code class="docutils literal notranslate"><span class="pre">schedule_out()</span></code> if you loop
+with <code class="docutils literal notranslate"><span class="pre">wfe()</span></code> in <code class="docutils literal notranslate"><span class="pre">switch_to()</span></code> to notify other cores waiting.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Make other cores participate in scheduling</strong></p>
+<blockquote>
+<div><p>The last step is to replace the infinite loop at the end of <code class="docutils literal notranslate"><span class="pre">kmain2()</span></code>
+in <code class="docutils literal notranslate"><span class="pre">kern/src/init.rs</span></code>
+with <code class="docutils literal notranslate"><span class="pre">SCHEDULER::start()</span></code>.</p>
+</div></blockquote>
+</li>
+</ul>
+<p>When you are finished, you should see that four cores are participating in scheduling.
+Print a <code class="docutils literal notranslate"><span class="pre">trace!()</span></code> log in local IRQ handling routine and verify that all four
+cores are participating in the scheduling.
+Recall that you need to run <code class="docutils literal notranslate"><span class="pre">VERBOSE_BUILD=1</span> <span class="pre">make</span></code> to enable trace-level log.
+If everything works correctly, proceed to the next phase.</p>
+<div class="question admonition">
+<p class="admonition-title">Multicore performance experiment (multicore-performance)</p>
+<p>Populate 4 fib processes in the scheduler.
+Run them with and without multicore, and record the running time.
+How much time did it take on a single core,
+and how much time did it take on four cores?
+Was it exactly four times faster on four cores?
+If not, what will be the overhead?</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="phase-2-tcp-networking">
+<h2>Phase 2: TCP Networking<a class="headerlink" href="lab5.html#phase-2-tcp-networking" title="Permalink to this headline">¶</a></h2>
+<p>In this phase, you’ll add TCP networking capability to our kernel
+by implementing a network driver and related system calls.
+In subphase A, you will learn how TCP over Ethernet works.
+Then, in subphase B,
+You will integrate an existing Ethernet implementation for RPi (USPi)
+and a minimal TCP stack (smoltcp) to our kernel.
+In subphase C,
+you will adjust process and scheduler so that sockets are properly managed
+as a process resource.
+Finally, in subphase D,
+you will implement several socket related system calls
+to expose the network driver to a user program.</p>
+<div class="section" id="subphase-a-networking-101">
+<h3>Subphase A: Networking 101<a class="headerlink" href="lab5.html#subphase-a-networking-101" title="Permalink to this headline">¶</a></h3>
+<p>In this subphase, you’ll learn the concepts of computer networking.
+We will cover the basics of computer networking, network layer, how a packet
+routes through computer networks, and socket abstraction provided by OS.</p>
+<div class="section" id="network-layer-model">
+<h4>Network Layer Model<a class="headerlink" href="lab5.html#network-layer-model" title="Permalink to this headline">¶</a></h4>
+<p>Networking is a way to communcate with other computers.
+There are many models that describe the network structure,
+but the common concept among them is that they all model network as a layered structure.
+In this lab, we will use TCP/IP’s 4 layer model.
+From the lowest to the highest, 4 layers of TCP/IP model are:</p>
+<ul class="simple">
+<li><p>Link Layer (Ethernet, IEEE 802.11)</p></li>
+<li><p>Internet Layer (IP)</p></li>
+<li><p>Transport Layer (TCP, UDP)</p></li>
+<li><p>Application Layer (FTP, HTTP, Plain Text)</p></li>
+</ul>
+<p><strong>The link layer</strong> provides a way to exchange packets in local (i.e., directly connected) network,
+such as computers connected to the same switch.
+<em>Ethernet</em> and <em>IEEE 802.11 (Wi-Fi)</em> are two popular link layer protocol.
+Typically, a <em>Media Access Control (MAC)</em> address is used as an identifier for link layer protocols.
+TCP/IP is designed to be link-layer independent,
+and there even exists a standard which uses
+<a class="reference external" href="https://en.wikipedia.org/wiki/IP_over_Avian_Carriers">homing birds as a link layer</a>.</p>
+<p><strong>The internet layer</strong> defines an addressing system to identify a host
+and how packets should be routed to the destination.
+<em>Internet protocol version 4 (IPv4)</em> is the most widely used address system.
+Under IPv4 scheme, an endpoint is identified by an address of four octets,
+which is often denoted as four decimal numbers separated by dots,
+such as 127.0.0.1.
+Internet protocol only provides <a class="reference external" href="https://en.wikipedia.org/wiki/Best-effort_delivery">best-effort delivery</a>;
+it does not guarantee that a packet will actually reach the destination.
+This concern is handled at the transport layer level.</p>
+<p><strong>The transport layer</strong> provides an abstraction of data channels,
+so that multiple connections can be established between two host computers.
+The two most famous transport layer protocols are
+<em>Transmission Control Protocol (TCP)</em> and <em>User Datagram Protocol (UDP)</em>.
+They use <em>ports</em>, a 16-bit integer, as an endpoint identifier.
+TCP provides reliable connection between two endpoints with packet delivery
+acknowledgement, retransmission for error recovery, and congestion control.
+On the other hand, UDP is a connectionless and lossy protocol that is much
+lighter and faster.</p>
+<p>Finally, <strong>the application layer</strong> serves various application level protocols.
+For instance, <em>HyperText Transfer Protocol (HTTP)</em> for web content,
+<em>File Transfer Protocol (FTP)</em> for file sharing,
+or <em>Transport Layer Security (TLS)</em> for encrypted communcations.
+In our lab, we will send and receive plain text messages over TCP/IP stack,
+using an Ethernet cable.</p>
+</div>
+<div class="section" id="packet-routing">
+<h4>Packet Routing<a class="headerlink" href="lab5.html#packet-routing" title="Permalink to this headline">¶</a></h4>
+<p>A route table is a data table managed by an operating system to determine
+which interface and gateway should be used to reach an IP address.
+On Ubuntu 18.04, a route table can be printed with <code class="docutils literal notranslate"><span class="pre">route</span></code> command
+(if the command is not available,
+install <code class="docutils literal notranslate"><span class="pre">net-tools</span></code> package by running <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">net-tools</span></code>).</p>
+<p>An example route table looks like this:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+default         192.168.0.1     0.0.0.0         UG    0      0        0 enp11s0f1
+192.168.0.0     0.0.0.0         255.255.255.0   U     0      0        0 enp11s0f1
+172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0
+</pre></div>
+</div>
+<p>An entry in a route table contains destination, gateway, subnet mask (genmask),
+and interface ID (Iface).
+Given an IP address, the operating system compares it with each entry in the
+route table to determine where that packet should be delivered (or forwarded).
+If the packet’s target IP address masked by the subnet mask matches the
+destination IP of an entry, that packet goes through the specified interface.
+If the packet’s target IP does not match any entry, it will be delivered to the
+default gateway, which is 192.168.0.1 in our example.</p>
+<p>A pair of destination address and a subnet mask is called <em>Classless
+Internet-Domain Routing (CIDR)</em> block.
+A subnet mask splits 32-bit address into two sections,
+network address and host address.
+The network address is a fixed part and represented as bit 1 in the subnet mask,
+and the host address is a variable part and represented as bit 0 in the subnet
+mask.
+A subnet mask always consists of n bits of 1 followed by 32-n bits of 0,
+and it is often shorthanded as “/(# of 1 bit in the subnet mask”
+after the IP address.
+For instance, destination IP 192.168.0.0 with subnet mask 255.255.255.0
+is written as 192.168.0.0/24,
+and destination IP 172.17.0.0 with subnet mask 255.255.0.0
+is written as 172.17.0.0/16.</p>
+<p>If an entry does not define a gateway, then a host with that IP can be found in
+the local network connected through the interface.
+For instance, since 192.168.0.4 matches 192.168.0.0/24, a host with IP
+192.168.0.4 can be found in the local network connected to <code class="docutils literal notranslate"><span class="pre">enp11s0f1</span></code>.
+If an entry defines a gateway, then a packet will be forwarded to that IP
+first in order to reach the target address.
+For instance, a packet with target IP 1.1.1.1 will be first forwarded to the
+default gateway 192.168.0.1 to reach the destination.
+Then, a machine at 192.168.0.1 (a router) routes the packet to the next host
+according to its own routing table.</p>
+<div class="figure align-center" id="id10">
+<a class="reference external image-reference" href="https://en.wikipedia.org/wiki/Address_Resolution_Protocol"><img alt="../_images/ARP.png" src="../_images/ARP.png" /></a>
+<p class="caption"><span class="caption-text">When used with IPv4 and Ethernet,
+hardware address in ARP packet is MAC address and
+protocol address in ARP packet is IPv4 address.</span><a class="headerlink" href="lab5.html#id10" title="Permalink to this image">¶</a></p>
+</div>
+<p>Recall that MAC address is used as an address scheme
+when delivering packets through Ethernet link layer.
+<em>Address Resolution Protocol (ARP)</em> is used to discover the association of
+the IPv4 address and the MAC address of local neighbors.
+ARP packet consists of IP and MAC address pair, and each computer in the local
+network saves (IP, MAC) pair in its neighbor cache for future use.</p>
+</div>
+<div class="section" id="socket">
+<h4>Socket<a class="headerlink" href="lab5.html#socket" title="Permalink to this headline">¶</a></h4>
+<p>Just like MAC is a link layer address and IP is a internet layer address,
+a port can be thought as an address for transport layer.
+An IP address is used to select a computer,
+and a port is used to select specific process running on that computer.
+Combined,
+a pair of IP address and a port forms a transport layer endpoint.
+Transport layer protocols such as TCP and UDP connects two different endpoints.</p>
+<div class="figure align-center" id="id11">
+<img alt="../_images/packet-hierarchy.gif" src="../_images/packet-hierarchy.gif" />
+<p class="caption"><span class="caption-text">A diagram of network layer hierarchy from
+“TCP/IP Illustrated, Vol. 1: The Protocols”</span><a class="headerlink" href="lab5.html#id11" title="Permalink to this image">¶</a></p>
+</div>
+<p>Most of user applications work at the application layer level.
+They need to select an endpoint to connect (or listen on) and translation layer
+protocol (TCP/UDP) to use when initializing the connection,
+but after that, they only send and receive application data.
+The operating system and the network driver take cares of how to deliver an
+actual packet generated from user programs,
+and during the process, they wrap and unwrap a packet with various protocol
+headers.</p>
+<p>Therefore, an operating system needs to manage the list of active connections
+and remember which process is using which connections.
+A socket is a system resource that abstracts this behavior.
+User programs open, interact with, and close sockets with system calls;
+They use a socket descriptor, a handle for a socket, to address a specific
+socket.</p>
+<p>Unix operating system uses
+<a class="reference external" href="https://en.wikipedia.org/wiki/Berkeley_sockets">Berkeley Socket API</a>.
+A few important socket APIs of Berkeley Socket APIs are as follows.
+These are descriptions of each API from Wikipedia:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">socket()</span></code> creates a new socket of a certain type, identified by an integer number, and allocates system resources to it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bind()</span></code> is typically used on the server side, and associates a socket with a socket address structure, i.e. a specified local IP address and a port number.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">listen()</span></code> is used on the server side, and causes a bound TCP socket to enter listening state.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">connect()</span></code> is used on the client side, and assigns a free local port number to a socket. In case of a TCP socket, it causes an attempt to establish a new TCP connection.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">accept()</span></code> is used on the server side. It accepts a received incoming attempt to create a new TCP connection from the remote client, and creates a new socket associated with the socket address pair of this connection.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">send()</span></code>, <code class="docutils literal notranslate"><span class="pre">recv()</span></code>, <code class="docutils literal notranslate"><span class="pre">sendto()</span></code>, and <code class="docutils literal notranslate"><span class="pre">recvfrom()</span></code> are used for sending and receiving data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">close()</span></code> causes the system to release resources allocated to a socket. In case of TCP, the connection is terminated.</p></li>
+</ul>
+<p>In our lab, we will use a TCP/IP stack written in Rust
+named <a class="reference external" href="https://github.com/smoltcp-rs/smoltcp">smoltcp</a>.
+Since <code class="docutils literal notranslate"><span class="pre">smoltcp</span></code>’s API set provides a little different functionality compared
+to Berkeley Socket API,
+we will just use <code class="docutils literal notranslate"><span class="pre">smoltcp</span></code>’s API.
+These are notable differences compared to Berkeley Socket API:</p>
+<ul class="simple">
+<li><p>Instead of <code class="docutils literal notranslate"><span class="pre">bind(Local</span> <span class="pre">Addr)</span></code> and <code class="docutils literal notranslate"><span class="pre">listen()</span></code>,
+it uses single <code class="docutils literal notranslate"><span class="pre">listen(Local</span> <span class="pre">Addr)</span></code> syscall.</p></li>
+<li><p>Instead of using a blocking syscall <code class="docutils literal notranslate"><span class="pre">accept()</span></code> which waits for a new
+connection and creates a new socket,
+a server socket will automatically get connected when Ethernet device is
+polled.
+To accept a new connection,
+a new socket need to be created.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">send()</span></code> and <code class="docutils literal notranslate"><span class="pre">recv()</span></code> are non-blocking by default.
+<code class="docutils literal notranslate"><span class="pre">send()</span></code> will queue the message to socket’s buffer and return immediately,
+and <code class="docutils literal notranslate"><span class="pre">recv()</span></code> will return immediately even if there’s no message.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="subphase-b-network-driver">
+<h3>Subphase B: Network Driver<a class="headerlink" href="lab5.html#subphase-b-network-driver" title="Permalink to this headline">¶</a></h3>
+<p>In this subphase, you’ll add a network driver to our kernel.
+TCP/IP specification is such a complex and huge protocol with numerous extensions,
+so instead of writing the network stack from scratch,
+we are going to use existing implementations and focus on their integration to OS.
+Namely, we will use USPi as an Ethernet driver and smoltcp as a network stack.</p>
+<div class="section" id="integrating-uspi">
+<h4>Integrating USPi<a class="headerlink" href="lab5.html#integrating-uspi" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference external" href="https://github.com/rsta2/uspi">USPi</a> is a bare metal USB driver for Raspberry Pi written in C.
+We are using it to communicate with Raspberry Pi’s Ethernet contoller through USB protocol.
+USPi consists of two parts, <code class="docutils literal notranslate"><span class="pre">env</span></code> and <code class="docutils literal notranslate"><span class="pre">lib</span></code>.
+<code class="docutils literal notranslate"><span class="pre">lib</span></code> is the main part of the library, and it expects a few API from the
+environment, such as memory allocation, timer, interrpt handling, and logging.
+<code class="docutils literal notranslate"><span class="pre">env</span></code> is a minimal kernel that exposes these functions,
+but instead of using <code class="docutils literal notranslate"><span class="pre">env</span></code>, we are going to replace it with our RustOS kernel.</p>
+<p><code class="docutils literal notranslate"><span class="pre">kern/src/net/uspi.rs</span></code> is responsible for the integration of USPi and RustOS.
+Functions inside <code class="docutils literal notranslate"><span class="pre">extern</span> <span class="pre">&quot;C&quot;</span></code> block are exposed from USPi to Rust, and
+functions with <code class="docutils literal notranslate"><span class="pre">#[no_mangle]</span></code> annotation are exposed from Rust to USPi.
+Most of the provided functions are self-explanatory.
+Go ahead and read the file now.
+The code structure follows the usual design;
+<code class="docutils literal notranslate"><span class="pre">USPi</span></code> struct implements non-thread safe version to interact with USPi and
+<code class="docutils literal notranslate"><span class="pre">Usb</span></code> struct wraps <code class="docutils literal notranslate"><span class="pre">USPi</span></code> under a Mutex so that it can be accessed by
+multiple cores at the same time.</p>
+<p>Two things noteworthy in this module are <code class="docutils literal notranslate"><span class="pre">uspi_trace!()</span></code> macro and <code class="docutils literal notranslate"><span class="pre">start_kernel_timer()</span></code>.
+Recall that <code class="docutils literal notranslate"><span class="pre">VERBOSE_BUILD</span></code> environment variable controls whether trace-level
+logs are printed or not. <code class="docutils literal notranslate"><span class="pre">uspi_trace!()</span></code> wraps <code class="docutils literal notranslate"><span class="pre">trace!()</span></code> macro and provides
+another knob to control, namely <code class="docutils literal notranslate"><span class="pre">DEBUG_USPI</span></code>. Set it to true when you are
+working on USPi related functions and turn it off when you are done.
+<code class="docutils literal notranslate"><span class="pre">start_kernel_timer()</span></code> uses USPi’s <code class="docutils literal notranslate"><span class="pre">TimerStartKernelTimer()</span></code> to register
+timer callback functions. The logic is very similar to the timer IRQ handling
+of our kernel, but it implements software timer so that multiple callback
+functions with different delays can be registered under the same interrupt.</p>
+<p>USB and Timer3 interrupts need to be handled in the kernel to support USPi.
+Moreover, USB interrupt needs to be handled in the kernel context.
+Which means, our kernel needs <em>nested handling</em> of USB interrupt.
+Instead of allowing general nested interrupt handling,
+we are going to handle USB interrupt as FIQ and allow nested FIQ interrupt in
+a few limited code places.</p>
+</div>
+<div class="section" id="network-driver">
+<h4>Network Driver<a class="headerlink" href="lab5.html#network-driver" title="Permalink to this headline">¶</a></h4>
+<p>We will use <a class="reference external" href="https://github.com/smoltcp-rs/smoltcp">smoltcp</a>,
+a minimal TCP/IP stack for bare-metal systems written in Rust,
+as a network stack for our kernel.
+Three important traits / structs in smoltcp are
+<a class="reference external" href="https://docs.rs/smoltcp/0.6.0/smoltcp/socket/struct.SocketSet.html">SocketSet</a>,
+<a class="reference external" href="https://docs.rs/smoltcp/0.6.0/smoltcp/phy/trait.Device.html">Device</a>, and
+<a class="reference external" href="https://docs.rs/smoltcp/0.6.0/smoltcp/iface/struct.EthernetInterface.html">EthernetInterface</a>.</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SocketSet</span></code> manages a set of sockets.
+Each socket in a socket set manages its own Rx and Tx buffer,
+and writing to and reading from a socket only accesses these buffers.</p></li>
+<li><p>A type that implements <code class="docutils literal notranslate"><span class="pre">Device</span></code> trait represents a physical hardware device
+that is capable of send and receive a raw network packet.
+In our case, USPi library will be used to send and receive raw physical
+packets.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">EthernetInterface</span></code> internally manages <code class="docutils literal notranslate"><span class="pre">Device</span></code> and uses it to send and
+receive packets. <code class="docutils literal notranslate"><span class="pre">EthernetInterface</span></code> can be <a href="lab5.html#id2"><span class="problematic" id="id3">``</span></a>poll()``ed with a socket
+set. When polled, pending data in Tx buffer of sockets will be sent and
+received data will be buffered to Rx buffer of sockets.</p></li>
+</ol>
+<p><code class="docutils literal notranslate"><span class="pre">kern/src/net.rs</span></code> integrates smoltcp library with our kernel design.
+Read the code of following structs to understand how this integration is done:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">FrameBuf</span></code> and <code class="docutils literal notranslate"><span class="pre">Frame</span></code>:</dt><dd><p>Fixed size, 8-byte aligned, and length trackable <code class="docutils literal notranslate"><span class="pre">u8</span></code> buffer.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">EthernetDriver</span></code> and <code class="docutils literal notranslate"><span class="pre">GlobalEthernetDriver</span></code>:</dt><dd><p>A thread-unsafe Ethernet driver struct and its corresponding struct wrapped
+in a mutex.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">UsbEthernet</span></code>, <code class="docutils literal notranslate"><span class="pre">RxToken</span></code>, and <code class="docutils literal notranslate"><span class="pre">TxToken</span></code>:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">UsbEthernet</span></code> implements <code class="docutils literal notranslate"><span class="pre">smoltcp::phy::Device</span></code> trait,
+which is an interface for sending and receiving raw network frames.
+<code class="docutils literal notranslate"><span class="pre">RxToken</span></code> and <code class="docutils literal notranslate"><span class="pre">TxToken</span></code> structs implement <code class="docutils literal notranslate"><span class="pre">smoltcp::phy::RxToken</span></code> and
+<code class="docutils literal notranslate"><span class="pre">smoltcp::phy::TxToken</span></code>, which are traits that define how a single network
+packet should be sent and received.</p>
+</dd>
+</dl>
+<p>When administrating a network stack, an important role of an operating system is
+managing port numbers on the system.
+Typically, an operating system tracks which processes are using which port
+numbers and prevents other processes to interfere with the connection.
+To support this behavior, you need to implement port management functions in
+<code class="docutils literal notranslate"><span class="pre">kern/src/net.rs</span></code> and use them properly in the process and scheduler code.</p>
+</div>
+<div class="section" id="id4">
+<h4>Implementation<a class="headerlink" href="lab5.html#id4" title="Permalink to this headline">¶</a></h4>
+<p>You’re now ready to implement a network driver to our kernel.
+We recommend you to implement features in the following order:</p>
+<ol class="arabic">
+<li><p><strong>Finish USPi environment integration in</strong> <code class="docutils literal notranslate"><span class="pre">kern/src/net/uspi.rs</span></code></p>
+<blockquote>
+<div><p>First, implement logging functions, <code class="docutils literal notranslate"><span class="pre">DoLogWrite()</span></code> and
+<code class="docutils literal notranslate"><span class="pre">uspi_assertion_failed()</span></code>. When implementing <code class="docutils literal notranslate"><span class="pre">DoLogWrite()</span></code>, ignore
+<code class="docutils literal notranslate"><span class="pre">_pSource</span></code> and <code class="docutils literal notranslate"><span class="pre">_Severity</span></code>, translate <code class="docutils literal notranslate"><span class="pre">pMessage</span></code> as null-terminated
+C-style string, and print it with <code class="docutils literal notranslate"><span class="pre">uspi_trace!()</span></code> macro.
+When implementing <code class="docutils literal notranslate"><span class="pre">uspi_assertion_failed()</span></code>,
+convert <code class="docutils literal notranslate"><span class="pre">pExpr</span></code> and <code class="docutils literal notranslate"><span class="pre">pFile</span></code> to Rust string similarly and print them
+with line number <code class="docutils literal notranslate"><span class="pre">nLine</span></code>.
+Both functions should not panic.</p>
+<p>Then, implement four timer functions,
+<code class="docutils literal notranslate"><span class="pre">TimerSimpleMsDelay()</span></code>, <code class="docutils literal notranslate"><span class="pre">TimerSimpleusDelay()</span></code>, <code class="docutils literal notranslate"><span class="pre">MsDelay()</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">usDelay()</span></code>.
+Convert milliseconds and microseconds provided as a parameter
+to Rust’s <code class="docutils literal notranslate"><span class="pre">Duration</span></code> and use <code class="docutils literal notranslate"><span class="pre">pi::timer::spin_sleep()</span></code>.</p>
+<p>Finally, implement <code class="docutils literal notranslate"><span class="pre">malloc()</span></code> and <code class="docutils literal notranslate"><span class="pre">free()</span></code>.
+These are C-style allocation API, which means that they do not provide
+layout parameter like Rust allocation API.
+Carefully read the definition of <code class="docutils literal notranslate"><span class="pre">malloc()</span></code> and <code class="docutils literal notranslate"><span class="pre">free()</span></code> and think about
+what information need to be tracked in addition to what has been provided
+as their parameters.
+Allocate additional space in a chunk to save those information.
+Make sure all allocated pointers are 16-byte aligned.</p>
+</div></blockquote>
+</li>
+<li><p><strong>Enable FIQ interrupt handling</strong></p>
+<blockquote>
+<div><p>USPi requires handling of USB and Timer3 interrupts.
+Moreover, it requires to handle USB interrupt in the kernel context.
+We are going to handle USB interrupt as FIQ interrupt instead of normal IRQ
+interrupt and allow nested FIQ interrupt handling in small number of places
+to support this behavior.</p>
+<p>Start by implementing <code class="docutils literal notranslate"><span class="pre">enable_fiq()</span></code> in <code class="docutils literal notranslate"><span class="pre">pi/src/interrupt.rs</span></code>.
+You’ll need to revisit chapter 7 of the
+<a class="reference external" href="../r/BCM2837-ARM-Peripherals.pdf">BCM2837 ARM Peripherals Manual</a>
+to see how an interupt can be selected as a FIQ interrupt.
+Then, add FIQ handling routine to <code class="docutils literal notranslate"><span class="pre">handle_exception()</span></code> in <code class="docutils literal notranslate"><span class="pre">kern/src/traps.rs</span></code>
+and implement <code class="docutils literal notranslate"><span class="pre">Index&lt;()&gt;</span></code> for <code class="docutils literal notranslate"><span class="pre">Fiq</span></code> in <code class="docutils literal notranslate"><span class="pre">kern/src/traps/irq.rs</span></code>.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>You may want to check FIQ control register when writing <code class="docutils literal notranslate"><span class="pre">enable_fiq()</span></code>.</p>
+</div>
+<p>Once you are finished,
+complete <code class="docutils literal notranslate"><span class="pre">ConnectInterrupt()</span></code> function in <code class="docutils literal notranslate"><span class="pre">kern/src/net/uspi.rs</span></code>.
+First, assert that <code class="docutils literal notranslate"><span class="pre">nIRQ</span></code> is one of <code class="docutils literal notranslate"><span class="pre">Interrupt::Usb</span></code> or <code class="docutils literal notranslate"><span class="pre">Interrupt::Timer3</span></code>.
+Then, if the request is for USB interrupt, enable FIQ handling of USB
+interrupt and register a handler that invokes provided <code class="docutils literal notranslate"><span class="pre">pHandler</span></code>
+to the FIQ handler registry (<code class="docutils literal notranslate"><span class="pre">crate::FIQ</span></code>).
+Otherwise, enable IRQ handling of Timer3 interrupt
+and register a handler that invokes provided <code class="docutils literal notranslate"><span class="pre">pHandler</span></code>
+to the global IRQ handler registry (<code class="docutils literal notranslate"><span class="pre">crate::GLOBAL_IRQ</span></code>).</p>
+<p>Recall that all exception flags are masked by default when an exception
+handler is called.
+To handle FIQ interrupt, F flag of PSTATE register should be unmasked.
+<code class="docutils literal notranslate"><span class="pre">enable_fiq_interrupt()</span></code> and <code class="docutils literal notranslate"><span class="pre">disable_fiq_interrupt()</span></code> in <code class="docutils literal notranslate"><span class="pre">aarch64</span></code>
+library give an ability to temporarily enable FIQ interrupt.
+Enable FIQ handling in following places with these functions:</p>
+<ol class="arabic simple">
+<li><p>When handling system calls (<code class="docutils literal notranslate"><span class="pre">kern/src/traps.rs</span></code>)</p></li>
+<li><p>When handling IRQ interrupts (<code class="docutils literal notranslate"><span class="pre">kern/src/traps.rs</span></code>)</p></li>
+<li><p>While waiting on the very first <code class="docutils literal notranslate"><span class="pre">switch_to</span></code> call in <code class="docutils literal notranslate"><span class="pre">start()</span></code>
+(<code class="docutils literal notranslate"><span class="pre">kern/src/process/scheduler.rs</span></code>)</p></li>
+</ol>
+</div></blockquote>
+</li>
+<li><p><strong>Implement Ethernet initialization</strong></p>
+<blockquote>
+<div><p>Finish <code class="docutils literal notranslate"><span class="pre">create_interface()</span></code> in <code class="docutils literal notranslate"><span class="pre">kern/src/net.rs</span></code>.
+You should use smoltcp’s
+<a class="reference external" href="https://docs.rs/smoltcp/0.6.0/smoltcp/iface/struct.EthernetInterfaceBuilder.html">EthernetInterfaceBuilder</a>.
+When creating the interface,
+use <code class="docutils literal notranslate"><span class="pre">UsbEthernet</span></code> as an inner physical device and
+MAC address obtained from USPi as Ethernet address of the interface.
+Then, add an empty neighbor cache using <code class="docutils literal notranslate"><span class="pre">BTreeMap</span></code>.
+Finally, add two CIDR blocks as its IP addresses:
+169.254.32.10/16 and 127.0.0.1/8.
+When you are done,
+implement <code class="docutils literal notranslate"><span class="pre">EthernetDriver::new()</span></code> using <code class="docutils literal notranslate"><span class="pre">create_interface()</span></code>.</p>
+<div class="note admonition">
+<p class="admonition-title">Link-local Address</p>
+<p>169.254.0.0/16 is a reserved address space for local communication.
+If two computers are directly connected with an Ethernet cable,
+two different link-local addresses will be assigned to each of them.
+In our case, we are assigning a fixed link-local address of
+169.254.32.10 to the kernel’s network interface.</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">How to setup with router</p>
+<p>If you have a router, you can connect RPi to the router instead of
+connecting it directly to the computer.</p>
+<ol class="arabic simple">
+<li><p>Record the MAC address of your RPi board.</p></li>
+<li><p>In router management page (check your router manual to learn how to access it),
+manually assign an IP to the MAC address of your RPi.</p></li>
+<li><p>In the network driver, manually assign the IP you chose.</p></li>
+</ol>
+<p>The IP address range managed by your router should be in
+one of these three private network address range.</p>
+<ul class="simple">
+<li><p>192.168.0.0 - 192.168.255.255</p></li>
+<li><p>172.16.0.0 - 172.31.255.255</p></li>
+<li><p>10.0.0.0 - 10.255.255.255</p></li>
+</ul>
+</div>
+<p>The next step is to initialize USB and ETHERNET in <code class="docutils literal notranslate"><span class="pre">kmain()</span></code>.
+Write the following initialization routine after the scheduler initialization:</p>
+<ol class="arabic simple">
+<li><p>Enable FIQ interrupt</p></li>
+<li><p>Initialize <code class="docutils literal notranslate"><span class="pre">USB</span></code></p></li>
+<li><p>Initialize <code class="docutils literal notranslate"><span class="pre">ETHERNET</span></code></p></li>
+<li><p>Assert if the Ethernet is available with <code class="docutils literal notranslate"><span class="pre">is_eth_available()</span></code></p></li>
+<li><p>Poll the Ethernet with <code class="docutils literal notranslate"><span class="pre">is_eth_link_up()</span></code> and loop until it returns true</p></li>
+<li><p>Disable FIQ interrupt</p></li>
+</ol>
+</div></blockquote>
+</li>
+<li><p><strong>Implement port management APIs</strong></p>
+<blockquote>
+<div><p>Next, write port management APIs in <code class="docutils literal notranslate"><span class="pre">EthernetDriver</span></code>.
+There are 65535 ports in our kernel, from 1 to 65535.
+We will manage port availability with
+<code class="docutils literal notranslate"><span class="pre">port_map</span></code> field of <code class="docutils literal notranslate"><span class="pre">EthernetDriver</span></code>,
+which is an arrray of <code class="docutils literal notranslate"><span class="pre">u64</span></code>.
+One <code class="docutils literal notranslate"><span class="pre">u64</span></code> integer variable has 64 bits,
+and you’ll use each bit in as an indicator of whether a port is
+available or not.</p>
+<div class="note admonition">
+<p class="admonition-title">Port permission</p>
+<p>A port number under 1024 are reserved in Linux operating system,
+and you need root permission to listen on those ports.
+Since we don’t have “user” concept in RustOS,
+we will not enforce this limitation.</p>
+</div>
+<p>Now write <code class="docutils literal notranslate"><span class="pre">mark_port()</span></code>, <code class="docutils literal notranslate"><span class="pre">erase_port()</span></code>, and <code class="docutils literal notranslate"><span class="pre">get_ephemeral_port()</span></code> in <code class="docutils literal notranslate"><span class="pre">kern/src/net.rs</span></code>.
+See the comments of the functions and follow the instruction.</p>
+</div></blockquote>
+</li>
+<li><p><strong>Implement Ethernet polling</strong></p>
+<blockquote>
+<div><p>The next step is to implement Ethernet interface polling.
+When Ethernet interface is polled with a <code class="docutils literal notranslate"><span class="pre">SocketSet</span></code>,
+it should send pending Tx packets in the socket buffer
+and queue pending Rx packets in the Ethernet to corresponding socket buffer.</p>
+<p><code class="docutils literal notranslate"><span class="pre">smoltcp</span></code> already implements this logic.
+Use them to implement <code class="docutils literal notranslate"><span class="pre">EthernetDriver::poll()</span></code> and <code class="docutils literal notranslate"><span class="pre">EthernetDriver::poll_delay()</span></code>
+in <code class="docutils literal notranslate"><span class="pre">kern/src/net.rs</span></code>.
+You may want to check <a class="reference external" href="https://docs.rs/smoltcp/0.6.0/smoltcp/iface/struct.EthernetInterface.html">EthernetInterface</a>
+documentation.
+You also need to implement <code class="docutils literal notranslate"><span class="pre">GlobalEthernetDriver::poll()</span></code>,
+which is a wrapper function to <code class="docutils literal notranslate"><span class="pre">EthernetDriver:poll()</span></code>.
+<code class="docutils literal notranslate"><span class="pre">GlobalEthernetDriver::poll()</span></code> should be only executed by core 0 in Timer3 handling context.
+Check these assumptions in addition to the usual wrapper function semantics.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>When implementing the check in <code class="docutils literal notranslate"><span class="pre">GlobalEthernetDriver::poll()</span></code>,
+you will need to check the core affinity and the preemptive counter.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Register Ethernet polling callback</strong></p>
+<blockquote>
+<div><p>Ethernet driver should be polled regularly to provide continuous network
+connectivity. Since we have already dedicated Timer1 interrupt to the
+scheduler tick, we are going to use <code class="docutils literal notranslate"><span class="pre">Usb::start_kernel_timer()</span></code> for
+Ethernet polling.</p>
+<p>First, implement <code class="docutils literal notranslate"><span class="pre">poll_ethernet()</span></code> function in <code class="docutils literal notranslate"><span class="pre">kern/src/process/scheduler.rs</span></code>.
+Poll the Ethernet interface with <code class="docutils literal notranslate"><span class="pre">GlobalEthernetDriver::poll()</span></code>,
+calculate the next poll time with <code class="docutils literal notranslate"><span class="pre">poll_delay()</span></code>,
+and register the timeout with <code class="docutils literal notranslate"><span class="pre">Usb::start_kernel_timer()</span></code>.
+Once you are finished, register the first timeout in
+<code class="docutils literal notranslate"><span class="pre">initialize_global_timer_interrupt()</span></code> with <code class="docutils literal notranslate"><span class="pre">Usb::start_kernel_timer()</span></code>.</p>
+</div></blockquote>
+</li>
+</ol>
+<p>When you are done, make sure that USPi and Ethernet initialization in <code class="docutils literal notranslate"><span class="pre">kmain()</span></code>
+works correctly, Ethernet interface is polled repetitively, and existing user
+programs still work.
+If everything works as expected, continue to the next subphase.</p>
+</div>
+</div>
+<div class="section" id="subphase-c-process-resource-management">
+<h3>Subphase C: Process Resource Management<a class="headerlink" href="lab5.html#subphase-c-process-resource-management" title="Permalink to this headline">¶</a></h3>
+<p>In this subphase, you’ll add process resource management to our kernel.
+An operating system kernel needs to track which sockets and files are used by
+which processes, so that they can be opened, updated, and closed according to
+processes’s requests and their lifetime.
+In Unix operating systems,
+actual sockets or files (inode) implementation reside in the kernel,
+and they are exposed to user programs as a descriptor.
+The process makes a syscall using a descriptor,
+which is an index to the list of resources used by the current process.
+For instance, if a process opens a file with <code class="docutils literal notranslate"><span class="pre">open()</span></code> syscall,
+it returns “3” and the process uses “3” to refer that file henceforth.
+(0, 1, 2 are reserved for standard I/O).
+We will follow this design when implementing process resource management code.</p>
+<div class="question admonition">
+<p class="admonition-title">Socket descriptor design (descriptor-design)</p>
+<p>What will be the benefit and the cost of using the index as a descriptor?
+What will be better or worse if a random token is used instead of an index?</p>
+</div>
+<div class="section" id="id5">
+<h4>Implementation<a class="headerlink" href="lab5.html#id5" title="Permalink to this headline">¶</a></h4>
+<p>Start with adding <code class="docutils literal notranslate"><span class="pre">sockets</span></code> field of type <code class="docutils literal notranslate"><span class="pre">Vec&lt;SocketHandle&gt;</span></code> to <code class="docutils literal notranslate"><span class="pre">Process</span></code>
+struct in <code class="docutils literal notranslate"><span class="pre">kern/src/process/process.rs</span></code>. Fix <code class="docutils literal notranslate"><span class="pre">new()</span></code> appropriately.
+Then, implement <code class="docutils literal notranslate"><span class="pre">Scheduler::release_process_resources()</span></code> in <code class="docutils literal notranslate"><span class="pre">kern/src/process/scheduler.rs</span></code>.
+Iterate through all sockets held by the current process,
+close all local ports attached to them,
+release the socket handle,
+and prune the Ethernet socket set.
+Don’t forget to call <code class="docutils literal notranslate"><span class="pre">Scheduler::release_process_resources()</span></code> in <code class="docutils literal notranslate"><span class="pre">Scheduler::kill()</span></code>.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">mem::replace</span></code> to swap out <code class="docutils literal notranslate"><span class="pre">process.sockets</span></code>.</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">There are two handles in our network stack</p>
+<p>smoltcp uses <code class="docutils literal notranslate"><span class="pre">SocketHandle</span></code> to refer a socket in <code class="docutils literal notranslate"><span class="pre">SocketSet</span></code>.
+Our kernel uses a socket descriptor to refer a <code class="docutils literal notranslate"><span class="pre">SocketHandle</span></code> held by a process.
+Be careful not to confuse these two handles.</p>
+</div>
+</div>
+</div>
+<div class="section" id="subphase-d-socket-system-calls">
+<h3>Subphase D: Socket System Calls<a class="headerlink" href="lab5.html#subphase-d-socket-system-calls" title="Permalink to this headline">¶</a></h3>
+<p>In this subphase, you will add a number of system calls to our kernel to allow
+user programs to use the network functionality.
+You’ll implement total 6 socket syscalls.
+Here is a short summary of them:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sock_create()</span></code>: creates a new socket and registers it as current process’s resource</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sock_status()</span></code>: checks the status of the socket</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sock_connect()</span></code>: connects to a remote endpoint with the socket</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sock_listen()</span></code>: listens on a local endpoint with the socket</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sock_send()</span></code>: sends a packet with a connected socket</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sock_recv()</span></code>: receives a packet from a connected socket</p></li>
+</ul>
+<div class="section" id="id6">
+<h4>Implementation<a class="headerlink" href="lab5.html#id6" title="Permalink to this headline">¶</a></h4>
+<p>Start writing socket related system call handlers in <code class="docutils literal notranslate"><span class="pre">kern/src/traps/syscall.rs</span></code>.
+Refer to the comments to understand what those functions do.
+Except <code class="docutils literal notranslate"><span class="pre">create()</span></code>, they will have the similar code structure:</p>
+<ol class="arabic simple">
+<li><p>Find a socket handle held by the current process</p></li>
+<li><p>Find a socket from Ethernet socket set using the handle</p></li>
+<li><p>Perform an operation with socket (such as <code class="docutils literal notranslate"><span class="pre">status()</span></code>, <code class="docutils literal notranslate"><span class="pre">connect()</span></code>, etc.)</p></li>
+<li><p>Update the scheduler and Ethernet driver accordingly;
+For example, you should mark the local port number as used when <code class="docutils literal notranslate"><span class="pre">listen()</span></code>
+or <code class="docutils literal notranslate"><span class="pre">connect()</span></code>.</p></li>
+<li><p>Convert the result according to the system call semantics.</p></li>
+</ol>
+<p>You will need to revisit scheduler and Ethernet driver code to find necessary
+APIs for this subphase. Also consult <a class="reference external" href="https://docs.rs/smoltcp/0.6.0/smoltcp/socket/struct.TcpSocket.html">TcpSocket</a>
+page from smoltcp document to find useful functions.</p>
+<div class="warning admonition">
+<p class="admonition-title">User address validation</p>
+<p>When reading from or writing to an address from users,
+you must ensure that the contents are really inside the user address space.
+Passing a kernel address through syscalls and trick the kernel to overwrite
+the kernel memory is a classic attack against operating system kernels.</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">There is no <code class="docutils literal notranslate"><span class="pre">close()</span></code> syscall</p>
+<p>We did not include <code class="docutils literal notranslate"><span class="pre">close()</span></code> syscall as a requirement,
+but feel free to implement it if you want to.</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">smoltcp socket APIs are non-blocking</p>
+<p>Unlike Berkeley socket API, our socket system calls are non-blocking
+by default.
+This is because we are directly wrapping smoltcp APIs as a syscall.
+In result, instead of getting notified by the kernel when a new connection
+is established, user programs need to check the socket status in a loop to
+see if a connection has been established.</p>
+</div>
+<div class="question admonition">
+<p class="admonition-title">Implement Berkeley-like socket APIs (berkeley-socket)</p>
+<p>How can you implement Berkeley-like socket APIs in our kernel design?
+For instance, let’s say a user program invokes <code class="docutils literal notranslate"><span class="pre">sock_listen()</span></code> syscall.
+How can the kernel suspend a user program until a new connection is established?</p>
+</div>
+<p>When you finish implementing socket related system call handlers in the kernel,
+write their corresponding user-side system calls in <code class="docutils literal notranslate"><span class="pre">kernel_api/src/syscalls.rs</span></code>.
+When implementing them,
+check the comments in their kernel side handlers
+for syscall argument and return value specification.
+Convert wrapper types (e.g., <code class="docutils literal notranslate"><span class="pre">SocketDescriptor</span></code>, <code class="docutils literal notranslate"><span class="pre">IpAddr</span></code>, etc.)
+to <code class="docutils literal notranslate"><span class="pre">u64</span></code> and back while implementing them,
+so that user programs can invoke system calls with more natural types.</p>
+</div>
+</div>
+</div>
+<div class="section" id="phase-3-echo-server">
+<h2>Phase 3: Echo Server<a class="headerlink" href="lab5.html#phase-3-echo-server" title="Permalink to this headline">¶</a></h2>
+<p>The last phase of our long journey is to implement a simple user program that
+tests the network stack.
+In this phase, you’ll write an echo server, a server that sends back any message
+that it reads from the client.
+It is one of the simplest network application.
+You will mainly work in <code class="docutils literal notranslate"><span class="pre">user/echo/src/main.rs</span></code>.</p>
+<div class="section" id="id7">
+<h3>Implementation<a class="headerlink" href="lab5.html#id7" title="Permalink to this headline">¶</a></h3>
+<p>We have provided a very basic error handling code in <code class="docutils literal notranslate"><span class="pre">main()</span></code>.
+Your role is to implement an echo server in <code class="docutils literal notranslate"><span class="pre">main_inner()</span></code>.</p>
+<ol class="arabic simple">
+<li><p>First, create a socket with <code class="docutils literal notranslate"><span class="pre">sock_create()</span></code>.</p></li>
+<li><p>Then make that socket listen on port number 80.</p></li>
+<li><p>Loop until a packet can be sent with the socket.
+You need to check <code class="docutils literal notranslate"><span class="pre">can_send</span></code> field in the socket status.
+Print a message in the loop and sleep for a short period of time (say, 1 sec).</p></li>
+<li><p>Send a welcome message to the client.</p></li>
+<li><p>Inside another loop, receive a packet and send it back through the socket.
+Also print the message to the console with <code class="docutils literal notranslate"><span class="pre">print!()</span></code>.</p></li>
+</ol>
+<p>When you are done implementing the echo server,
+add “/echo” to the scheduler initialization code.</p>
+</div>
+<div class="section" id="how-to-test">
+<h3>How to Test<a class="headerlink" href="lab5.html#how-to-test" title="Permalink to this headline">¶</a></h3>
+<p>Run <code class="docutils literal notranslate"><span class="pre">make</span></code> in <code class="docutils literal notranslate"><span class="pre">user/echo</span></code> to build the program
+and copy <code class="docutils literal notranslate"><span class="pre">user/echo/build/echo.bin</span></code> to the SD card.
+Then, <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">transmit</span></code> your kernel (in <code class="docutils literal notranslate"><span class="pre">kern</span></code> directory).
+There are two connections to the kernel now:
+a serial connection and the Ethernet connection.
+If you <code class="docutils literal notranslate"><span class="pre">screen</span></code> to the serial connection after transmitting the kernel image,
+you should see repeated messages which say that the server is waiting for
+a client connection.
+The next step is to connect to the echo server with netcat (<code class="docutils literal notranslate"><span class="pre">nc</span></code>) command.</p>
+<div class="warning admonition">
+<p class="admonition-title">Don’t forget to copy your user program to the SD card</p>
+<p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">transmit</span></code> only transmits the kernel image.
+Don’t forget to copy the user programs to the SD card to make your kernel
+detect them!</p>
+</div>
+<p>If you are using a VM, we recommend you to <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">transmit</span></code> in VM
+but using netcat on your host operating system.
+Using a link local address is a bit uncommon way to communicate these days,
+and since the link-local address space is meant to be used only in local setups,
+there is a possibility that the network translation layer of a virtual machine
+doesn’t work well with it.</p>
+<p>You may need to install netcat command to your host system.
+On Windows, <a class="reference external" href="https://eternallybored.org/misc/netcat/">netcat</a> seems to work
+well. On Linux, you might need to configure your ethernet interface to be
+<code class="docutils literal notranslate"><span class="pre">Link-Local</span> <span class="pre">Only</span></code> in the Network Manager or using <code class="docutils literal notranslate"><span class="pre">ifconfig</span></code>. Netcat will
+mostly be pre-installed. If not, you can use <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">netcat</span></code>.
+On MacOS, you can install netcat with <code class="docutils literal notranslate"><span class="pre">brew</span> <span class="pre">install</span> <span class="pre">nmap</span></code> command. If your RPi
+server wakes up, you can see the light for <code class="docutils literal notranslate"><span class="pre">USB</span> <span class="pre">10/100/1000</span> <span class="pre">LAN</span></code> (or something
+similar name) turns to yellow from red in <code class="docutils literal notranslate"><span class="pre">System</span> <span class="pre">Preferences</span></code> - <code class="docutils literal notranslate"><span class="pre">Network</span></code>
+with its IP address.</p>
+<p>If everything is ready,
+type <code class="docutils literal notranslate"><span class="pre">nc</span> <span class="pre">169.254.32.10</span> <span class="pre">80</span></code> (or <code class="docutils literal notranslate"><span class="pre">ncat</span></code> on MacOS)
+on your computer to connect to the echo server.
+It would take a while for RPi to be recognized by the operating system,
+so the first few tries might fail.
+When connected, the echo server will print a welcome message,
+and anything you type into the shell will go through the Ethernet cable and
+come back in a while.</p>
+<div class="figure align-center">
+<img alt="../_images/echo-serial.png" src="../_images/echo-serial.png" />
+</div>
+<div class="figure align-center">
+<img alt="../_images/echo-ethernet.png" src="../_images/echo-ethernet.png" />
+</div>
+</div>
+</div>
+<div class="section" id="submission">
+<h2>Submission<a class="headerlink" href="lab5.html#submission" title="Permalink to this headline">¶</a></h2>
+<p>Once you’ve completed the tasks above, you’re done and ready to
+submit! Congratulations!</p>
+<p>You can call <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">check</span></code> in <code class="docutils literal notranslate"><span class="pre">tut/5-multicore</span></code> directory to check
+if you’ve answered every question.</p>
+<p>Once you’ve completed the tasks above, you’re done and ready to
+submit! Ensure you’ve committed your changes. Any uncommitted
+changes <em>will not</em> be visible to us, thus unconsidered for grading.</p>
+<p>When you’re ready, push a commit to your GitHub repository with a tag named <code class="docutils literal notranslate"><span class="pre">lab5-done</span></code>.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="c1"># submit lab5</span>
+$ git tag lab5-done
+$ git push --tags
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../proj.html" class="btn btn-neutral float-right" title="Final Project" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="lab4.html" class="btn btn-neutral float-left" title="Lab 4: Preemptive Multitasking" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Dec 14, 2021.
+      </span>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    
+
+<script src="../_static/email.js"></script>
+<script src="../_static/custom.js"></script>
+
+
+
+</body>
+</html>

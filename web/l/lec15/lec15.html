@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Interrupt and Exception</title>
+<meta charset="utf-8"/>
+<meta content="ie=edge" http-equiv="x-ua-compatible"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="../shower/styles/ribbon.css" rel="stylesheet"/>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+  position: relative; left: -1em; text-align: right; vertical-align: baseline;
+  border: none; display: inline-block;
+  -webkit-touch-callout: none; -webkit-user-select: none;
+  -khtml-user-select: none; -moz-user-select: none;
+  -ms-user-select: none; user-select: none;
+  padding: 0 4px; width: 4em;
+  color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+{   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style>
+section pre code {
+  line-height: 1.4 !important;
+  font-size: 20px !important;
+}
+.compact code {
+  line-height: 1.4 !important;
+  font-size: 16px !important;
+}
+ul.compact {
+  line-height: 1.5 !important;
+  font-size: 20px !important;
+}
+.writeup {
+    font-size: 20px !important;
+}
+a.sourceLine { background: none !important; }
+section.region { display: none !important; }
+pre.numberSource { margin-left: 2em; }
+div.sourceCode { overflow: hidden; }
+a.sourceLine::before { text-decoration: none; }
+
+pre > code.sourceCode > span > a:first-child::before { text-decoration: none !important; }
+</style>
+<script src="../shower/js/jquery-2.2.0.min.js"></script>
+</head>
+<body class="shower list">
+<header class="caption">
+<h1>CS3210 Design Operating Systems</h1>
+<p>Taesoo Kim</p>
+</header>
+<header class="caption">
+</header>
+<section class="slide" id="cover">
+<br/><br/><br/><br/>
+<h2>Interrupt and Exception</h2>
+<p> Taesoo Kim</p>
+<style>
+ #cover h2 {
+   /* margin:180px 0 0; */
+   color: #666;
+   text-align:center;
+   font-size: 60px;
+   font-weight: bold;
+   margin-bottom: 0em;
+ }
+ #cover p {
+   margin:30px 0 0;
+   text-align:center;
+   font-style:italic;
+   font-size:40px;
+ }
+ </style>
+</section>
+
+<section class="slide level1" id="administrivia"><div>
+<h1>Administrivia</h1>
+<ul>
+<li>First off, be safe/healthy!</li>
+<li>Last miles:
+<ol type="1">
+<li><strong><em>Virtual</em></strong> final project demo/presentation: 7 to 10-min video (DUE: <mark>Apr 13</mark>)</li>
+<li>Final project peer-evaluation (DUE: <mark>Apr 14</mark>/<mark>Apr 15</mark>)</li>
+<li>Final write-up/code (DUE: <mark>May 1</mark>)</li>
+<li>Quiz #2 will be distributed at <mark>9am on Apr 21</mark> (take-home/open-ended, 24h)</li>
+<li>Lab4 (DUE: <mark>Apr 20</mark> w/ 2-week late days)</li>
+</ol></li>
+</ul>
+</div></section>
+<section class="slide level1" id="about-quiz-2"><div>
+<h1>About Quiz 2</h1>
+<ul>
+<li>I will prepare “review materials” for Quiz #2 (on <mark>Apr 9</mark>)</li>
+<li>Topics include <mark>Lab 1-4</mark> and <mark>Lec 1-17</mark> (not Lab5 and Lec 18/19)</li>
+<li><mark>24h</mark>, so no rustling-type questions but open-ended/book questions</li>
+</ul>
+</div></section>
+<section class="slide level1" id="qa"><div>
+<h1>Q&amp;A</h1>
+<blockquote>
+<p>What happens when the processor doesn’t know how to handle the exception?</p>
+</blockquote>
+<blockquote>
+<p>Are Synchronous Interrupts possible, or are they all asynchronous?</p>
+</blockquote>
+</div></section>
+<section class="slide level1" id="agenda"><div>
+<h1>Agenda</h1>
+<ul>
+<li>LEC 15: Interrupt and Exception (Lab4, Phase 1)</li>
+<li>LEC 16: Process and Scheduling (Lab4, Phase 2)</li>
+<li>LEC 17: Virtual Memory (Lab4, Phase 3/4)</li>
+<li>LEC 19/20: Synchronization (Lab5, Phase 1)</li>
+</ul>
+</div></section>
+<section class="slide level1" id="summary-exception-level-execution-states"><div>
+<h1>Summary: Exception level / Execution states</h1>
+<ul>
+<li>A logical separation of software execution privilege
+<ul>
+<li>Similar to hierarchical protection domains (e.g., ring in x86)</li>
+</ul></li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/el.png" style="width:70%"/></p>
+</div></section>
+<section class="slide level1" id="execution-states-of-aarch3264"><div>
+<h1>Execution states of AArch32/64</h1>
+<p style="text-align:center;margin:0"><img src="img/aarch32-64.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="changing-execution-levels-target-mode"><div>
+<h1>Changing execution levels (target mode)</h1>
+<ul>
+<li>When a processor takes an exception (e.g., interrupt or system call):
+<ol type="1">
+<li>Save the current processor state in SPSR</li>
+<li>Save the return address to ELR</li>
+</ol></li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/mode.png" style="width:100%"/></p>
+</div></section>
+<section class="slide level1" id="example-invoking-a-system-call"><div>
+<h1>Example: invoking a system call</h1>
+<p style="text-align:center;margin:0"><img src="img/syscall.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="today-topic-exception-handling-in-arm"><div>
+<h1>Today topic: exception handling (in Arm)</h1>
+<ul>
+<li><strong><em>Exception</em></strong>: system events requiring an action/service by the kernel (<a href="https://static.docs.arm.com/100933/0100/aarch64_exception_and_interrupt_handling_100933_0100_en.pdf?_ga=2.53419304.1898977826.1583857121-1374653565.1582651530">link</a>)
+<ul>
+<li><strong><em>Asynchronous</em></strong>: e.g., external events/signal (aka, interrupt)</li>
+<li><strong><em>Synchronous</em></strong>: e.g., <code>svc</code> (system call), data abort (access violation), etc.</li>
+</ul></li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/exception.png" style="width:30%"/></p>
+</div></section>
+<section class="slide level1" id="example-actionsevents-causing-an-exception"><div>
+<h1>Example: actions/events causing an exception</h1>
+<ul>
+<li><strong><em>Abort</em></strong>: instruction or data aborts (access violation)</li>
+<li><strong><em>Exception generating instructions</em></strong>: supervisor call (<code>svc</code>), hypervisor call (<code>hvc</code>)</li>
+<li><strong><em>Interrupt</em></strong>: IRQ, FIQ (e.g., timer/usb interrupt in lab4/5)</li>
+</ul>
+</div></section>
+<section class="slide level1" id="note-on-definition-x86"><div>
+<h1>Note on definition (x86)</h1>
+<ul>
+<li><strong><em>Interrupt</em></strong>: asynchronous events (i.e., any moment)</li>
+<li><strong><em>Exception</em></strong>: synchronous events (i.e., instruction boundary)
+<ul>
+<li><strong><em>fault</em></strong>: faulting instruction not executed (e.g., page fault)</li>
+<li><strong><em>trap</em></strong>: trapping instruction executed (e.g., break point)</li>
+<li><strong><em>abort</em></strong>: no way to recover (e.g., machine check, double fault)</li>
+</ul></li>
+</ul>
+<p>-&gt; Interrupt in x86: <em>a control transfer mechanism</em></p>
+</div></section>
+<section class="slide level1" id="interrupt-routing-rpi3"><div>
+<h1>Interrupt routing (RPi3)</h1>
+<p style="text-align:center;margin:0"><img src="img/int-routing.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="handling-synchronous-exceptions"><div>
+<h1>Handling synchronous exceptions</h1>
+<ul>
+<li>Two information provided for a synchronous exception:
+<ul>
+<li>ESR_ELn: Exception Syndrome Register</li>
+<li>FAR_ELn: Fault Address Register</li>
+</ul></li>
+</ul>
+</div></section>
+<section class="slide level1" id="handling-synchronous-exceptions-1"><div>
+<h1>Handling synchronous exceptions</h1>
+<ul>
+<li>ESR_ELn.EC: Exception class (e.g., alignment, data abort)</li>
+<li>ESR_ELn.IL: Instruction length (e.g., 1 for 32-bit)</li>
+<li>ESR_ELn.ISS: Instruction Specific Syndrome (e.g., translation level)</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/esr.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="example-invoking-a-system-call-workflow"><div>
+<h1>Example: invoking a system call (workflow)</h1>
+<p style="text-align:center;margin:0"><img src="img/syscall.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="example-invoking-a-system-call-in-kernel"><div>
+<h1>Example: invoking a system call (in kernel)</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb1-1"><a href="lec15.html#cb1-1"></a><span class="at">#[</span>no_mangle<span class="at">]</span></span>
+<span id="cb1-2"><a href="lec15.html#cb1-2"></a><span class="kw">pub</span> <span class="kw">extern</span> <span class="st">"C"</span> <span class="kw">fn</span> handle_exception(info<span class="op">:</span> Info<span class="op">,</span> esr<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span> </span>
+<span id="cb1-3"><a href="lec15.html#cb1-3"></a>                                   tf<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> TrapFrame) <span class="op">{</span></span>
+<span id="cb1-4"><a href="lec15.html#cb1-4"></a>    <span class="kw">match</span> info<span class="op">.</span>kind <span class="op">{</span></span>
+<span id="cb1-5"><a href="lec15.html#cb1-5"></a>        <span class="pp">Kind::</span>Synchronous <span class="op">=&gt;</span> <span class="op">{</span></span>
+<span id="cb1-6"><a href="lec15.html#cb1-6"></a>            <span class="kw">let</span> syndrome <span class="op">=</span> <span class="pp">Syndrome::</span>from(esr)<span class="op">;</span></span>
+<span id="cb1-7"><a href="lec15.html#cb1-7"></a>            <span class="kw">match</span> syndrome <span class="op">{</span></span>
+<span id="cb1-8"><a href="lec15.html#cb1-8"></a>                <span class="pp">Syndrome::</span>Brk(_) <span class="op">=&gt;</span> <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span>
+<span id="cb1-9"><a href="lec15.html#cb1-9"></a>                <span class="pp">Syndrome::</span>Svc(n) <span class="op">=&gt;</span> <span class="op">{</span></span>
+<span id="cb1-10"><a href="lec15.html#cb1-10"></a>                    handle_syscall(n<span class="op">,</span> tf)<span class="op">;</span></span>
+<span id="cb1-11"><a href="lec15.html#cb1-11"></a>                    <span class="kw">return</span><span class="op">;</span></span>
+<span id="cb1-12"><a href="lec15.html#cb1-12"></a>                <span class="op">}</span></span>
+<span id="cb1-13"><a href="lec15.html#cb1-13"></a>                <span class="op">...</span></span>
+<span id="cb1-14"><a href="lec15.html#cb1-14"></a>        <span class="op">},</span></span>
+<span id="cb1-15"><a href="lec15.html#cb1-15"></a>        <span class="op">...</span></span>
+<span id="cb1-16"><a href="lec15.html#cb1-16"></a>    <span class="op">}</span></span>
+<span id="cb1-17"><a href="lec15.html#cb1-17"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="example-invoking-a-system-call-in-kernel-1"><div>
+<h1>Example: invoking a system call (in kernel)</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb2-1"><a href="lec15.html#cb2-1"></a><span class="co">// (ref: D1.10.4)</span></span>
+<span id="cb2-2"><a href="lec15.html#cb2-2"></a><span class="kw">pub</span> <span class="kw">enum</span> Syndrome <span class="op">{</span></span>
+<span id="cb2-3"><a href="lec15.html#cb2-3"></a>    Unknown<span class="op">,</span></span>
+<span id="cb2-4"><a href="lec15.html#cb2-4"></a>    SimdFp<span class="op">,</span></span>
+<span id="cb2-5"><a href="lec15.html#cb2-5"></a>    IllegalExecutionState<span class="op">,</span></span>
+<span id="cb2-6"><a href="lec15.html#cb2-6"></a>    Svc(<span class="dt">u16</span>)<span class="op">,</span></span>
+<span id="cb2-7"><a href="lec15.html#cb2-7"></a>    Hvc(<span class="dt">u16</span>)<span class="op">,</span></span>
+<span id="cb2-8"><a href="lec15.html#cb2-8"></a>    Smc(<span class="dt">u16</span>)<span class="op">,</span></span>
+<span id="cb2-9"><a href="lec15.html#cb2-9"></a>    InstructionAbort <span class="op">{</span> kind<span class="op">:</span> Fault<span class="op">,</span> level<span class="op">:</span> <span class="dt">u8</span> <span class="op">},</span></span>
+<span id="cb2-10"><a href="lec15.html#cb2-10"></a>    PCAlignmentFault<span class="op">,</span></span>
+<span id="cb2-11"><a href="lec15.html#cb2-11"></a>    DataAbort <span class="op">{</span> kind<span class="op">:</span> Fault<span class="op">,</span> level<span class="op">:</span> <span class="dt">u8</span> <span class="op">},</span></span>
+<span id="cb2-12"><a href="lec15.html#cb2-12"></a>    SpAlignmentFault<span class="op">,</span></span>
+<span id="cb2-13"><a href="lec15.html#cb2-13"></a>    Breakpoint<span class="op">,</span></span>
+<span id="cb2-14"><a href="lec15.html#cb2-14"></a>    <span class="bu">Step</span><span class="op">,</span></span>
+<span id="cb2-15"><a href="lec15.html#cb2-15"></a>    Watchpoint<span class="op">,</span></span>
+<span id="cb2-16"><a href="lec15.html#cb2-16"></a>    Brk(<span class="dt">u16</span>)<span class="op">,</span></span>
+<span id="cb2-17"><a href="lec15.html#cb2-17"></a>    Other(<span class="dt">u32</span>)<span class="op">,</span></span>
+<span id="cb2-18"><a href="lec15.html#cb2-18"></a>    <span class="op">...</span></span>
+<span id="cb2-19"><a href="lec15.html#cb2-19"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="synchronous-exception-in-other-exception-levels"><div>
+<h1>Synchronous exception in other exception levels</h1>
+<p style="text-align:center;margin:0"><img src="img/el-changes.png" style="width:60%"/></p>
+</div></section>
+<section class="slide level1" id="exception-handling-steps"><div>
+<h1>Exception handling steps</h1>
+<ol type="1">
+<li>PSTATE → SPSR_ELn (where n is the exception level where the exception is taken)</li>
+<li>PC → ELR_ELn</li>
+<li>PSTATE is updated for an exception handler (i.e., PC and SP)</li>
+</ol>
+<p style="text-align:center;margin:0"><img src="img/transition.png" style="width:30%"/></p>
+</div></section>
+<section class="slide level1" id="nested-exception-handling-steps"><div>
+<h1>Nested exception handling steps</h1>
+<p style="text-align:center;margin:0"><img src="img/nested.png" style="width:80%"/></p>
+</div></section>
+<section class="slide level1" id="exception-vector-table"><div>
+<h1>Exception vector table</h1>
+<ul>
+<li><strong><em>Vector</em></strong> means to direct an interrupt to a certain entry in the table</li>
+<li>4 (exception types) x 4 (execution modes) = 16 entries
+<ul>
+<li>Each entry contains 0x80 bytes of the actual <strong>code</strong> (unlike a pointer)</li>
+<li>PC will be updated based on a combinations of two conditions</li>
+</ul></li>
+<li>VBAR_EL1: points to the vector table</li>
+</ul>
+</div></section>
+<section class="slide level1" id="exception-vector-table-1"><div>
+<h1>Exception vector table</h1>
+<ul>
+<li>Exception types
+<ol type="1">
+<li>Synchronous: e.g., used for handling system calls</li>
+<li>IRQ: used for handling timer interrupt (in Lab3)</li>
+<li>FIQ: used for handling USB interrupt (in Lab5)</li>
+<li>SError: not supported</li>
+</ol></li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb3-1"><a href="lec15.html#cb3-1"></a><span class="kw">pub</span> <span class="kw">enum</span> Kind <span class="op">{</span></span>
+<span id="cb3-2"><a href="lec15.html#cb3-2"></a>    Synchronous <span class="op">=</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb3-3"><a href="lec15.html#cb3-3"></a>    Irq <span class="op">=</span> <span class="dv">1</span><span class="op">,</span></span>
+<span id="cb3-4"><a href="lec15.html#cb3-4"></a>    Fiq <span class="op">=</span> <span class="dv">2</span><span class="op">,</span></span>
+<span id="cb3-5"><a href="lec15.html#cb3-5"></a>    SError <span class="op">=</span> <span class="dv">3</span><span class="op">,</span></span>
+<span id="cb3-6"><a href="lec15.html#cb3-6"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="exception-vector-table-2"><div>
+<h1>Exception vector table</h1>
+<ul>
+<li>Execution modes
+<ol type="1">
+<li>Current EL with SP0 (not supported)</li>
+<li>Current EL with SPx: e.g., when data abort in your kernel</li>
+<li><strong><em>Lower EL using AArch64</em></strong>: e.g., a syscall from userspace</li>
+<li>Lower EL using AArch32 (not supported)</li>
+</ol></li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb4-1"><a href="lec15.html#cb4-1"></a><span class="kw">pub</span> <span class="kw">enum</span> Source <span class="op">{</span></span>
+<span id="cb4-2"><a href="lec15.html#cb4-2"></a>    CurrentSpEl0 <span class="op">=</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb4-3"><a href="lec15.html#cb4-3"></a>    CurrentSpElx <span class="op">=</span> <span class="dv">1</span><span class="op">,</span></span>
+<span id="cb4-4"><a href="lec15.html#cb4-4"></a>    LowerAArch64 <span class="op">=</span> <span class="dv">2</span><span class="op">,</span></span>
+<span id="cb4-5"><a href="lec15.html#cb4-5"></a>    LowerAArch32 <span class="op">=</span> <span class="dv">3</span><span class="op">,</span></span>
+<span id="cb4-6"><a href="lec15.html#cb4-6"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="exception-vector-table-3"><div>
+<h1>Exception vector table</h1>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource asm numberLines"><code class="sourceCode fasm"><span id="cb5-1"><a href="lec15.html#cb5-1"></a>.<span class="bu">align</span> <span class="dv">11</span></span>
+<span id="cb5-2"><a href="lec15.html#cb5-2"></a>.global vectors</span>
+<span id="cb5-3"><a href="lec15.html#cb5-3"></a><span class="fu">vectors:</span></span>
+<span id="cb5-4"><a href="lec15.html#cb5-4"></a>    HANDLER <span class="dv">0</span>, <span class="dv">0</span></span>
+<span id="cb5-5"><a href="lec15.html#cb5-5"></a>    HANDLER <span class="dv">0</span>, <span class="dv">1</span></span>
+<span id="cb5-6"><a href="lec15.html#cb5-6"></a>    HANDLER <span class="dv">0</span>, <span class="dv">2</span></span>
+<span id="cb5-7"><a href="lec15.html#cb5-7"></a>    HANDLER <span class="dv">0</span>, <span class="dv">3</span></span>
+<span id="cb5-8"><a href="lec15.html#cb5-8"></a>    ...</span>
+<span id="cb5-9"><a href="lec15.html#cb5-9"></a>    HANDLER <span class="dv">3</span>, <span class="dv">3</span></span></code></pre></div>
+<p style="text-align:center;margin:0"><img src="img/vector.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="exception-vector-table-vector.s"><div>
+<h1>Exception vector table (vector.s)</h1>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource asm numberLines"><code class="sourceCode fasm"><span id="cb6-1"><a href="lec15.html#cb6-1"></a>.<span class="pp">macro</span> HANDLER source, kind</span>
+<span id="cb6-2"><a href="lec15.html#cb6-2"></a>    .<span class="bu">align</span> <span class="dv">7</span></span>
+<span id="cb6-3"><a href="lec15.html#cb6-3"></a>    stp     lr, xzr, [<span class="kw">SP</span>, #-<span class="dv">16</span>]!</span>
+<span id="cb6-4"><a href="lec15.html#cb6-4"></a>    stp     x28, x29, [<span class="kw">SP</span>, #-<span class="dv">16</span>]!</span>
+<span id="cb6-5"><a href="lec15.html#cb6-5"></a>    </span>
+<span id="cb6-6"><a href="lec15.html#cb6-6"></a>    <span class="bu">mov</span>     x29, \source</span>
+<span id="cb6-7"><a href="lec15.html#cb6-7"></a>    movk    x29, \kind, <span class="bu">LSL</span> #<span class="dv">16</span></span>
+<span id="cb6-8"><a href="lec15.html#cb6-8"></a>    <span class="kw">bl</span>      context_save</span>
+<span id="cb6-9"><a href="lec15.html#cb6-9"></a>    </span>
+<span id="cb6-10"><a href="lec15.html#cb6-10"></a>    ldp     x28, x29, [<span class="kw">SP</span>], #<span class="dv">16</span></span>
+<span id="cb6-11"><a href="lec15.html#cb6-11"></a>    ldp     lr, xzr, [<span class="kw">SP</span>], #<span class="dv">16</span></span>
+<span id="cb6-12"><a href="lec15.html#cb6-12"></a>    eret</span>
+<span id="cb6-13"><a href="lec15.html#cb6-13"></a>.endm</span></code></pre></div>
+</div></section>
+<section class="slide level1" id="returning-from-an-exception-reverse"><div>
+<h1>Returning from an exception (reverse)</h1>
+<ul>
+<li>Upon <code>eret</code> (lowering the exception level):
+<ol type="1">
+<li>SPSR_ELn → PSTATE (where n is the exception level where the exception is taken)</li>
+<li>ELR_ELn → PC</li>
+</ol></li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/transition.png" style="width:30%"/></p>
+</div></section>
+<section class="slide level1" id="processor-state-pstate"><div>
+<h1>Processor state (PSTATE)</h1>
+<ul>
+<li>Conditional flags: N, Z, C, V</li>
+<li><strong><em>Interrupt masks</em></strong>: D (Debug), A (SError), I (IRQ), F (FIQ)</li>
+<li>Execution state: nRW (32/64-bit)</li>
+<li><strong><em>Stack selection</em></strong>: SP (SP_EL0/SP_ELn)</li>
+<li>Misc: SS (single step), IL (illegal execution)</li>
+</ul>
+<p style="text-align:center;margin:0"><img src="img/spsr.png" style="width: 100%"/></p>
+</div></section>
+<section class="slide level1" id="controlling-interrupts"><div>
+<h1>Controlling interrupts</h1>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource c numberLines"><code class="sourceCode c"><span id="cb7-1"><a href="lec15.html#cb7-1"></a>MSR DAIFSet, #Imm4  <span class="co">// Used to set any or all of DAIF to 1</span></span>
+<span id="cb7-2"><a href="lec15.html#cb7-2"></a>MSR DAIFClr, #Imm4  <span class="co">// Used to clear any or all of DAIF to 0</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb8-1"><a href="lec15.html#cb8-1"></a><span class="co">/// Enable (unmask) IRQ interrupts</span></span>
+<span id="cb8-2"><a href="lec15.html#cb8-2"></a><span class="kw">pub</span> <span class="kw">fn</span> enable_irq_interrupt() <span class="op">{</span></span>
+<span id="cb8-3"><a href="lec15.html#cb8-3"></a>    <span class="kw">unsafe</span> <span class="op">{</span></span>
+<span id="cb8-4"><a href="lec15.html#cb8-4"></a>        <span class="pp">asm!</span>(<span class="st">"msr DAIFClr, 0b0010"</span> <span class="op">::::</span> <span class="st">"volatile"</span>)<span class="op">;</span></span>
+<span id="cb8-5"><a href="lec15.html#cb8-5"></a>    <span class="op">}</span></span>
+<span id="cb8-6"><a href="lec15.html#cb8-6"></a><span class="op">}</span></span>
+<span id="cb8-7"><a href="lec15.html#cb8-7"></a><span class="co">/// Disable (mask) FIQ interrupt</span></span>
+<span id="cb8-8"><a href="lec15.html#cb8-8"></a><span class="kw">pub</span> <span class="kw">fn</span> disable_fiq_interrupt() <span class="op">{</span></span>
+<span id="cb8-9"><a href="lec15.html#cb8-9"></a>    <span class="kw">unsafe</span> <span class="op">{</span> </span>
+<span id="cb8-10"><a href="lec15.html#cb8-10"></a>        <span class="pp">asm!</span>(<span class="st">"msr DAIFSet, 0b0001"</span> <span class="op">::::</span> <span class="st">"volatile"</span>)<span class="op">;</span></span>
+<span id="cb8-11"><a href="lec15.html#cb8-11"></a>    <span class="op">}</span></span>
+<span id="cb8-12"><a href="lec15.html#cb8-12"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="interrupt-handling"><div>
+<h1>Interrupt handling</h1>
+<p style="text-align:center;margin:0"><img src="img/irq.png" style="width:70%"/></p>
+</div></section>
+<section class="slide level1" id="nested-interrupt-handling-same-el"><div>
+<h1>Nested interrupt handling (same EL)</h1>
+<p style="text-align:center;margin:0"><img src="img/nested-irq.png" style="width:85%"/></p>
+</div></section>
+<section class="slide level1" id="interrupt-handling-routines"><div>
+<h1>Interrupt handling routines</h1>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource rs numberLines"><code class="sourceCode rust"><span id="cb9-1"><a href="lec15.html#cb9-1"></a><span class="at">#[</span>no_mangle<span class="at">]</span></span>
+<span id="cb9-2"><a href="lec15.html#cb9-2"></a><span class="kw">pub</span> <span class="kw">extern</span> <span class="st">"C"</span> <span class="kw">fn</span> handle_exception( <span class="op">...</span> ) <span class="op">{</span></span>
+<span id="cb9-3"><a href="lec15.html#cb9-3"></a>    <span class="kw">match</span> info<span class="op">.</span>kind <span class="op">{</span></span>
+<span id="cb9-4"><a href="lec15.html#cb9-4"></a>        <span class="pp">Kind::</span>Synchronous <span class="op">=&gt;</span> <span class="op">{</span></span>
+<span id="cb9-5"><a href="lec15.html#cb9-5"></a>            <span class="kw">let</span> syndrome <span class="op">=</span> <span class="pp">Syndrome::</span>from(esr)<span class="op">;</span></span>
+<span id="cb9-6"><a href="lec15.html#cb9-6"></a>            <span class="kw">match</span> syndrome <span class="op">{</span></span>
+<span id="cb9-7"><a href="lec15.html#cb9-7"></a>                <span class="pp">Syndrome::</span>Brk(_) <span class="op">=&gt;</span> <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span>
+<span id="cb9-8"><a href="lec15.html#cb9-8"></a>                <span class="pp">Syndrome::</span>Svc(n) <span class="op">=&gt;</span> <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span>
+<span id="cb9-9"><a href="lec15.html#cb9-9"></a>        <span class="op">}</span></span>
+<span id="cb9-10"><a href="lec15.html#cb9-10"></a>        <span class="pp">Kind::</span>Irq <span class="op">=&gt;</span> <span class="op">{</span></span>
+<span id="cb9-11"><a href="lec15.html#cb9-11"></a>            <span class="kw">let</span> ic <span class="op">=</span> <span class="pp">Controller::</span>new()<span class="op">;</span></span>
+<span id="cb9-12"><a href="lec15.html#cb9-12"></a>            <span class="kw">for</span> v <span class="kw">in</span> <span class="pp">Interrupt::</span>iter() <span class="op">{</span></span>
+<span id="cb9-13"><a href="lec15.html#cb9-13"></a>                <span class="kw">if</span> ic<span class="op">.</span>is_pending(v) <span class="op">{</span></span>
+<span id="cb9-14"><a href="lec15.html#cb9-14"></a>                    <span class="kw">crate</span><span class="pp">::</span>IRQ<span class="op">.</span>invoke(v<span class="op">,</span> tf)<span class="op">;</span></span>
+<span id="cb9-15"><a href="lec15.html#cb9-15"></a>                <span class="op">}</span></span>
+<span id="cb9-16"><a href="lec15.html#cb9-16"></a>            <span class="op">}</span></span>
+<span id="cb9-17"><a href="lec15.html#cb9-17"></a>        <span class="op">}</span></span>
+<span id="cb9-18"><a href="lec15.html#cb9-18"></a>        <span class="op">...</span></span>
+<span id="cb9-19"><a href="lec15.html#cb9-19"></a><span class="op">}</span></span></code></pre></div>
+</div></section>
+<section class="slide level1" id="summary-exceptioninterrupt"><div>
+<h1>Summary: Exception/interrupt</h1>
+<ul>
+<li>Exception is a way to transfer a control to higher-privileged component
+<ul>
+<li>e.g., requesting a service for an interrupt</li>
+<li>e.q., requesting a software service like file system accesses via system calls</li>
+</ul></li>
+<li>Two types: synchronous and asynchronous</li>
+<li>Carefully enabling/disabling based on execution conditions</li>
+</ul>
+</div></section>
+<section class="slide level1" id="references"><div>
+<h1>References</h1>
+<ul>
+<li><a href="https://static.docs.arm.com/100878/0100/fundamentals_of_armv8_a_100878_0100_en.pdf">Fundamentals of ARMv8-A</a></li>
+<li><a href="https://static.docs.arm.com/100933/0100/aarch64_exception_and_interrupt_handling_100933_0100_en.pdf?_ga=2.53419304.1898977826.1583857121-1374653565.1582651530">AArch64 Exception and Interrupt Handling</a></li>
+<li><a href="https://events.static.linuxfound.org/images/stories/pdf/lcna_co2012_marinas.pdf">Linux on AArch64 ARM 64-bit Architecture</a></li>
+</ul>
+</div></section>
+<div class="progress"><div></div></div>
+<script src="../shower/js/shower.js"></script>
+</body>
+</html>

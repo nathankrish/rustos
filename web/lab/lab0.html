@@ -1,0 +1,459 @@
+
+
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Lab 0: Rustlings &mdash; CS-3210, Spring 2020 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lab 1: Bootstrapping Raspberry Pi" href="lab1.html" />
+    <link rel="prev" title="Tools" href="tools.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> CS-3210, Spring 2020
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../info.html">General Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cal.html">Schedule</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../lab.html">Lab</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tools.html">Tools</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="lab0.html#">Lab 0: Rustlings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="lab0.html#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lab0.html#rustlings">Rustlings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lab0.html#assignment-submission">Assignment Submission</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="lab1.html">Lab 1: Bootstrapping Raspberry Pi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab2.html">Lab 2: Shell and Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab3.html">Lab 3: FAT32 Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab4.html">Lab 4: Preemptive Multitasking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab5.html">Lab 5: Multicore and Networking</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proj.html">Final Project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refs.html">Reference Materials</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CS-3210, Spring 2020</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../lab.html">Lab</a> &raquo;</li>
+        
+      <li>Lab 0: Rustlings</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/lab/lab0.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="lab-0-rustlings">
+<h1>Lab 0: Rustlings<a class="headerlink" href="lab0.html#lab-0-rustlings" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><strong>Handed out:</strong> Tuesday, January 7, 2020</p></li>
+<li><p><strong>Due:</strong> Monday, January 20, 2020</p></li>
+</ul>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="lab0.html#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Welcome to CS3210! We’re really excited that you’ve decided to
+join us for this inaugural incarnation. We hope you have as much
+fun taking this class as we’ve had developing it! And, of course,
+we hope you learn a ton.</p>
+<p>We’re hoping to do things a little differently in CS3210 than the
+norm. In particular, we want <em>you</em> to write the majority of the
+code, and we want your code to execute on <em>real</em> hardware, doing
+<em>real</em> things. There’s going to be very little scaffolding
+provided for you, and all of your code will target and run on the
+Raspberry Pi 3/B/B+, a quad-core ARMv8 Cortex-A53 based embedded
+platform.</p>
+<p>Unlike last serveral years,
+we’ll be programming a toy OS
+in <a class="reference external" href="https://www.rust-lang.org/en-US/">Rust</a>,
+“a systems programming language that runs blazingly fast, prevents segfaults,
+and guarantees thread safety.”
+You can think of Rust as a
+successor to C and C++, but it’s more useful to think of it as a
+brand new language with new concepts. Don’t try to program in Rust
+as if it’s C, C++, Java, or any other language you’re used to.
+Instead, see it as an opportunity to learn a new way to write
+software - a new <em>rusty</em> way. By the end of the term, we think
+you’ll agree that Rust helps you write more correct, more
+reliable, and importantly more secure software,
+which are the key properties for operating systems!</p>
+<p>You’ll be writing a lot of code in CS3210, though we think that
+the majority of your time will be spent thinking about what needs
+to happen. We expect that most assignments will take about 15-20
+hours a week to complete, which means you should, under no circumstance,
+procrastinate in CS3210.
+Start early, ask questions, visit us at the office hours,
+and importantly have fun - you’ll learn much more if you give yourself
+a chance to think through hard problems.</p>
+<p>We’re here to answer any and all questions. Please don’t hesitate
+to reach out to us. Best of luck!</p>
+<div class="section" id="overview">
+<h3>Overview<a class="headerlink" href="lab0.html#overview" title="Permalink to this headline">¶</a></h3>
+<p>Mastering a programming language takes time.
+In fact, truly mastering a single programming language
+takes <em>long</em> time, perhaps our lifetime.
+In other words, it’s unrealistic to assume
+that we become a true master of Rust in a week
+- but we all hope we can start tinkering anything with Rust
+at the end of this semester.</p>
+<p>As a warm up, we will spend sometime
+to understand syntactic as well as semantic
+foundation of the Rust programming language
+by answering a series of questions we prepared.</p>
+<p>To get set up your environment,
+let’s first install required dependencies
+and the Rust ecosystems, namely <code class="docutils literal notranslate"><span class="pre">rustc</span></code> and <code class="docutils literal notranslate"><span class="pre">cargo</span></code>.
+We assume that you are doing the assignments
+on a latest LTS Ubuntu distribution (i.e., Ubuntu 18.04 LTS).
+If you are not running Ubuntu natively,
+please check the <a class="reference external" href="tools.html">Tool</a> page
+to prepare a Ubuntu virtual machine.
+Also if you are not familiar with <code class="docutils literal notranslate"><span class="pre">git</span></code>,
+please first check
+<a class="reference external" href="https://git-scm.com/book/en/v2">Pro Git Book</a>.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/sslab-gatech/cs3210-rustos-public.git --origin skeleton rustos
+$ <span class="nb">cd</span> rustos
+
+<span class="c1"># This script automatically setup the environment</span>
+$ bin/setup.sh
+...
+
+$ <span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$HOME</span>/.cargo/bin:<span class="nv">$PATH</span>
+$ rustc --version
+rustc <span class="m">1</span>.37.0-nightly <span class="o">(</span>0af8e872e <span class="m">2019</span>-06-30<span class="o">)</span>
+</pre></div>
+</div>
+<p>In the repository, we try hard to keep everything in place
+- no additional download or dependencies. It looks like:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>.
+├── bin : common binaries/utilities (e.g., objdump for aarch64)
+├── doc : reference documents
+└── tut : tutorial/practices (i.e., no further reuse for later labs)
+    └── 0-rustlings : this contains files for lab0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="rustlings">
+<h2>Rustlings<a class="headerlink" href="lab0.html#rustlings" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="https://i.imgur.com/LbZJgmm.gif"><img alt="https://i.imgur.com/LbZJgmm.gif" src="https://i.imgur.com/LbZJgmm.gif" style="width: 300px;" /></a>
+</div>
+<p>Our goal of lab0 is to guide you to read
+from <a class="reference external" href="https://doc.rust-lang.org/rust-by-example/hello.html">Chapter 1</a> to
+<a class="reference external" href="https://doc.rust-lang.org/rust-by-example/error.html">Chapter 18</a>
+of <a class="reference external" href="https://doc.rust-lang.org/rust-by-example/index.html">Rust By Example</a>.</p>
+<p>To check your understanding,
+we will use <a class="reference external" href="https://github.com/rust-lang/rustlings/">Rustlings</a>,
+which is a neat way
+to get familiarized with Rust
+by solving a series of <em>simple</em> exercises.
+It provides an interactive session of training
+by comprehending the compiler error messages
+and resolving it.
+While doing exercises,
+you would like to read various chapters of
+<a class="reference external" href="https://doc.rust-lang.org/book/index.html">The Rust Book</a>.
+You can also find more pointers on Rust
+in the course’s reference page.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> tut/0-rustlings
+$ ./rustlings <span class="nb">help</span>
+...
+SUBCOMMANDS:
+     <span class="nb">help</span>      Prints this message or the <span class="nb">help</span> of the given subcommand<span class="o">(</span>s<span class="o">)</span>
+     hint      Returns a hint <span class="k">for</span> the current exercise
+     run       Runs/Tests a single exercise
+     verify    Verifies all exercises according to the recommended order
+     watch     Reruns <span class="sb">`</span>verify<span class="sb">`</span> when files were edited
+</pre></div>
+</div>
+<p>To start your exercise,
+you can invoke the <code class="docutils literal notranslate"><span class="pre">watch</span></code> command
+that guides you which exercise to work on
+in a proper order:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ./rustlings watch
+</pre></div>
+</div>
+<p>If you’d like, you can also do each exercise (files in <code class="docutils literal notranslate"><span class="pre">exercises/</span></code>)
+by invoking <code class="docutils literal notranslate"><span class="pre">./rustling</span> <span class="pre">run</span> <span class="pre">[name]</span></code>.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ ./rustlings run variables1
+ ! Compilation of exercises/variables/variables1.rs failed! Compiler error message:
+
+ error<span class="o">[</span>E0425<span class="o">]</span>: cannot find value <span class="sb">`</span>x<span class="sb">`</span> in this scope
+   --&gt; exercises/variables/variables1.rs:12:5
+    <span class="p">|</span>
+ <span class="m">12</span> <span class="p">|</span>     <span class="nv">x</span> <span class="o">=</span> <span class="m">5</span><span class="p">;</span>
+    <span class="p">|</span>     ^ not found in this scope
+
+ error<span class="o">[</span>E0425<span class="o">]</span>: cannot find value <span class="sb">`</span>x<span class="sb">`</span> in this scope
+   --&gt; exercises/variables/variables1.rs:13:36
+    <span class="p">|</span>
+ <span class="m">13</span> <span class="p">|</span>     println!<span class="o">(</span><span class="s2">&quot;x has the value {}&quot;</span>, x<span class="o">)</span><span class="p">;</span>
+    <span class="p">|</span>                                    ^ not found in this scope
+
+ error: aborting due to <span class="m">2</span> previous errors
+
+ For more information about this error, try <span class="sb">`</span>rustc --explain E0425<span class="sb">`</span>.
+</pre></div>
+</div>
+<p>If you find the exercise too difficult,
+ask rustlings for hints of the exercise, like below:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ rustlings hint variables1
+Hint: The declaration on line <span class="m">12</span> is missing a keyword that is needed in Rust
+to create a new variable binding
+</pre></div>
+</div>
+<p>To complete this assignment, <code class="docutils literal notranslate"><span class="pre">./rusting</span> <span class="pre">verify</span></code> should say
+all the prepared exercises are successfully completed!</p>
+</div>
+<div class="section" id="assignment-submission">
+<h2>Assignment Submission<a class="headerlink" href="lab0.html#assignment-submission" title="Permalink to this headline">¶</a></h2>
+<p>We are going to use <a class="reference external" href="https://github.gatech.edu">Georgia Tech’s GitHub</a>
+for the assignment submission in CS3210.
+After logging into the system,
+<a class="reference external" href="https://help.github.com/en/github/getting-started-with-github/create-a-repo">create a repository</a> named <code class="docutils literal notranslate"><span class="pre">rustos</span></code>.
+When creating the repository, <strong>make it private</strong>
+and <strong>do not initialize the repository with a README</strong>.
+Next, give TAs’ accounts access to your repository for the grading purpose.
+You should add us in <code class="docutils literal notranslate"><span class="pre">Settings</span> <span class="pre">&gt;</span> <span class="pre">Collaborators</span></code> in your repository menu.</p>
+<ul class="simple">
+<li><p>Yechan Bae (ybae38)</p></li>
+<li><p>Sujin Park (spark800)</p></li>
+<li><p>Mansour Alharthi (malharthi9)</p></li>
+<li><p>Taesoo Kim (tkim92)</p></li>
+</ul>
+<p>Once you have created the repository, <strong>inform us via</strong>
+<a class="reference external" href="https://forms.gle/5nz7F3DoWGELjtev8">Google Form</a>.</p>
+<p>To submit your code for lab0,
+push a commit to the GitHub repository with a tag named <code class="docutils literal notranslate"><span class="pre">lab0-done</span></code>.
+We will fetch the assignment code from your repository on each deadline.
+The following git command samples might be helpful.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="c1"># connect your local repository to GitHub</span>
+$ git remote add origin https://github.gatech.edu/<span class="o">[</span>id<span class="o">]</span>/rustos
+$ git push -u origin master
+
+<span class="c1"># make a commit and publish the update</span>
+$ git status
+$ git add -A
+$ git commit -a -m <span class="s2">&quot;yay, lab0 done!&quot;</span>
+$ git push
+
+<span class="c1"># submit lab0</span>
+$ git tag lab0-done
+$ git push --tags
+</pre></div>
+</div>
+<div class="section" id="grading-policy">
+<h3>Grading Policy<a class="headerlink" href="lab0.html#grading-policy" title="Permalink to this headline">¶</a></h3>
+<p>Your score will be simply calculated based
+on the submission date of the “completed” assignment.
+The meaning of “completion” is for your repository
+to be <strong>tagged</strong> as “labN-done” (e.g., lab0-done).
+If your code in the repo
+passes all test cases
+provided as part of the assignment <strong>on time</strong>,
+you will get the maximum score (i.e., 100) for the corresponding lab.
+If you are late in submitting the completed assignment,
+your score of the lab
+will be <code class="docutils literal notranslate"><span class="pre">max(0,</span> <span class="pre">100*[#passes/#testcases]</span> <span class="pre">-</span> <span class="pre">[#late-day]*10)</span></code>, in theory.</p>
+<p>However, we give <strong>a week</strong> (7 days in total for all labs)
+of a grace period, which you can use without even letting
+us know! For example,
+if you are one-day late in submitting the first lab
+(i.e., the completed lab0),
+you still get 100 points for the lab
+but your grace period is <em>first</em> reduced to 6 days.
+Once you don’t have any grace period left,
+the above rule for the lab effectively takes place.
+For example, if you don’t have any grace period
+but again late in submitting the lab one day,
+your score would be <code class="docutils literal notranslate"><span class="pre">max(0,</span> <span class="pre">100</span> <span class="pre">-</span> <span class="pre">1*10)</span></code>, so <code class="docutils literal notranslate"><span class="pre">90</span></code>
+for the completed lab.</p>
+<p>We will regularly fetch your repository after the initial deadline,
+and your score and the grace period will be automatically updated on canvas.
+Please <a class="reference external" href="http://headstrong.gtisc.gatech.edu:8080/info.html#staff-ta">send us an email</a>
+if you made a late change to the assignment
+and your score had not updated for a week.</p>
+<p>We really hope <em>all</em> the students in this class get A!</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="lab1.html" class="btn btn-neutral float-right" title="Lab 1: Bootstrapping Raspberry Pi" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tools.html" class="btn btn-neutral float-left" title="Tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">
+        Last updated on Dec 14, 2021.
+      </span>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    
+
+<script src="../_static/email.js"></script>
+<script src="../_static/custom.js"></script>
+
+
+
+</body>
+</html>
